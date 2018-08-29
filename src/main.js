@@ -5,8 +5,7 @@ import App from './App'
 import router from '@/router/index.js'
 import GlsxVueComponents from 'glsx-vue-components'
 import 'glsx-vue-components/dist/glsx-vue-components.css'
-import { GlsxVueCommon, GlConst } from 'glsx-vue-common'
-const { AppConst } = GlConst
+import GlsxVueCommon from 'glsx-vue-common'
 // import _ from 'lodash'
 
 Vue.use(GlsxVueComponents)
@@ -14,15 +13,12 @@ Vue.use(GlsxVueCommon)
 
 var mixin = {
   mounted () {
+    const _this = this
     const theme = new this.$Theme()
-    const menus = new this.$get_config_by_key(AppConst.Auth.Resources.Key)
     const connection = this.$Penpal.connectToParent({
       methods: {
         setTheme (color) {
           theme.change(color)
-        },
-        setResources (resources) {
-          menus.change(resources)
         },
         height () {
           return document.height || document.body.offsetHeight // document.documentElement.clientHeight || document.body.clientHeight //
@@ -30,7 +26,11 @@ var mixin = {
       }
     })
     connection.promise.then(parent => {
-      parent.onload()
+      const cfg = _this.$get_session_config()
+      if (cfg) return
+      parent.getResources().then(config => {
+        _this.$set_session_config(config)
+      })
     })
   }
 }
