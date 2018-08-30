@@ -14,7 +14,7 @@ export default {
 <style scoped>
 .div-style{
   background-color: #FFF;
-  padding: 15px 15px;
+  padding: 20px 25px 40px;
   margin: 20px 20px;
 }
 </style>
