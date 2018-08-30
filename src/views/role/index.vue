@@ -4,11 +4,17 @@
     <div class="default-style role-header">
       <gl-input class="role-input" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
       <gl-button type="primary" @click="findRoleName">搜索</gl-button>
-      <gl-button class="create-button" size="small" @click="createRole">创建</gl-button>
     </div>
     <hr style="height:1px;border:0px;background-color:#e7eaec">
     <div class="default-style">
+      <gl-button class="create-button" size="small" @click="createRole">创建</gl-button>
       <gl-table :table="roleData"></gl-table>
+      <gl-dropdown>
+        <span class="gl-dropdown">
+          {{page}}
+          <i class="gl-icon-arrow-down gl-icon--right"></i>
+        </span>
+      </gl-dropdown>
     </div>
   </div>
 </template>
@@ -19,10 +25,42 @@ export default {
   data () {
     return {
       roleName: '',
+      page: '10',
+      pageList: '',
       roleData: {
         data: [{
           id: '1032',
           name: '好车主',
+          department: '研发中心-网络软件部',
+          state: '开启',
+          createTime: '2018-08-12 13:00:00'
+        }, {
+          id: '1033',
+          name: '运营平台',
+          department: '研发中心-网络软件部',
+          state: '开启',
+          createTime: '2018-08-12 13:00:00'
+        }, {
+          id: '1034',
+          name: '精品车主',
+          department: '研发中心-网络软件部',
+          state: '开启',
+          createTime: '2018-08-12 13:00:00'
+        }, {
+          id: '1035',
+          name: '云商分润',
+          department: '研发中心-网络软件部',
+          state: '开启',
+          createTime: '2018-08-12 13:00:00'
+        }, {
+          id: '1036',
+          name: '营销系统',
+          department: '研发中心-网络软件部',
+          state: '开启',
+          createTime: '2018-08-12 13:00:00'
+        }, {
+          id: '1037',
+          name: 'test',
           department: '研发中心-网络软件部',
           state: '开启',
           createTime: '2018-08-12 13:00:00'
@@ -42,9 +80,15 @@ export default {
         }, {
           label: '创建时间',
           prop: 'createTime'
+        }, {
+          label: '操作',
+          prop: 'operation'
         }]
       }
     }
+  },
+  created () {
+    console.log(this.roleData.data.length)
   },
   methods: {
     findRoleName () {
@@ -67,19 +111,18 @@ export default {
 </script>
 <style scoped>
 .default-style {
+    position: relative;
     padding: 0px 25px;
 }
 .role-header {
-    position: relative;
     margin-bottom: 20px;
 }
 .role-input {
-    width: 40%;
-    margin-right: 5px;
+    width: 250px;
 }
 .create-button {
     position: absolute;
     right: 25px;
-    bottom: 0px;
+    top: -56px;
 }
 </style>
