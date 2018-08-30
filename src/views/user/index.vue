@@ -1,14 +1,13 @@
-<!-- 主页 -->
+<!-- userManagement -->
 <template>
-  <div>我是主页！</div>
+  <div>userList</div>
 </template>
 
 <script>
 export default {
-  name: 'layout',
-  data () {
+  name:'user',
+  data(){
     return {
-
     }
   }
 }

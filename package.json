@@ -14,6 +14,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "glsx-vue-common": "^1.1.6",
     "glsx-vue-components": "^1.0.12",
     "lodash": "^4.17.10",
