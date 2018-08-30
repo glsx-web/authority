@@ -5,8 +5,8 @@
 
 <script>
 export default {
-  name:'user',
-  data(){
+  name: 'user',
+  data () {
     return {
     }
   }

@@ -1,17 +1,13 @@
 <!-- menuManagement -->
 <template>
-  <div>menuManagement
-    <hr>
-    {{session}}
-    </div>
+  <div>menuManagement</div>
 </template>
 
 <script>
 export default {
-  name: 'menu',
+  name: 'menuMG',
   data () {
     return {
-      session:this.$get_session_config()
     }
   }
 }

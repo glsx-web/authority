@@ -10,7 +10,6 @@ import Department from '@/views/department'
 Vue.use(Router)
 
 const routers = [
-  { path: '/', redirect: {name: 'menu'} },
   { name: 'menu', path: '/menu', component: Menu },
   { name: 'user', path: '/user', component: User },
   { name: 'role', path: '/role', component: Role },
