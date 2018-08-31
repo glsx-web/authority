@@ -16,8 +16,15 @@
       </div>
       <div>
         <label>显示
-          <!-- <gl-dropdown>{{showNumber}}</gl-dropdown> -->
-          条
+          <gl-dropdown split-button size="small" class="m-rl8" @command="changeShowNumber">
+            {{showNumber}}
+            <gl-dropdown-menu slot="dropdown" class="w-75">
+              <gl-dropdown-item command="10">10</gl-dropdown-item>
+              <gl-dropdown-item command="20">20</gl-dropdown-item>
+              <gl-dropdown-item command="30">30</gl-dropdown-item>
+              <gl-dropdown-item command="40">40</gl-dropdown-item>
+            </gl-dropdown-menu>
+          </gl-dropdown>条
         </label>
         <label>,&nbsp;共&nbsp;{{total}}&nbsp;条</label>
       </div>
@@ -150,6 +157,9 @@ export default {
       }).catch(() => {
         this.message('', '取消删除')
       })
+    },
+    changeShowNumber (command) {
+      this.showNumber = command
     }
   }
 }
