@@ -8,13 +8,15 @@
     <hr style="height:1px;border:0px;background-color:#e7eaec">
     <div class="default-style">
       <gl-button class="create-button" size="small" @click="createRole">创建</gl-button>
-      <gl-table :table="roleData"></gl-table>
-      <gl-dropdown>
-        <span class="gl-dropdown">
-          {{page}}
-          <i class="gl-icon-arrow-down gl-icon--right"></i>
-        </span>
-      </gl-dropdown>
+      <div class="dataTables-scroll">
+        <gl-table :table="roleData"></gl-table>
+      </div>
+      <div>
+        <label>显示
+        <gl-dropdown>{{showNumber}}</gl-dropdown>条
+        </label>
+        <label>,&nbsp;共&nbsp;{{total}}&nbsp;条</label>
+      </div>
     </div>
   </div>
 </template>
@@ -25,9 +27,11 @@ export default {
   data () {
     return {
       roleName: '',
-      page: '10',
-      pageList: '',
+      showNumber: 10,
+      showNumberList: [],
+      total: 0,
       roleData: {
+        border: true,
         data: [{
           id: '1032',
           name: '好车主',
@@ -87,8 +91,8 @@ export default {
       }
     }
   },
-  created () {
-    console.log(this.roleData.data.length)
+  mounted () {
+    this.total = this.roleData.data.length
   },
   methods: {
     findRoleName () {
@@ -116,6 +120,9 @@ export default {
 }
 .role-header {
     margin-bottom: 20px;
+}
+.dataTables-scroll{
+  margin-bottom: 8px;
 }
 .role-input {
     width: 250px;

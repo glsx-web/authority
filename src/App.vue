@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="div-style">
+  <div id="app" class="outsider">
     <router-view></router-view>
   </div>
 </template>
@@ -12,9 +12,9 @@ export default {
 </script>
 
 <style scoped>
-.div-style{
+.outsider{
   background-color: #FFF;
   padding: 20px 0px 40px 0px;
-  margin: 20px 20px;
+  /* margin: 20px 20px; */
 }
 </style>
