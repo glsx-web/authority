@@ -1,19 +1,20 @@
 <!-- roleManagement -->
 <template>
   <div>
-    <div class="default-style role-header">
-      <gl-input class="role-input" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
+    <div class="default m-b20">
+      <gl-input class="search-w250" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
       <gl-button type="primary" @click="findRoleName">搜索</gl-button>
     </div>
-    <hr style="height:1px;border:0px;background-color:#e7eaec">
-    <div class="default-style">
-      <gl-button class="create-button" size="small" @click="createRole">创建</gl-button>
-      <div class="dataTables-scroll">
+    <hr>
+    <div class="default p-t15">
+      <gl-button class="control-tabledata-button" size="small" @click="createRole">创建</gl-button>
+      <div class="m-b8">
         <gl-table :table="roleData"></gl-table>
       </div>
       <div>
         <label>显示
-        <gl-dropdown>{{showNumber}}</gl-dropdown>条
+          <!-- <gl-dropdown>{{showNumber}}</gl-dropdown> -->
+          条
         </label>
         <label>,&nbsp;共&nbsp;{{total}}&nbsp;条</label>
       </div>
@@ -24,7 +25,7 @@
 <script>
 export default {
   name: 'role',
-  data () {
+  data() {
     return {
       roleName: '',
       showNumber: 10,
@@ -84,10 +85,36 @@ export default {
         }, {
           label: '创建时间',
           prop: 'createTime'
-        }, {
+        }],
+        console: {
           label: '操作',
-          prop: 'operation'
-        }]
+          prop: 'operation',
+          button: [{
+            label: '编辑',
+            type: 'text',
+            callback: (index, rows) => {
+              this.$alert(rows[index])
+            }
+          }, {
+            label: '详细',
+            type: 'text',
+            callback: (index, rows) => {
+              this.$alert(rows[index])
+            }
+          }, {
+            label: '删除',
+            type: 'text',
+            callback: (index, rows) => {
+              this.confirmDeleteOrNot(index)
+            }
+          }, {
+            label: '用户',
+            type: 'text',
+            callback: (index, rows) => {
+              this.$alert(rows[index])
+            }
+          }]
+        }
       }
     }
   },
@@ -98,38 +125,41 @@ export default {
     findRoleName () {
       this.roleName = ''
     },
+    message (type, message) {
+      this.$message({
+        showClose: true,
+        type: type,
+        message: message
+      })
+    },
     createRole () {
       this.$alert('创建成功', '创建角色', {
         confirmButtonTest: '确定',
         callback: action => {
-          this.$message({
-            showClose: true,
-            type: 'success',
-            message: 'action: 创建成功'
-          })
+          this.message('success', '创建成功')
         }
+      })
+    },
+    confirmDeleteOrNot (index) {
+      this.$confirm('确定要删除这条数据？', '', {
+        confirmButtonTest: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.roleData.data.splice(index, 1)
+        this.message('success', '删除成功')
+      }).catch(() => {
+        this.message('', '取消删除')
       })
     }
   }
 }
 </script>
 <style scoped>
-.default-style {
-    position: relative;
-    padding: 0px 25px;
-}
-.role-header {
-    margin-bottom: 20px;
-}
-.dataTables-scroll{
-  margin-bottom: 8px;
-}
-.role-input {
+.search-w250 {
     width: 250px;
 }
-.create-button {
-    position: absolute;
-    right: 25px;
-    top: -56px;
+.m-b8{
+  margin-bottom: 8px;
 }
 </style>
