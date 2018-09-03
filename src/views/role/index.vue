@@ -9,7 +9,7 @@
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="createRole">创建</gl-button>
       <div class="m-b8">
-        <gl-table :table="roleData"></gl-table>
+        <gl-table :table="roleData" :pagination="pagination"></gl-table>
       </div>
       <div>
         <label>显示
@@ -32,7 +32,7 @@
 <script>
 export default {
   name: 'role',
-  data() {
+  data () {
     return {
       roleName: '',
       showNumber: 10,
@@ -120,6 +120,9 @@ export default {
               this.$alert(rows[index])
             }
           }]
+        },
+        pagination: {
+          show: true
         }
       }
     }
