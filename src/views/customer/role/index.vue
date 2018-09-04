@@ -1,18 +1,15 @@
-<!-- userManagement -->
+<!-- roleManagement -->
 <template>
   <div>
     <div class="default m-b20">
-      <gl-input class="search-w250" placeholder="请输入用户名或姓名" v-model="userName" clearable></gl-input>
-      <gl-button type="primary" @click="finduserName">搜索</gl-button>
+      <gl-input class="search-w250" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
+      <gl-button type="primary" @click="findRoleName">搜索</gl-button>
     </div>
     <hr>
     <div class="default p-t15">
-      <div class="control-tabledata-button">
-        <gl-button size="small" @click="createUser">新增用户</gl-button>
-        <gl-button size="small" @click="delteSelected">删除选中</gl-button>
-      </div>
+      <gl-button class="control-tabledata-button" size="small" @click="createRole">创建</gl-button>
       <div class="m-b8">
-        <gl-table :table="userData"></gl-table>
+        <gl-table :table="roleData" :pagination="pagination"></gl-table>
       </div>
       <div>
         <label>显示
@@ -34,14 +31,13 @@
 
 <script>
 export default {
-  name: 'user',
+  name: 'role',
   data() {
     return {
-      userName: '',
+      roleName: '',
       showNumber: 10,
-      showNumberList: [],
       total: 0,
-      userData: {
+      roleData: {
         border: true,
         data: [{
           id: '1032',
@@ -124,41 +120,48 @@ export default {
               this.$alert(rows[index])
             }
           }]
+        },
+        pagination: {
+          show: true
         }
       }
     }
   },
-  mounted () {
-    this.total = this.userData.data.length
+  mounted() {
+    this.total = this.roleData.data.length
   },
   methods: {
-    finduserName () {
-      this.userName = ''
+    findRoleName() {
+      this.roleName = ''
     },
-    message (type, message) {
+    message(type, message) {
       this.$message({
         showClose: true,
         type: type,
         message: message
       })
     },
-    createUser () {
+    createRole() {
+      this.$alert('创建成功', '创建角色', {
+        confirmButtonTest: '确定',
+        callback: action => {
+          this.message('success', '创建成功')
+        }
+      })
     },
-    delteSelected () {
-    },
-    confirmDeleteOrNot (index) {
+    confirmDeleteOrNot(index) {
       this.$confirm('确定要删除这条数据？', '', {
         confirmButtonTest: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.userData.data.splice(index, 1)
+        this.roleData.data.splice(index, 1)
         this.message('success', '删除成功')
       }).catch(() => {
         this.message('', '取消删除')
       })
     },
-    changeShowNumber (command) {
+    changeShowNumber(command) {
       this.showNumber = command
     }
   }
@@ -168,7 +171,7 @@ export default {
 .search-w250 {
     width: 250px;
 }
-.m-b8{
-  margin-bottom: 8px;
+.m-b8 {
+    margin-bottom: 8px;
 }
 </style>

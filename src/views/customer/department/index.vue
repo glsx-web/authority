@@ -1,13 +1,14 @@
-<!-- menuManagement -->
+<!-- departmentManagement -->
 <template>
-  <div>menuManagement</div>
+  <div>departmentList</div>
 </template>
 
 <script>
 export default {
-  name: 'menuMG',
-  data () {
+  name: 'department',
+  data() {
     return {
+
     }
   }
 }
