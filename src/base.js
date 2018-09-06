@@ -8,10 +8,10 @@ import config from './config'
 import './styles/role-user-common.scss'
 import './styles/index.scss'
 // import _ from 'lodash'
-
+import { Tree } from '@/components'
 Vue.use(GlsxVueComponents)
 Vue.use(GlsxVueCommon, config)
-
+Vue.component('tree', Tree)
 var mixin = {
   mounted() {
     const _this = this
