@@ -1,7 +1,7 @@
 export default{
   axios: {
-    baseURL: 'http://192.168.3.171:7300/mock/5b0ed7dbf189006180803286/standard',
-    whiteList: ['user/login', 'user/info', 'user/logout', 'user/getInfo', 'vue/lt', 'vue/login', 'auth/checkLogin', 'vue/logout'],
+    baseURL: 'http://192.168.3.171:7300/mock/5b91805391b67469b43e2921/subsystem',
+    whiteList: ['vue/userList', 'vue/roleList'],
     timeout: 15000,
     result: {
       data_key: 'data', // 返回值数据实体存放对象

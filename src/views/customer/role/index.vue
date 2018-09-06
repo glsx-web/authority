@@ -18,6 +18,7 @@
 
 <script>
 import { RoleCreateDialog } from '@/components/index'
+import { getInfo } from '@/api/user'
 export default {
   name: 'role',
   components: {
@@ -30,103 +31,13 @@ export default {
       roleData: {
         border: true,
         height: 500,
-        data: [{
-          id: '1032',
-          name: '好车主',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1033',
-          name: '运营平台',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1034',
-          name: '精品车主',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1035',
-          name: '云商分润',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1036',
-          name: '营销系统',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }],
+        data: [],
         column: [{
           label: '序号',
           prop: 'id'
         }, {
           label: '角色名字',
-          prop: 'name'
+          prop: 'rolename'
         }, {
           label: '所属部门',
           prop: 'department'
@@ -135,7 +46,7 @@ export default {
           prop: 'state'
         }, {
           label: '创建时间',
-          prop: 'createTime'
+          prop: 'createtime'
         }],
         console: {
           label: '操作',
@@ -173,7 +84,19 @@ export default {
       }
     }
   },
+  mounted() {
+    getInfo.req('/roleList').then(res => {
+      this.roleData.data = res.roleData
+      console.log(this.roleData.data)
+    })
+  },
   methods: {
+    // getData() {
+    //   getInfo.req('/roleList').then(res => {
+    //     this.roleData.data = res
+    //     console.log(res)
+    //   })
+    // },
     message(message, type) {
       type && this.$message({
         showClose: true,
@@ -186,7 +109,6 @@ export default {
       })
     },
     confirmDeleteOrNot(index, rows) {
-      alert('?????')
       this.$confirm('确定要删除这条数据？', '11', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
