@@ -62,7 +62,7 @@ export default {
           // width: '100'
         }, {
           label: '创建时间',
-          prop: 'createTime'
+          prop: 'userCreateTime'
           // width: '200'
         }],
         // number: {

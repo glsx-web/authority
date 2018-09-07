@@ -1,6 +1,6 @@
 import UserManagement from './UserManagement'
-import RoleCreateDialog from './RoleCreateDialog'
+import RoleCreate from './RoleCreate'
 export {
   UserManagement,
-  RoleCreateDialog
+  RoleCreate
 }
