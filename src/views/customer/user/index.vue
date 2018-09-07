@@ -10,7 +10,7 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser">新增用户</gl-button>
         <gl-button size="small" @click="delteSelected">删除选中</gl-button>
-        <user-edit :dialogFormVisible="dialogFormVisible" @userForm="handleUserForm"></user-edit>
+        <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserForm"></user-form>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
@@ -20,12 +20,12 @@
 </template>
 
 <script>
-import userEdit from '@/components/UserManagement'
+import UserForm from '@/components/UserCreate'
 import { getInfo } from '@/api/user'
 export default {
   name: 'user',
   components: {
-    userEdit
+    UserForm
   },
   data() {
     return {
@@ -39,31 +39,24 @@ export default {
         column: [{
           label: '用户序号',
           prop: 'userId'
-          // width: '100'
         }, {
           label: '用户名',
           prop: 'userName'
-          // width: '100'
         }, {
           label: '真实姓名',
           prop: 'actualName'
-          // width: '100'
         }, {
           label: '管理员',
           prop: 'isAdministrator'
-          // width: '100'
         }, {
           label: '手机号码',
           prop: 'phoneNumber'
-          // width: '150'
         }, {
           label: '状态',
           prop: 'status'
-          // width: '100'
         }, {
           label: '创建时间',
-          prop: 'createTime'
-          // width: '200'
+          prop: 'userCreateTime'
         }],
         // number: {
         //   label: '序号',
@@ -79,9 +72,7 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              // this.$alert(rows[index])
               this.dialogFormVisible = true
-              // console.log(this.dialogFormVisible)
             }
           }, {
             label: '详细',
@@ -118,22 +109,24 @@ export default {
   mounted() {
     getInfo.req('/userList').then(res => {
       this.userData.data = res.userData
-      console.log(this.userData.data)
     })
   },
   methods: {
     // 接受子组件传递的值
-    handleUserForm(data) {
+    handleUserForm(params) {
       this.dialogFormVisible = false
+      // this.userDataCreate(data)
+      console.log(params)
     },
     // 新增按钮
     createUser() {
       this.dialogFormVisible = !this.dialogFormVisible
     },
     // 新增事件
-    // userDataCreate(data) {
-    //   const newData = { id: '1038', userName: data.userName, actualName: data.actualName, isAdministrator: data.administrator, phoneNumber: data.phoneNumber, }
-    // },
+    userDataCreate(data) {
+      console.log(data)
+      // const newData = { userId: '10' + data.length, userName: data.userName, actualName: data.actualName, isAdministrator: data.isAdministrator, phoneNumber: data.phoneNumber, status: data.status, }
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },

@@ -3,7 +3,7 @@
         <gl-form :model="userManageForm" :rules="rules" ref="userManageForm" label-width="100px">
           <el-col :span="12">
             <gl-form-item label="用户名" prop="userName">
-                <gl-input v-model="userManageForm.userName"></gl-input>
+                <gl-input v-model="userManageForm.userName" value=""></gl-input>
             </gl-form-item>
           </el-col>
           <gl-col :span="12">
@@ -18,9 +18,8 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="手机号码" prop="phoneNumber">
-                <gl-input clearable v-model="userManageForm.phoneNumber" 
+                <gl-input v-model="userManageForm.phoneNumber" 
                           prefix-icon='el-icon-mobile-phone' 
-                          :mask="tel" 
                           placeholder='请输入手机号码'></gl-input>
             </gl-form-item>
           </gl-col>
@@ -31,7 +30,7 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="邮箱" prop="email">
-                <gl-input v-model='userManageForm.email' email placeholder='请输入电子邮箱'>
+                <gl-input v-model='userManageForm.email' placeholder='请输入电子邮箱'>
                       </gl-input>
             </gl-form-item>
           </gl-col>
@@ -45,7 +44,7 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="管理员">
-                <gl-select v-model="userManageForm.administrator" placeholder="否">
+                <gl-select v-model="userManageForm.isAdministrator" placeholder="否">
                 <gl-option label="否" value="fou"></gl-option>
                 <gl-option label="是" value="shi"></gl-option>
                 </gl-select>
@@ -53,7 +52,7 @@
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="department">
-                <gl-select v-model="userManageForm.value" placeholder="请选择">
+                <gl-select v-model="userManageForm.department" placeholder="请选择">
                     <gl-option
                     v-for="item in userManageForm.options"
                     :key="item.value"
@@ -84,7 +83,7 @@
 
 <script>
 export default {
-  name: 'UserEdit',
+  name: 'UserForm',
   props: {
     dialogFormVisible: Boolean
   },
@@ -95,7 +94,7 @@ export default {
   },
   data() {
     return {
-      tel: '[ 1, /[34578]/, /\d/, /\d/, /\d/,/\d/, /\d/, /\d/,/\d/, /\d/, /\d/]',
+      tel: '[ 1, /[34578]/, /\d/{9}]',
       userManageForm: {
         userName: '',
         actualName: '',
@@ -104,7 +103,7 @@ export default {
         registeredIP: '',
         email: '',
         status: '',
-        administrator: '',
+        isAdministrator: '',
         department: '',
         roleOptions: [],
         options: [{
@@ -122,8 +121,7 @@ export default {
         }, {
           value: '选项5',
           label: '北京烤鸭'
-        }],
-        value: ''
+        }]
       },
       rules: {
         userName: [
@@ -133,19 +131,19 @@ export default {
         actualName: [
           { required: true, message: '请输入用户真实名字', trigger: 'blur' },
           { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入用户密码', trigger: 'blur' },
-          { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        ],
+        ]
+        // password: [
+        //   { required: true, message: '请输入用户密码', trigger: 'blur' },
+        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
+        // ],
         // phoneNumber: [
         //   { required: true, message: '请输入手机号码', trigger: 'blur' },
         //   { length: 11, message: '长度为11个字符', trigger: 'blur' }
         // ],
-        registeredIP: [
-          { required: true, message: '请输入注册IP', trigger: 'blur' },
-          { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        ]
+        // registeredIP: [
+        //   { required: true, message: '请输入注册IP', trigger: 'blur' },
+        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
+        // ]
         // email: [
         //   { required: true, message: '请输入邮箱', trigger: 'blur' },
         //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
@@ -166,18 +164,19 @@ export default {
       })
     },
     submitForm(formName) {
+      console.log(this.userManageForm)
+      // console.log(this.userManageForm)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('userForm', this.userManageForm)
+          this.$emit('userFormData', this.userManageForm)
           this.message('创建角色成功', 'success')
         } else {
-          console.log('error submit!!')
           return false
         }
       })
     },
     cancelForm() {
-      this.$emit('userForm')
+      this.$emit('userFormData')
       this.message('取消创建角色')
     }
   }
