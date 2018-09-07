@@ -165,7 +165,7 @@ export default {
 .search-w250 {
     width: 250px;
 }
-.m-b8{
-  margin-bottom: 8px;
+.m-b8 {
+    margin-bottom: 8px;
 }
 </style>

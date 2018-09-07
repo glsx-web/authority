@@ -8,7 +8,7 @@
     <hr>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateRole">创建</gl-button>
-      <role-create-dialog :createDialogVisible="createDialogVisible" @createDialogClose="handleCreateDialogClose"></role-create-dialog>
+      <role-create :createVisible="createVisible" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <gl-table :table="roleData" :pagination="pagination"></gl-table>
       </div>
@@ -17,40 +17,40 @@
 </template>
 
 <script>
-import { RoleCreateDialog } from '@/components/index'
+import { RoleCreate } from '@/components/index'
 import { getInfo } from '@/api/user'
 export default {
   name: 'role',
   components: {
-    RoleCreateDialog
+    RoleCreate
   },
   data() {
     return {
       roleName: '',
-      createDialogVisible: false,
+      createVisible: false,
       roleData: {
         border: true,
-        height: 500,
+        height: 400,
         data: [],
         column: [{
           label: '序号',
-          prop: 'id'
+          prop: 'roleId'
         }, {
           label: '角色名字',
-          prop: 'rolename'
+          prop: 'roleName'
         }, {
           label: '所属部门',
           prop: 'department'
         }, {
           label: '状态',
-          prop: 'state'
+          prop: 'roleStatus'
         }, {
           label: '创建时间',
-          prop: 'createtime'
+          prop: 'roleCreateTime'
         }],
         console: {
           label: '操作',
-          prop: 'operation',
+          prop: 'roleOptions',
           button: [{
             label: '编辑',
             type: 'text',
@@ -90,12 +90,6 @@ export default {
     })
   },
   methods: {
-    // getData() {
-    //   getInfo.req('/roleList').then(res => {
-    //     this.roleData.data = res
-    //     console.log(res)
-    //   })
-    // },
     message(message, type) {
       type && this.$message({
         showClose: true,
@@ -108,7 +102,7 @@ export default {
       })
     },
     confirmDeleteOrNot(index, rows) {
-      this.$confirm('确定要删除这条数据？', '11', {
+      this.$confirm('确定要删除这条数据？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -127,17 +121,17 @@ export default {
     },
     roleDataEdit(data) {
       this.dateFormat()
-      const newData = { id: '1038', name: data.name, department: data.department, state: '开启', createTime: '' }
+      const newData = { roleId: '1038', roleName: data.roleName, department: data.department, roleStatus: '开启', roleCreateTime: '' }
       this.roleData.data.push(newData)
     },
     handleFindRoleName() {
       this.roleName = ''
     },
     handleCreateRole() {
-      this.createDialogVisible = !this.createDialogVisible
+      this.createVisible = !this.createVisible
     },
-    handleCreateDialogClose(data) {
-      this.createDialogVisible = false
+    handleCreateClose(data) {
+      this.createVisible = false
       data && this.roleDataEdit(data)
     }
   }

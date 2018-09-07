@@ -1,12 +1,12 @@
 <!-- createRoleComponent -->
 <template>
-  <gl-dialog title="新增角色" :visible.sync="createDialogVisible" :before-close="handleCreateCancel">
+  <gl-dialog title="新增角色" :visible.sync="createVisible" :before-close="handleCreateCancel">
     <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
-      <gl-form-item label="角色名称：" prop="name">
-        <gl-input v-model="createRuleForm.name" clearable></gl-input>
+      <gl-form-item label="角色名称：" prop="roleName">
+        <gl-input v-model="createRuleForm.roleName" clearable></gl-input>
       </gl-form-item>
-      <gl-form-item label="角色描述：" prop="descript">
-        <gl-input v-model="createRuleForm.descript" type="textarea" clearable></gl-input>
+      <gl-form-item label="角色描述：" prop="roleDescript">
+        <gl-input v-model="createRuleForm.roleDescript" type="textarea" clearable></gl-input>
       </gl-form-item>
       <gl-form-item label="所属部门：" prop="department">
         <gl-select v-model="createRuleForm.department" placeholder="请选择">
@@ -14,40 +14,38 @@
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项："></gl-form-item>
-      <gl-form-item>
-        <gl-button type="primary" @click="handleCreateSubmit('createRuleForm')">提交</gl-button>
-        <gl-button @click="handleCreateCancel">取消</gl-button>
-      </gl-form-item>
     </gl-form>
+    <div slot="footer" class="dialog-footer">
+      <gl-button type="primary" @click="handleCreateSubmit('createRuleForm')">提交</gl-button>
+      <gl-button @click="handleCreateCancel">取消</gl-button>
+    </div>
   </gl-dialog>
 </template>
 
 <script>
 export default {
-  name: 'RoleCreateDialog',
+  name: 'RoleCreate',
   props: {
-    createDialogVisible: {
-      type: Boolean
-    }
+    createVisible: Boolean
   },
   watch: {
-    createDialogVisible(val) {
+    createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
     }
   },
   data() {
     return {
       createRuleForm: {
-        name: '',
-        descript: '',
+        roleName: '',
+        roleDescript: '',
         department: '',
         menuOption: ''
       },
       createRules: {
-        name: [
+        roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
         ],
-        descript: [
+        roleDescript: [
           { required: true, message: '请输入角色描述！', trigger: 'blur' },
           { max: 200, message: '字数限制在200以内！', trigger: 'blur' }
         ],
@@ -72,7 +70,7 @@ export default {
     handleCreateSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('createDialogClose', this.createRuleForm)
+          this.$emit('createClose', this.createRuleForm)
           this.message('创建角色成功', 'success')
         } else {
           return false
@@ -80,7 +78,7 @@ export default {
       })
     },
     handleCreateCancel() {
-      this.$emit('createDialogClose')
+      this.$emit('createClose')
       this.message('取消创建角色')
     }
   }

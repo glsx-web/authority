@@ -1,6 +1,8 @@
 import UserCreate from './UserCreate'
-import RoleCreateDialog from './RoleCreateDialog'
+import RoleCreate from './RoleCreate'
+import Tree from './Tree'
 export {
   UserCreate,
-  RoleCreateDialog
+  RoleCreate,
+  Tree
 }
