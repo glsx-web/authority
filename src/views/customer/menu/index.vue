@@ -1,4 +1,3 @@
-<!-- menuManagement -->
 <template>
   <div>
     <tree :data='res' :title="'菜单列表'" :props='props' consoleItem></tree>

@@ -4,14 +4,15 @@ import Vue from 'vue'
 import GlsxVueComponents from 'glsx-vue-components'
 import 'glsx-vue-components/dist/glsx-vue-components.css'
 import GlsxVueCommon from 'glsx-vue-common'
-import config from './config'
+import { common } from '@/config'
 import './styles/role-user-common.scss'
 import './styles/index.scss'
 // import _ from 'lodash'
 import { Tree } from '@/components'
 Vue.use(GlsxVueComponents)
-Vue.use(GlsxVueCommon, config)
 Vue.component('tree', Tree)
+Vue.use(GlsxVueCommon, common)
+
 var mixin = {
   mounted() {
     const _this = this

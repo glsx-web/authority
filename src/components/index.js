@@ -1,2 +1,6 @@
 import Tree from './Tree'
-export { Tree }
+import RoleCreateDialog from './RoleCreateDialog'
+export {
+  RoleCreateDialog,
+  Tree
+}
