@@ -87,16 +87,9 @@ export default {
   mounted() {
     getInfo.req('/roleList').then(res => {
       this.roleData.data = res.roleData
-      console.log(this.roleData.data)
     })
   },
   methods: {
-    // getData() {
-    //   getInfo.req('/roleList').then(res => {
-    //     this.roleData.data = res
-    //     console.log(res)
-    //   })
-    // },
     message(message, type) {
       type && this.$message({
         showClose: true,

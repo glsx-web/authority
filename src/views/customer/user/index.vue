@@ -10,92 +10,68 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser">新增用户</gl-button>
         <gl-button size="small" @click="delteSelected">删除选中</gl-button>
+        <user-edit :dialogFormVisible="dialogFormVisible" @userForm="handleUserForm"></user-edit>
       </div>
       <div class="m-b8">
-        <gl-table :table="userData"></gl-table>
-      </div>
-      <div>
-        <label>显示
-          <gl-dropdown split-button size="small" class="m-rl8" @command="changeShowNumber">
-            {{showNumber}}
-            <gl-dropdown-menu slot="dropdown" class="w-75">
-              <gl-dropdown-item command="10">10</gl-dropdown-item>
-              <gl-dropdown-item command="20">20</gl-dropdown-item>
-              <gl-dropdown-item command="30">30</gl-dropdown-item>
-              <gl-dropdown-item command="40">40</gl-dropdown-item>
-            </gl-dropdown-menu>
-          </gl-dropdown>条
-        </label>
-        <label>,&nbsp;共&nbsp;{{total}}&nbsp;条</label>
+        <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import userEdit from '@/components/UserManagement'
+import { getInfo } from '@/api/user'
 export default {
   name: 'user',
+  components: {
+    userEdit
+  },
   data() {
     return {
       userName: '',
-      showNumber: 10,
-      showNumberList: [],
-      total: 0,
+      dialogFormVisible: false,
       userData: {
         border: true,
-        data: [{
-          id: '1032',
-          name: '好车主',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1033',
-          name: '运营平台',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1034',
-          name: '精品车主',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1035',
-          name: '云商分润',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1036',
-          name: '营销系统',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          id: '1037',
-          name: 'test',
-          department: '研发中心-网络软件部',
-          state: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }],
+        align: 'center',
+        height: 500,
+        data: [],
         column: [{
-          label: '序号',
-          prop: 'id'
+          label: '用户序号',
+          prop: 'userId'
+          // width: '100'
         }, {
-          label: '角色名字',
-          prop: 'name'
+          label: '用户名',
+          prop: 'userName'
+          // width: '100'
         }, {
-          label: '所属部门',
-          prop: 'department'
+          label: '真实姓名',
+          prop: 'actualName'
+          // width: '100'
+        }, {
+          label: '管理员',
+          prop: 'isAdministrator'
+          // width: '100'
+        }, {
+          label: '手机号码',
+          prop: 'phoneNumber'
+          // width: '150'
         }, {
           label: '状态',
-          prop: 'state'
+          prop: 'status'
+          // width: '100'
         }, {
           label: '创建时间',
           prop: 'createTime'
+          // width: '200'
         }],
+        // number: {
+        //   label: '序号',
+        //   index: (index) => {
+        //     ++index
+        //     return index < 10 && index > 0 ? '0' + index : index
+        //   }
+        // },
         console: {
           label: '操作',
           prop: 'operation',
@@ -103,7 +79,9 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              // this.$alert(rows[index])
+              this.dialogFormVisible = true
+              // console.log(this.dialogFormVisible)
             }
           }, {
             label: '详细',
@@ -115,7 +93,7 @@ export default {
             label: '删除',
             type: 'text',
             callback: (index, rows) => {
-              this.confirmDeleteOrNot(index)
+              this.confirmDeleteOrNot(index, rows)
             }
           }, {
             label: '用户',
@@ -124,14 +102,40 @@ export default {
               this.$alert(rows[index])
             }
           }]
+        },
+        selection: {},
+        multipleSelection: []
+      },
+      pagination: {
+        show: true,
+        layout: 'total, sizes, prev, pager, next, jumper',
+        style: {
+          marginTop: '20px'
         }
       }
     }
   },
   mounted() {
-    this.total = this.userData.data.length
+    getInfo.req('/userList').then(res => {
+      this.userData.data = res.userData
+    })
   },
   methods: {
+    // 接受子组件传递的值
+    handleUserForm(data) {
+      this.dialogFormVisible = false
+    },
+    // 新增按钮
+    createUser() {
+      this.dialogFormVisible = !this.dialogFormVisible
+    },
+    // 新增事件
+    // userDataCreate(data) {
+    //   const newData = { id: '1038', userName: data.userName, actualName: data.actualName, isAdministrator: data.administrator, phoneNumber: data.phoneNumber, }
+    // },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
     finduserName() {
       this.userName = ''
     },
@@ -142,17 +146,16 @@ export default {
         message: message
       })
     },
-    createUser() {
-    },
     delteSelected() {
     },
-    confirmDeleteOrNot(index) {
+    confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {
         confirmButtonTest: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.userData.data.splice(index, 1)
+        rows.splice(index, 1)
         this.message('success', '删除成功')
       }).catch(() => {
         this.message('', '取消删除')
@@ -168,7 +171,7 @@ export default {
 .search-w250 {
     width: 250px;
 }
-.m-b8{
-  margin-bottom: 8px;
+.m-b8 {
+    margin-bottom: 8px;
 }
 </style>
