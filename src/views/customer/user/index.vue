@@ -21,6 +21,7 @@
 
 <script>
 import userEdit from '@/components/UserManagement'
+import { getInfo } from '@/api/user'
 export default {
   name: 'user',
   components: {
@@ -34,119 +35,7 @@ export default {
         border: true,
         align: 'center',
         height: 500,
-        data: [{
-          userId: '1000',
-          userName: 'admin',
-          actualName: '超级管理员',
-          isAdministrator: '是',
-          phoneNumber: '13760178357',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1001',
-          userName: 'xusm',
-          actualName: '徐少敏',
-          isAdministrator: '否',
-          phoneNumber: '18666296430',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1002',
-          userName: 'liuhq',
-          actualName: '刘华全',
-          isAdministrator: '否',
-          phoneNumber: '13480614473',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1003',
-          userName: 'yangph',
-          actualName: '杨培弘',
-          isAdministrator: '否',
-          phoneNumber: '13760178357',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1006',
-          userName: 'moxq',
-          actualName: '莫显强',
-          isAdministrator: '否',
-          phoneNumber: '15914085672',
-          status: '禁用',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1007',
-          userName: 'chenxue',
-          actualName: '陈雪',
-          isAdministrator: '否',
-          phoneNumber: '13590251811',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1008',
-          userName: 'zhangqi',
-          actualName: '张琪',
-          isAdministrator: '否',
-          phoneNumber: '15889639514',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1009',
-          userName: 'hugm',
-          actualName: '胡庚美',
-          isAdministrator: '否',
-          phoneNumber: '13632791593',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1010',
-          userName: 'lisk',
-          actualName: '李水魁',
-          isAdministrator: '否',
-          phoneNumber: '15999572761',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1012',
-          userName: 'fanhua',
-          actualName: '范华',
-          isAdministrator: '否',
-          phoneNumber: '13798463989',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1013',
-          userName: 'yangqw',
-          actualName: 'yangqw',
-          isAdministrator: '否',
-          phoneNumber: '13590251811',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1014',
-          userName: 'mj',
-          actualName: '马俊',
-          isAdministrator: '否',
-          phoneNumber: '13590251811',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1015',
-          userName: 'liujing',
-          actualName: '刘静',
-          isAdministrator: '否',
-          phoneNumber: '13926572965',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }, {
-          userId: '1016',
-          userName: 'wuwt',
-          actualName: '吴万添',
-          isAdministrator: '否',
-          phoneNumber: '18616756337',
-          status: '开启',
-          createTime: '2018-08-12 13:00:00'
-        }],
+        data: [],
         column: [{
           label: '用户序号',
           prop: 'userId'
@@ -225,6 +114,12 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    getInfo.req('/userList').then(res => {
+      this.userData.data = res.userData
+      console.log(this.userData.data)
+    })
   },
   methods: {
     // 接受子组件传递的值
