@@ -27,31 +27,26 @@
 </template>
 
 <script>
+import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'RoleCreate',
   props: {
     createVisible: Boolean,
-    editParams: Object
+    editParam: Object
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
     },
-    editParams(val) {
-      if (val) {
-        this.createRuleForm = val
+    editParam(val) {
+      if (val !== this.createRuleForm) {
+        this.createRuleForm = this.$deep_clone(val)
       }
-      console.log(this.createRuleForm)
     }
   },
   data() {
     return {
-      createRuleForm: {
-        roleName: '',
-        roleDescript: '',
-        department: '',
-        menuOption: ''
-      },
+      createRuleForm: roleCreateStructure,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -67,22 +62,13 @@ export default {
     }
   },
   methods: {
-    message(message, type) {
-      type && this.$message({
-        showClose: true,
-        type: type,
-        message: message
-      })
-      !type && this.$message({
-        showClose: true,
-        message: message
-      })
-    },
     handleCreateSubmit(formName) {
+      const editData = this.$deep_clone(this.createRuleForm)
+      // eidt:true;create:false
+      const flagEOrC = editData.roleId
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('createClose', this.createRuleForm)
-          this.message('创建角色成功', 'success')
+          this.$emit('createClose', flagEOrC, editData)
         } else {
           return false
         }
@@ -90,7 +76,6 @@ export default {
     },
     handleCreateCancel() {
       this.$emit('createClose')
-      this.message('取消创建角色')
     }
   }
 }
