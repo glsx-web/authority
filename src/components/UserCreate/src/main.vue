@@ -37,16 +37,16 @@
           <gl-col :span="12">
             <gl-form-item label="状态" prop="status">
                 <gl-select v-model="userManageForm.status" placeholder="启用">
-                <gl-option label="禁用" value="jinyong"></gl-option>
-                <gl-option label="启用" value="qiyong"></gl-option>
+                <gl-option label="启用" value="启用"></gl-option>
+                <gl-option label="禁用" value="禁用"></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="管理员">
                 <gl-select v-model="userManageForm.isAdministrator" placeholder="否">
-                <gl-option label="否" value="fou"></gl-option>
-                <gl-option label="是" value="shi"></gl-option>
+                <gl-option label="否" value="否"></gl-option>
+                <gl-option label="是" value="是"></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
@@ -108,19 +108,10 @@ export default {
         roleOptions: [],
         options: [{
           value: '选项1',
-          label: '黄金糕'
+          label: '总经办'
         }, {
           value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
+          label: '研发中心-网络软件部'
         }]
       },
       rules: {
@@ -164,11 +155,9 @@ export default {
       })
     },
     submitForm(formName) {
-      console.log(this.userManageForm)
-      // console.log(this.userManageForm)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('userFormData', this.userManageForm)
+          this.$emit('userFormData', this.$deep_clone(this.userManageForm))
           this.message('创建角色成功', 'success')
         } else {
           return false

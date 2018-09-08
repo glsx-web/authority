@@ -10,7 +10,7 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser">新增用户</gl-button>
         <gl-button size="small" @click="delteSelected">删除选中</gl-button>
-        <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserForm"></user-form>
+        <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserFormData"></user-form>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
@@ -109,36 +109,44 @@ export default {
   mounted() {
     getInfo.req('/userList').then(res => {
       this.userData.data = res.userData
+      console.log(this.userData.data)
     })
   },
   methods: {
     // 接受子组件传递的值
-    handleUserForm(params) {
+    handleUserFormData(params) {
       this.dialogFormVisible = false
-      // this.userDataCreate(data)
-      console.log(params)
+      params && this.userDataCreate(params)
     },
     // 新增按钮
     createUser() {
       this.dialogFormVisible = !this.dialogFormVisible
     },
     // 新增事件
-    userDataCreate(data) {
-      console.log(data)
-      // const newData = { userId: '10' + data.length, userName: data.userName, actualName: data.actualName, isAdministrator: data.isAdministrator, phoneNumber: data.phoneNumber, status: data.status, }
+    userDataCreate(params) {
+      // this.dateFormat()
+      const newData = { userId: '100' + this.userData.data.length, userName: params.userName, actualName: params.actualName, isAdministrator: params.isAdministrator, phoneNumber: params.phoneNumber, status: params.status, userCreateTime: this.dateFormat() }
+      this.userData.data.push(newData)
+    },
+    dateFormat() {
+      const currentTime = new Date()
+      const year = currentTime.getFullYear()
+      const month = currentTime.getMonth() + 1
+      const day = currentTime.getDate()
+      const h = currentTime.getHours()
+      const m = currentTime.getHours()
+      const s = currentTime.getSeconds()
+      const createTime = year + '-' + month + '-' + day + ' ' + h + ':' + m + ':' + s
+      console.log(createTime)
+      // const createDate = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
+      return createTime
+      // const date = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
     finduserName() {
       this.userName = ''
-    },
-    message(type, message) {
-      this.$message({
-        showClose: true,
-        type: type,
-        message: message
-      })
     },
     delteSelected() {
     },
