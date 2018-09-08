@@ -7,8 +7,8 @@
     </div>
     <hr>
     <div class="default p-t15">
-      <gl-button class="control-tabledata-button" size="small" @click="handleCreateRole(editParams)">创建</gl-button>
-      <role-create :createVisible="createVisible" :editParams="editParams" @createClose="handleCreateClose"></role-create>
+      <gl-button class="control-tabledata-button" size="small" @click="handleCreateRole">创建</gl-button>
+      <role-create :createVisible="createVisible" :editParam="editParam" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <gl-table :table="roleData" :pagination="pagination"></gl-table>
       </div>
@@ -29,7 +29,7 @@ export default {
     return {
       roleName: '',
       createVisible: false,
-      editParams: roleCreateStructure,
+      editParam: roleCreateStructure,
       roleData: {
         border: true,
         height: 400,
@@ -57,7 +57,7 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.handleCreateRole(rows[index])
+              this.handleEditRole(rows[index])
             }
           }, {
             label: '详细',
@@ -116,29 +116,37 @@ export default {
         this.message('取消删除')
       })
     },
-    // dateFormat() {
-    //   const currentTime = new Date()
-    //   const date = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
-    //   console.log(date)
-    // },
     // 新增用户到页面
     addRole(data) {
-      const newData = { roleId: '1038', roleName: data.roleName, department: data.department, roleStatus: '开启', roleCreateTime: new Date().toLocaleString().split('/').join('-') }
+      // 后台获取----------------------
+      data.roleId = '1038'
+      data.roleCreateTime = new Date().toLocaleString().split('/').join('-')
+      // 后台获取----------------------
+      const newData = data
       this.roleData.data.push(newData)
+      this.message('创建角色成功！', 'success')
+    },
+    createDialogVisible() {
+      this.createVisible = !this.createVisible
     },
     handleSearchRoleName() {
       this.roleName = ''
     },
-    handleCreateRole(params) {
-      // console.log(params)
-      this.editParams = params
-      this.createVisible = !this.createVisible
+    handleCreateRole() {
+      this.createDialogVisible()
+      this.editParam = roleCreateStructure
+    },
+    handleEditRole(param) {
+      this.createDialogVisible()
+      this.editParam = param
     },
     // 关闭新增用户组件
-    handleCreateClose(data) {
-      this.handleCreateRole()
-      data && !this.editParams && this.addRole(data)
-      this.editParams = roleCreateStructure
+    handleCreateClose(flagEOrC, data) {
+      this.createDialogVisible()
+      !data && this.message('取消创建角色')
+      // 将数据提交给后台，根据返回结果做判断
+      data && !flagEOrC && this.addRole(data)
+      data && flagEOrC && this.message('已经成功修改数据！', 'success')
     }
   }
 }
