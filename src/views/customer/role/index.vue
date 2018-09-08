@@ -19,6 +19,7 @@
 <script>
 import { RoleCreate } from '@/components/index'
 import { getInfo } from '@/api/user'
+import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'role',
   components: {
@@ -28,7 +29,7 @@ export default {
     return {
       roleName: '',
       createVisible: false,
-      editParams: {},
+      editParams: roleCreateStructure,
       roleData: {
         border: true,
         height: 400,
@@ -129,7 +130,7 @@ export default {
       this.roleName = ''
     },
     handleCreateRole(params) {
-      console.log(params)
+      // console.log(params)
       this.editParams = params
       this.createVisible = !this.createVisible
     },
@@ -137,6 +138,7 @@ export default {
     handleCreateClose(data) {
       this.handleCreateRole()
       data && !this.editParams && this.addRole(data)
+      this.editParams = roleCreateStructure
     }
   }
 }

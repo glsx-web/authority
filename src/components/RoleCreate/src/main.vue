@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'RoleCreate',
   props: {
@@ -41,17 +42,14 @@ export default {
       if (val) {
         this.createRuleForm = val
       }
+      console.log('editParamsChange----------------------------')
       console.log(this.createRuleForm)
+      console.log('editParamsChange----------------------------')
     }
   },
   data() {
     return {
-      createRuleForm: {
-        roleName: '',
-        roleDescript: '',
-        department: '',
-        menuOption: ''
-      },
+      createRuleForm: roleCreateStructure,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
