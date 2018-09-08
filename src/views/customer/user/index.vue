@@ -114,9 +114,9 @@ export default {
   methods: {
     // 接受子组件传递的值
     handleUserForm(params) {
+      console.log(params)
       this.dialogFormVisible = false
       // this.userDataCreate(data)
-      console.log(params)
     },
     // 新增按钮
     createUser() {
