@@ -8,9 +8,9 @@
     <hr>
     <div class="default p-t15">
       <div class="control-tabledata-button">
-        <gl-button size="small" @click="createUser">新增用户</gl-button>
+        <gl-button size="small" @click="createUser(editUser={})">新增用户</gl-button>
         <gl-button size="small" @click="delteSelected">删除选中</gl-button>
-        <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserFormData"></user-form>
+        <user-form :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-form>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
@@ -31,6 +31,7 @@ export default {
     return {
       userName: '',
       dialogFormVisible: false,
+      editUser: {},
       userData: {
         border: true,
         align: 'center',
@@ -72,7 +73,7 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.dialogFormVisible = true
+              this.createUser(rows[index])
             }
           }, {
             label: '详细',
@@ -119,7 +120,9 @@ export default {
       params && this.userDataCreate(params)
     },
     // 新增按钮
-    createUser() {
+    createUser(editUser) {
+      console.log(editUser)
+      this.editUser = editUser
       this.dialogFormVisible = !this.dialogFormVisible
     },
     // 新增事件
@@ -129,18 +132,24 @@ export default {
       this.userData.data.push(newData)
     },
     dateFormat() {
+      const zeroize = function(value) {
+        if (value < 10) {
+          value = '0' + value
+          return value
+        } else {
+          return value
+        }
+      }
       const currentTime = new Date()
       const year = currentTime.getFullYear()
-      const month = currentTime.getMonth() + 1
-      const day = currentTime.getDate()
-      const h = currentTime.getHours()
-      const m = currentTime.getHours()
-      const s = currentTime.getSeconds()
+      const month = zeroize(currentTime.getMonth() + 1)
+      const day = zeroize(currentTime.getDate())
+      const h = zeroize(currentTime.getHours())
+      const m = zeroize(currentTime.getHours())
+      const s = zeroize(currentTime.getSeconds())
       const createTime = year + '-' + month + '-' + day + ' ' + h + ':' + m + ':' + s
       console.log(createTime)
-      // const createDate = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
       return createTime
-      // const date = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

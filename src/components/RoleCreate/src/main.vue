@@ -6,7 +6,11 @@
         <gl-input v-model="createRuleForm.roleName" clearable></gl-input>
       </gl-form-item>
       <gl-form-item label="角色描述：" prop="roleDescript">
-        <gl-input v-model="createRuleForm.roleDescript" type="textarea" clearable></gl-input>
+        <gl-input v-model="createRuleForm.roleDescript" type="textarea" :rows="3" clearable></gl-input>
+      </gl-form-item>
+      <gl-form-item>
+        <span style="position:absolute; right:35px; top:-20px;">{{createRuleForm.roleDescript.length}}</span>
+        <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
       <gl-form-item label="所属部门：" prop="department">
         <gl-select v-model="createRuleForm.department" placeholder="请选择">
@@ -26,11 +30,18 @@
 export default {
   name: 'RoleCreate',
   props: {
-    createVisible: Boolean
+    createVisible: Boolean,
+    editParams: Object
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
+    },
+    editParams(val) {
+      if (val) {
+        this.createRuleForm = val
+      }
+      console.log(this.createRuleForm)
     }
   },
   data() {

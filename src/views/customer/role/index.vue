@@ -3,12 +3,12 @@
   <div>
     <div class="default m-b20">
       <gl-input class="search-w250" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
-      <gl-button type="primary" @click="handleFindRoleName">搜索</gl-button>
+      <gl-button type="primary" @click="handleSearchRoleName">搜索</gl-button>
     </div>
     <hr>
     <div class="default p-t15">
-      <gl-button class="control-tabledata-button" size="small" @click="handleCreateRole">创建</gl-button>
-      <role-create :createVisible="createVisible" @createClose="handleCreateClose"></role-create>
+      <gl-button class="control-tabledata-button" size="small" @click="handleCreateRole(editParams)">创建</gl-button>
+      <role-create :createVisible="createVisible" :editParams="editParams" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <gl-table :table="roleData" :pagination="pagination"></gl-table>
       </div>
@@ -28,6 +28,7 @@ export default {
     return {
       roleName: '',
       createVisible: false,
+      editParams: {},
       roleData: {
         border: true,
         height: 400,
@@ -55,7 +56,7 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              this.handleCreateRole(rows[index])
             }
           }, {
             label: '详细',
@@ -114,25 +115,28 @@ export default {
         this.message('取消删除')
       })
     },
-    dateFormat() {
-      const currentTime = new Date()
-      const date = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
-      console.log(date)
-    },
-    roleDataEdit(data) {
-      this.dateFormat()
-      const newData = { roleId: '1038', roleName: data.roleName, department: data.department, roleStatus: '开启', roleCreateTime: '' }
+    // dateFormat() {
+    //   const currentTime = new Date()
+    //   const date = currentTime.toLocaleDateString().split('/').forEach((item) => { console.log(item) })
+    //   console.log(date)
+    // },
+    // 新增用户到页面
+    addRole(data) {
+      const newData = { roleId: '1038', roleName: data.roleName, department: data.department, roleStatus: '开启', roleCreateTime: new Date().toLocaleString().split('/').join('-') }
       this.roleData.data.push(newData)
     },
-    handleFindRoleName() {
+    handleSearchRoleName() {
       this.roleName = ''
     },
-    handleCreateRole() {
+    handleCreateRole(params) {
+      console.log(params)
+      this.editParams = params
       this.createVisible = !this.createVisible
     },
+    // 关闭新增用户组件
     handleCreateClose(data) {
-      this.createVisible = false
-      data && this.roleDataEdit(data)
+      this.handleCreateRole()
+      data && !this.editParams && this.addRole(data)
     }
   }
 }

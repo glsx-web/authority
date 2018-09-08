@@ -85,11 +85,18 @@
 export default {
   name: 'UserForm',
   props: {
-    dialogFormVisible: Boolean
+    dialogFormVisible: Boolean,
+    editUser: Object
   },
   watch: {
     dialogFormVisible(val) {
       !val && this.$refs['userManageForm'].resetFields()
+    },
+    editUser(val) {
+      if (val) {
+        this.userManageForm = val
+      }
+      console.log(this.userManageForm)
     }
   },
   data() {
