@@ -1,6 +1,6 @@
 <!-- createRoleComponent -->
 <template>
-  <gl-dialog :title="title" :visible.sync="createVisible" :before-close="handleCreateCancel">
+  <gl-dialog :title="createOrEditTitle" :visible.sync="createVisible" :before-close="handleCreateCancel">
     <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
       <gl-form-item label="角色名称：" prop="roleName">
         <gl-input v-model="createRuleForm.roleName" clearable></gl-input>
@@ -31,7 +31,7 @@ import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'RoleCreate',
   props: {
-    title: String,
+    createOrEditTitle: String,
     createVisible: Boolean,
     roleParam: Object
   },

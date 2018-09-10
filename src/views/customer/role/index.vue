@@ -8,32 +8,36 @@
     <hr>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
-      <role-create :createVisible="createVisible" :roleParam="roleParam" :title="title" @createClose="handleCreateClose"></role-create>
+      <role-create :createVisible="createVisible" :roleParam="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
       <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
+      <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="userDetailDialogVisible"></user-detail>
       <div class="m-b8">
-        <gl-table :table="roleData" :pagination="pagination"></gl-table>
+        <gl-table :table="roleData" :pagination="pagination" :dataParam="[]" :columnParam="[]"></gl-table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { RoleCreate, RoleDetail } from '@/components/index'
+import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 import { roleTest } from '@/api/roleApi'
 import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'role',
   components: {
     RoleCreate,
-    RoleDetail
+    RoleDetail,
+    UserDetail
   },
   data() {
     return {
       roleName: '',
       createVisible: false,
       detailVisible: false,
+      userDetailVisible: false,
       roleParam: roleCreateStructure,
-      title: '新增角色',
+      createOrEditTitle: '新增角色',
+      userDetailTitle: '用户列表',
       roleData: {
         border: true,
         height: 400,
@@ -79,7 +83,7 @@ export default {
             label: '用户',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              this.handleGetUserDetail(rows[index])
             }
           }]
         }
@@ -133,23 +137,29 @@ export default {
     createDialogVisible() {
       this.createVisible = !this.createVisible
     },
-    DetaleDialogVisible() {
+    detaleDialogVisible() {
       this.detailVisible = !this.detailVisible
+    },
+    userDetailDialogVisible() {
+      this.userDetailVisible = !this.userDetailVisible
     },
     handleSearchRoleName() {
       this.roleName = ''
     },
     handleGetRoleDetail(params) {
       this.roleParam = params
-      this.DetaleDialogVisible()
+      this.detaleDialogVisible()
     },
     handleDetailClose() {
-      this.DetaleDialogVisible()
+      this.detaleDialogVisible()
       this.roleParam = roleCreateStructure
+    },
+    handleGetUserDetail(params) {
+      this.userDetailDialogVisible()
     },
     handleCreateOrEdit(params, title) {
       this.createDialogVisible()
-      this.title = title
+      this.createOrEditTitle = title
       this.roleParam = params
     },
     // 关闭新增用户组件
