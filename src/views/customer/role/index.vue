@@ -7,7 +7,7 @@
     </div>
     <hr>
     <div class="default p-t15">
-      <gl-button class="control-tabledata-button" size="small" @click="handleCreateRole">创建</gl-button>
+      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(editParam)">创建</gl-button>
       <role-create :createVisible="createVisible" :editParam="editParam" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <gl-table :table="roleData" :pagination="pagination"></gl-table>
@@ -18,7 +18,7 @@
 
 <script>
 import { RoleCreate } from '@/components/index'
-import { getInfo } from '@/api/user'
+import { roleTest } from '@/api/roleApi'
 import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'role',
@@ -36,19 +36,19 @@ export default {
         data: [],
         column: [{
           label: '序号',
-          prop: 'roleId'
+          prop: 'id'
         }, {
           label: '角色名字',
           prop: 'roleName'
         }, {
           label: '所属部门',
-          prop: 'department'
+          prop: 'departName'
         }, {
           label: '状态',
-          prop: 'roleStatus'
+          prop: 'state'
         }, {
           label: '创建时间',
-          prop: 'roleCreateTime'
+          prop: 'createTime'
         }],
         console: {
           label: '操作',
@@ -57,7 +57,7 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.handleEditRole(rows[index])
+              this.handleCreateOrEdit(rows[index])
             }
           }, {
             label: '详细',
@@ -87,7 +87,7 @@ export default {
     }
   },
   mounted() {
-    getInfo.req('/roleList').then(res => {
+    roleTest.req().then(res => {
       this.roleData.data = res.roleData
     })
   },
@@ -119,8 +119,8 @@ export default {
     // 新增用户到页面
     addRole(data) {
       // 后台获取----------------------
-      data.roleId = '1038'
-      data.roleCreateTime = new Date().toLocaleString().split('/').join('-')
+      data.id = '1038'
+      data.createTime = new Date().toLocaleString().split('/').join('-')
       // 后台获取----------------------
       const newData = data
       this.roleData.data.push(newData)
@@ -132,17 +132,14 @@ export default {
     handleSearchRoleName() {
       this.roleName = ''
     },
-    handleCreateRole() {
+    handleCreateOrEdit(params) {
       this.createDialogVisible()
-      this.editParam = roleCreateStructure
-    },
-    handleEditRole(param) {
-      this.createDialogVisible()
-      this.editParam = param
+      this.editParam = params
     },
     // 关闭新增用户组件
     handleCreateClose(flagEOrC, data) {
       this.createDialogVisible()
+      this.editParam = roleCreateStructure
       !data && this.message('取消创建角色')
       // 将数据提交给后台，根据返回结果做判断
       data && !flagEOrC && this.addRole(data)

@@ -1,11 +1,11 @@
 const roleCreateStructure = {
-  roleId: '',
+  id: '',
   roleName: '',
-  roleDescript: '',
-  department: '',
+  description: '',
+  departName: '',
   menuOption: '',
-  roleStatus: '启动',
-  roleCreateTime: ''
+  state: '启动',
+  createTime: ''
 }
 
 export { roleCreateStructure }

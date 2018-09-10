@@ -21,7 +21,7 @@
 
 <script>
 import UserForm from '@/components/UserCreate'
-import { getInfo } from '@/api/user'
+import { getUserInfo } from '@/api/userApi'
 export default {
   name: 'user',
   components: {
@@ -38,25 +38,25 @@ export default {
         data: [],
         column: [{
           label: '用户序号',
-          prop: 'userId'
+          prop: 'id'
         }, {
           label: '用户名',
-          prop: 'userName'
+          prop: 'username'
         }, {
           label: '真实姓名',
-          prop: 'actualName'
+          prop: 'realname'
         }, {
           label: '管理员',
-          prop: 'isAdministrator'
+          prop: 'isadmin'
         }, {
           label: '手机号码',
-          prop: 'phoneNumber'
+          prop: 'mobile'
         }, {
           label: '状态',
-          prop: 'status'
+          prop: 'state'
         }, {
           label: '创建时间',
-          prop: 'userCreateTime'
+          prop: 'createTime'
         }],
         // number: {
         //   label: '序号',
@@ -107,7 +107,7 @@ export default {
     }
   },
   mounted() {
-    getInfo.req('/userList').then(res => {
+    getUserInfo.req().then(res => {
       this.userData.data = res.userData
     })
   },

@@ -5,15 +5,15 @@
       <gl-form-item label="角色名称：" prop="roleName">
         <gl-input v-model="createRuleForm.roleName" clearable></gl-input>
       </gl-form-item>
-      <gl-form-item label="角色描述：" prop="roleDescript">
-        <gl-input v-model="createRuleForm.roleDescript" type="textarea" :rows="3" clearable></gl-input>
+      <gl-form-item label="角色描述：" prop="description">
+        <gl-input v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
       </gl-form-item>
       <gl-form-item>
-        <span style="position:absolute; right:35px; top:-20px;">{{createRuleForm.roleDescript.length}}</span>
+        <span style="position:absolute; right:35px; top:-20px;">{{createRuleForm.description.length}}</span>
         <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
-      <gl-form-item label="所属部门：" prop="department">
-        <gl-select v-model="createRuleForm.department" placeholder="请选择">
+      <gl-form-item label="所属部门：" prop="departName">
+        <gl-select v-model="createRuleForm.departName" placeholder="请选择">
           <gl-option label="运营平台" value="运营平台"></gl-option>
         </gl-select>
       </gl-form-item>
@@ -51,11 +51,11 @@ export default {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
         ],
-        roleDescript: [
+        description: [
           { required: true, message: '请输入角色描述！', trigger: 'blur' },
           { max: 200, message: '字数限制在200以内！', trigger: 'blur' }
         ],
-        department: [
+        departName: [
           { required: true, message: '请输入所属部门！', trigger: 'change' }
         ]
       }
@@ -65,7 +65,7 @@ export default {
     handleCreateSubmit(formName) {
       const editData = this.$deep_clone(this.createRuleForm)
       // eidt:true;create:false
-      const flagEOrC = editData.roleId
+      const flagEOrC = editData.id
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$emit('createClose', flagEOrC, editData)
