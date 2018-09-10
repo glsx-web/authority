@@ -7,8 +7,9 @@
     </div>
     <hr>
     <div class="default p-t15">
-      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(editParam)">创建</gl-button>
-      <role-create :createVisible="createVisible" :editParam="editParam" @createClose="handleCreateClose"></role-create>
+      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
+      <role-create :createVisible="createVisible" :roleParam="roleParam" :title="title" @createClose="handleCreateClose"></role-create>
+      <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
       <div class="m-b8">
         <gl-table :table="roleData" :pagination="pagination"></gl-table>
       </div>
@@ -17,19 +18,22 @@
 </template>
 
 <script>
-import { RoleCreate } from '@/components/index'
+import { RoleCreate, RoleDetail } from '@/components/index'
 import { roleTest } from '@/api/roleApi'
 import { roleCreateStructure } from '@/common/roleCommon'
 export default {
   name: 'role',
   components: {
-    RoleCreate
+    RoleCreate,
+    RoleDetail
   },
   data() {
     return {
       roleName: '',
       createVisible: false,
-      editParam: roleCreateStructure,
+      detailVisible: false,
+      roleParam: roleCreateStructure,
+      title: '新增角色',
       roleData: {
         border: true,
         height: 400,
@@ -57,13 +61,13 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.handleCreateOrEdit(rows[index])
+              this.handleCreateOrEdit(rows[index], '角色列表')
             }
           }, {
             label: '详细',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              this.handleGetRoleDetail(rows[index])
             }
           }, {
             label: '删除',
@@ -129,17 +133,29 @@ export default {
     createDialogVisible() {
       this.createVisible = !this.createVisible
     },
+    DetaleDialogVisible() {
+      this.detailVisible = !this.detailVisible
+    },
     handleSearchRoleName() {
       this.roleName = ''
     },
-    handleCreateOrEdit(params) {
+    handleGetRoleDetail(params) {
+      this.roleParam = params
+      this.DetaleDialogVisible()
+    },
+    handleDetailClose() {
+      this.DetaleDialogVisible()
+      this.roleParam = roleCreateStructure
+    },
+    handleCreateOrEdit(params, title) {
       this.createDialogVisible()
-      this.editParam = params
+      this.title = title
+      this.roleParam = params
     },
     // 关闭新增用户组件
     handleCreateClose(flagEOrC, data) {
       this.createDialogVisible()
-      this.editParam = roleCreateStructure
+      this.roleParam = roleCreateStructure
       !data && this.message('取消创建角色')
       // 将数据提交给后台，根据返回结果做判断
       data && !flagEOrC && this.addRole(data)
