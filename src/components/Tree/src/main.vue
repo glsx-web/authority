@@ -4,7 +4,7 @@
        <div class="menu-box box">
         <div class="title" v-html="title"></div>
         <gl-row v-if="consoleItem" class="console-btn">
-          <gl-col :span='8'><gl-button @click="openAll">全部展开</gl-button></gl-col>
+          <gl-col :span='8'><gl-button @click="openAll(openOrClose)">{{openOrClose ? '全部展开' : '全部收起'}}</gl-button></gl-col>
           <gl-col :span='16'>
             <gl-button @click="pushSublings" type='primary' :disabled="push">添加同级菜单</gl-button>
             <gl-button @click="pushChildren" type='primary' :disabled="push">添加子菜单</gl-button>
@@ -90,12 +90,12 @@
 </template>
 
 <script>
-import './time.js'
 var timeTip = '系统自动生成(格式yyyy-MM-dd HH:mm:ss)'
 export default {
   name: 'Tree',
   data() {
     return {
+      openOrClose: true,
       node: null,
       btnTxt: '修改',
       allNode: null,
@@ -177,7 +177,6 @@ export default {
   },
   methods: {
     nodeClick(data, node, that) {
-      console.log(data, node, that)
       this.btnTxt = '修改'
       this.node = node
       this.allNode = data
@@ -193,12 +192,18 @@ export default {
       this.form.createTime = data.createTime
       this.form.changeTime = data.changeTime
     },
-    // 打开全部
-    openAll() {
-      console.log(this.$refs)
-      for (let i = 0; i < this.$refs.tree.$children[0].store._getAllNodes().length; i++) {
-        this.$refs.tree.$children[0].store._getAllNodes()[i].expanded = true
-      }
+    // 展开与关闭
+    openAll(val) {
+      this.searchChildren(this.$refs.tree.$children[0].store._getAllNodes(), val)
+      this.openOrClose = !this.openOrClose
+    },
+    searchChildren(data, val) {
+      data.forEach(el => {
+        el.expanded = val
+        if (el.childNodes) {
+          this.searchChildren(el.childNodes, val)
+        }
+      })
     },
     // 添加同级菜单
     pushSublings() {
