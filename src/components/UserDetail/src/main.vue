@@ -1,9 +1,9 @@
 <!-- -->
 <template>
   <div>
-      <gl-dialog :title="userDetailTitle" :visible.sync="userDetailVisible" :before-close="handleClose">
-          <gl-table :table="tableParam"></gl-table>
-      </gl-dialog>
+    <gl-dialog :title="userDetailTitle" :visible.sync="userDetailVisible" :before-close="handleClose">
+      <gl-table :table="tableParam"></gl-table>
+    </gl-dialog>
   </div>
 </template>
 
@@ -13,27 +13,37 @@ export default {
   props: {
     userDetailTitle: String,
     userDetailVisible: Boolean,
-    // dataParam: Object,
+    // dataParam: Array,
     columnParam: Array,
     consoleParam: [Array, Object]
   },
   watch: {
     columnParam(val) {
-      this.tableParam.column = this.$deep_clone(val)
+      this.tableParam.column = val
     },
     consoleParam(val) {
-      this.tableParam.console = this.$deep_clone(val)
+      this.tableParam.console = val
     }
   },
   data() {
     return {
       tableParam: {
         border: true,
+        // role-data
+        // data: [{
+        //   id: '1006',
+        //   username: 'text11',
+        //   realname: '陈婉清',
+        //   state: '启动'
+        // }],
         data: [{
-          id: '1006',
-          username: 'text11',
+          username: 'abc',
           realname: '陈婉清',
-          state: '启动'
+          isadmin: '否',
+          mobile: '13033333333',
+          email: 'abc@didihu.com',
+          roles: '好车主',
+          state: '开启'
         }],
         column: [],
         console: []

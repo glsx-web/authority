@@ -29,7 +29,8 @@ const userRoleDetailConsole = {
     label: '删除',
     type: 'text',
     callback: (index, rows) => {
-      this.$alert(rows[index])
+      rows.splice(index, 1)
+      // this.$alert(rows[index])
     }
   }]
 }

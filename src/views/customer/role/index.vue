@@ -9,10 +9,10 @@
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
       <role-create :createVisible="createVisible" :roleParam="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
-      <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
-      <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       <div class="m-b8">
         <gl-table :table="roleData" :pagination="pagination"></gl-table>
+        <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 import { roleTest } from '@/api/roleApi'
-import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/roleCommon'
+import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/common'
 export default {
   name: 'role',
   components: {
@@ -139,7 +139,7 @@ export default {
     createDialogVisible() {
       this.createVisible = !this.createVisible
     },
-    detaleDialogVisible() {
+    deleteDialogVisible() {
       this.detailVisible = !this.detailVisible
     },
     userDetailDialogVisible() {
@@ -150,21 +150,19 @@ export default {
     },
     handleGetRoleDetail(params) {
       this.roleParam = params
-      this.detaleDialogVisible()
+      this.deleteDialogVisible()
     },
     handleDetailClose() {
-      this.detaleDialogVisible()
+      this.deleteDialogVisible()
       this.roleParam = roleCreateStructure
     },
     handleGetUserDetail() {
-      this.columnParam = this.$deep_clone(userRoleDetailColumn)
-      this.consoleParam = this.$deep_clone(userRoleDetailConsole)
+      this.columnParam = userRoleDetailColumn
+      this.consoleParam = userRoleDetailConsole
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
-      this.columnParam = []
-      this.consoleParam = []
     },
     handleCreateOrEdit(params, title) {
       this.createDialogVisible()
