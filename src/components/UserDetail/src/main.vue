@@ -13,8 +13,17 @@ export default {
   props: {
     userDetailTitle: String,
     userDetailVisible: Boolean,
-    dataParam: Object,
-    columnParam: Object
+    // dataParam: Object,
+    columnParam: Array,
+    consoleParam: [Array, Object]
+  },
+  watch: {
+    columnParam(val) {
+      this.tableParam.column = this.$deep_clone(val)
+    },
+    consoleParam(val) {
+      this.tableParam.console = this.$deep_clone(val)
+    }
   },
   data() {
     return {
@@ -26,30 +35,8 @@ export default {
           realname: '陈婉清',
           state: '启动'
         }],
-        column: [{
-          label: '序号',
-          prop: 'id'
-        }, {
-          label: '账号',
-          prop: 'username'
-        }, {
-          label: '用户名称',
-          prop: 'realname'
-        }, {
-          label: '状态',
-          prop: 'state'
-        }],
-        console: {
-          label: '操作',
-          prop: 'option',
-          button: [{
-            label: '删除',
-            type: 'text',
-            callback: (index, rows) => {
-              this.$alert(rows[index])
-            }
-          }]
-        }
+        column: [],
+        console: []
       }
     }
   },
