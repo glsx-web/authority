@@ -127,7 +127,7 @@ export default {
       })
     },
     // 新增用户到页面
-    addRole(data) {
+    aaaddRole(data) {
       // 后台获取----------------------
       data.id = '1038'
       data.createTime = new Date().toLocaleString().split('/').join('-')
@@ -175,7 +175,7 @@ export default {
       this.roleParam = roleCreateStructure
       !data && this.message('取消创建角色')
       // 将数据提交给后台，根据返回结果做判断
-      data && !flagEOrC && this.addRole(data)
+      data && !flagEOrC && this.aaaddRole(data)
       data && flagEOrC && this.message('已经成功修改数据！', 'success')
     }
   }
