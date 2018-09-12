@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <tree :data='res' :title="'菜单列表'" :props='props' consoleItem></tree> -->
+    <tree :data='res' :title="'菜单列表'" :props='props' consoleItem></tree>
   </div>
 </template>
 
@@ -9,10 +9,10 @@ export default {
   name: 'menuMG',
   data() {
     return {
-      // res: this.$get_session_config(),
-      // props: {
-      //   label: 'title'
-      // }
+      res: this.$get_session_config().resources,
+      props: {
+        label: 'title'
+      }
     }
   }
 }
