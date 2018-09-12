@@ -10,27 +10,34 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser">新增用户</gl-button>
         <gl-button size="small" @click="delteSelected">删除选中</gl-button>
-        <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserForm"></user-form>
+        <!-- <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserForm"></user-form> -->
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import UserForm from '@/components/UserCreate'
-import { getInfo } from '@/api/user'
+import { UserForm, UserDetail } from '@/components/index'
+import { getUser } from '@/api/userApi'
+import { userDetailColumn } from '@/common/common'
 export default {
   name: 'user',
   components: {
-    UserForm
+    UserForm,
+    UserDetail
   },
   data() {
     return {
       userName: '',
       dialogFormVisible: false,
+      userDetailVisible: false,
+      userDetailTitle: '用户详情',
+      columnParam: [],
+      consoleParam: [],
       userData: {
         border: true,
         align: 'center',
@@ -38,25 +45,25 @@ export default {
         data: [],
         column: [{
           label: '用户序号',
-          prop: 'userId'
+          prop: 'id'
         }, {
           label: '用户名',
-          prop: 'userName'
+          prop: 'username'
         }, {
           label: '真实姓名',
-          prop: 'actualName'
+          prop: 'realname'
         }, {
           label: '管理员',
-          prop: 'isAdministrator'
+          prop: 'isadmin'
         }, {
           label: '手机号码',
-          prop: 'phoneNumber'
+          prop: 'mobile'
         }, {
           label: '状态',
-          prop: 'status'
+          prop: 'state'
         }, {
           label: '创建时间',
-          prop: 'userCreateTime'
+          prop: 'createTime'
         }],
         // number: {
         //   label: '序号',
@@ -90,7 +97,8 @@ export default {
             label: '用户',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              this.handleGetUserDetail()
+              // this.$alert(rows[index])
             }
           }]
         },
@@ -107,7 +115,7 @@ export default {
     }
   },
   mounted() {
-    getInfo.req('/userList').then(res => {
+    getUser.req().then(res => {
       this.userData.data = res.userData
     })
   },
@@ -157,6 +165,17 @@ export default {
     },
     changeShowNumber(command) {
       this.showNumber = command
+    },
+    userDetailDialogVisible() {
+      this.userDetailVisible = !this.userDetailVisible
+    },
+    handleGetUserDetail() {
+      this.columnParam = userDetailColumn
+      this.consoleParam = []
+      this.userDetailDialogVisible()
+    },
+    handleUserDetailClose() {
+      this.userDetailDialogVisible()
     }
   }
 }
