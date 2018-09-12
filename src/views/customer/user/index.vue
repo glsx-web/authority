@@ -9,7 +9,7 @@
     <div class="default p-t15">
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser(editUser={})">新增用户</gl-button>
-        <gl-button size="small" @click="delteSelected">删除选中</gl-button>
+        <gl-button size="small" @click="delteSelected(index[rows])">删除选中</gl-button>
         <user-form :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-form>
       </div>
       <div class="m-b8">
@@ -39,25 +39,25 @@ export default {
         data: [],
         column: [{
           label: '用户序号',
-          prop: 'userId'
+          prop: 'id'
         }, {
           label: '用户名',
-          prop: 'userName'
+          prop: 'username'
         }, {
           label: '真实姓名',
-          prop: 'actualName'
+          prop: 'realname'
         }, {
           label: '管理员',
-          prop: 'isAdministrator'
+          prop: 'isadmin'
         }, {
           label: '手机号码',
-          prop: 'phoneNumber'
+          prop: 'mobile'
         }, {
           label: '状态',
-          prop: 'status'
+          prop: 'state'
         }, {
           label: '创建时间',
-          prop: 'userCreateTime'
+          prop: 'createTime'
         }],
         // number: {
         //   label: '序号',
@@ -110,14 +110,27 @@ export default {
   mounted() {
     getInfo.req('/userList').then(res => {
       this.userData.data = res.userData
-      console.log(this.userData.data)
+      console.log(res.userData)
     })
   },
   methods: {
+    message(message, type) {
+      type && this.$message({
+        showClose: true,
+        type: type,
+        message: message
+      })
+      !type && this.$message({
+        showClose: true,
+        message: message
+      })
+    },
     // 接受子组件传递的值
-    handleUserFormData(params) {
-      this.dialogFormVisible = false
-      params && this.userDataCreate(params)
+    handleUserFormData(isflag, params) {
+      this.dialogFormVisible = !this.dialogFormVisible
+      !params && this.message('取消操作')
+      params && !isflag && this.userDataCreate(params)
+      params && isflag && this.message('已经成功修改数据！', 'success')
     },
     // 新增按钮
     createUser(editUser) {
@@ -128,8 +141,12 @@ export default {
     // 新增事件
     userDataCreate(params) {
       // this.dateFormat()
-      const newData = { userId: '100' + this.userData.data.length, userName: params.userName, actualName: params.actualName, isAdministrator: params.isAdministrator, phoneNumber: params.phoneNumber, status: params.status, userCreateTime: this.dateFormat() }
+      params.id = '100' + this.userData.data.length
+      params.createTime = this.dateFormat()
+      const newData = params
+      //  { id: '100' + this.userData.data.length, username: params.username, realname: params.realname, isadmin: params.isadmin, mobile: params.mobile, state: params.state, createTime: this.dateFormat() }
       this.userData.data.push(newData)
+      this.message('创建用户成功！', 'success')
     },
     dateFormat() {
       const zeroize = function(value) {
@@ -157,7 +174,8 @@ export default {
     finduserName() {
       this.userName = ''
     },
-    delteSelected() {
+    delteSelected(index, rows) {
+      console.log(rows)
     },
     confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {
@@ -165,7 +183,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.userData.data.splice(index, 1)
+        // this.userData.data.splice(index, 1)
         rows.splice(index, 1)
         this.message('success', '删除成功')
       }).catch(() => {
