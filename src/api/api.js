@@ -1,5 +1,5 @@
-import
-{ roleTest,
+import {
+  roleTest,
   deleteRoleById,
   deleteUserRoleById,
   getRoleDetail,
@@ -11,13 +11,35 @@ import
   updateRole
 } from './roleApi'
 
-import
-{
-  getUserInfo
+import {
+  getUser,
+  batcheDelUser,
+  findUserList,
+  getUserInfo,
+  getWithRoles,
+  operatUser,
+  updateUser
 } from './userApi'
 
-export
-{
+import {
+  delDepartment,
+  findDepartTree,
+  getDepartPName,
+  getDepartTreeNode,
+  updateDepartment
+} from './departApi'
+
+import {
+  addMenu,
+  delMenu,
+  editMenu,
+  findMenuById,
+  findMenuTree,
+  getMenuByUserId,
+  getMenuByPName
+} from './menuApi'
+
+export {
   // role接口
   roleTest,
   deleteRoleById,
@@ -30,5 +52,25 @@ export
   selectUserRoleByRoleId,
   updateRole,
   // user接口
-  getUserInfo
+  getUser,
+  batcheDelUser,
+  findUserList,
+  getUserInfo,
+  getWithRoles,
+  operatUser,
+  updateUser,
+  // depart接口
+  delDepartment,
+  findDepartTree,
+  getDepartPName,
+  getDepartTreeNode,
+  updateDepartment,
+  // menu接口
+  addMenu,
+  delMenu,
+  editMenu,
+  findMenuById,
+  findMenuTree,
+  getMenuByUserId,
+  getMenuByPName
 }

@@ -10,7 +10,7 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser">新增用户</gl-button>
         <gl-button size="small" @click="delteSelected">删除选中</gl-button>
-        <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserForm"></user-form>
+        <!-- <user-form :dialogFormVisible="dialogFormVisible" @userFormData="handleUserForm"></user-form> -->
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
@@ -22,7 +22,7 @@
 
 <script>
 import { UserForm, UserDetail } from '@/components/index'
-import { getUserInfo } from '@/api/userApi'
+import { getUser } from '@/api/userApi'
 import { userDetailColumn } from '@/common/common'
 export default {
   name: 'user',
@@ -115,7 +115,7 @@ export default {
     }
   },
   mounted() {
-    getUserInfo.req().then(res => {
+    getUser.req().then(res => {
       this.userData.data = res.userData
     })
   },

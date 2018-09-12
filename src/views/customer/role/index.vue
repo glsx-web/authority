@@ -31,9 +31,9 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // easy mock接口
-// import { roleTest } from '@/api/api'
+import { roleTest } from '@/api/api'
 // 后台接口
-import { getRoleList } from '@/api/api'
+// import { getRoleList } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/common'
 export default {
   name: 'role',
@@ -113,15 +113,17 @@ export default {
     }
   },
   mounted() {
-    // roleTest.req().then(res => {
-    //   this.roleData.data = res.roleData
-    // })
-    // 请求表格数据
-    getRoleList.req(this.pagination).then(res => {
-      console.log(res)
-      this.total = res.total
-      this.roleData.data = res.condition
+    roleTest.req().then(res => {
+      this.roleData.data = res.roleData
     })
+    // 请求表格数据
+    // getRoleList.req(this.pagination).then(res => {
+    //   console.log(res)
+    //   this.total = res.total
+    //   this.roleData.data = res.condition
+    // }).catch(err => {
+    //   console.log(err)
+    // })
   },
   methods: {
     message(message, type) {
