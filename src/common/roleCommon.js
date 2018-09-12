@@ -3,7 +3,7 @@ const roleCreateStructure = {
   roleName: '',
   description: '',
   departName: '',
-  menuOption: '',
+  right: [],
   state: '启动',
   createTime: ''
 }

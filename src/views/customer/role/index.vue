@@ -10,7 +10,17 @@
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
       <role-create :createVisible="createVisible" :roleParam="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
-        <gl-table :table="roleData" :pagination="pagination"></gl-table>
+        <gl-table :table="roleData"></gl-table>
+        <gl-pagination 
+        background
+        @size-change="handleSizeChange" 
+        @current-change="handleCurrentChange" 
+        :current-page="pagination.pageNum" 
+        :page-sizes="[10,20,30,40]" 
+        :page-size="pagination.pageSize" 
+        layout="total, sizes, prev, pager, next, jumper" 
+        :total="total">
+        </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
         <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       </div>
@@ -20,7 +30,10 @@
 
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
-import { roleTest } from '@/api/roleApi'
+// easy mock接口
+// import { roleTest } from '@/api/api'
+// 后台接口
+import { getRoleList } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/common'
 export default {
   name: 'role',
@@ -40,6 +53,13 @@ export default {
       consoleParam: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
+      // 分页所需参数-start
+      total: 100,
+      pagination: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      // 分页所需参数-end
       roleData: {
         border: true,
         height: 400,
@@ -89,16 +109,18 @@ export default {
             }
           }]
         }
-      },
-      pagination: {
-        show: true,
-        layout: 'total, sizes, prev, pager, next, jumper'
       }
     }
   },
   mounted() {
-    roleTest.req().then(res => {
-      this.roleData.data = res.roleData
+    // roleTest.req().then(res => {
+    //   this.roleData.data = res.roleData
+    // })
+    // 请求表格数据
+    getRoleList.req(this.pagination).then(res => {
+      console.log(res)
+      this.total = res.total
+      this.roleData.data = res.condition
     })
   },
   methods: {
@@ -144,6 +166,13 @@ export default {
     },
     userDetailDialogVisible() {
       this.userDetailVisible = !this.userDetailVisible
+    },
+    // 调取接口相关函数
+    handleSizeChange(val) {
+      this.pagination.pageSize = val
+    },
+    handleCurrentChange(val) {
+      this.pagination.pageNum = val
     },
     handleSearchRoleName() {
       this.roleName = ''
