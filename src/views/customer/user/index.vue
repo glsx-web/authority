@@ -14,24 +14,31 @@
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import UserForm from '@/components/UserCreate'
-import { getInfo } from '@/api/user'
+import { UserForm, UserDetail } from '@/components/index'
+import { getUser } from '@/api/userApi'
+import { userDetailColumn } from '@/common/common'
 export default {
   name: 'user',
   components: {
-    UserForm
+    UserForm,
+    UserDetail
   },
   data() {
     return {
       userName: '',
       dialogFormVisible: false,
       editUser: {},
+      userDetailVisible: false,
+      userDetailTitle: '用户详情',
+      columnParam: [],
+      consoleParam: [],
       userData: {
         border: true,
         align: 'center',
@@ -91,7 +98,8 @@ export default {
             label: '用户',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              this.handleGetUserDetail()
+              // this.$alert(rows[index])
             }
           }]
         },
@@ -108,7 +116,7 @@ export default {
     }
   },
   mounted() {
-    getInfo.req('/userList').then(res => {
+    getUser.req().then(res => {
       this.userData.data = res.userData
       console.log(res.userData)
     })
@@ -192,6 +200,17 @@ export default {
     },
     changeShowNumber(command) {
       this.showNumber = command
+    },
+    userDetailDialogVisible() {
+      this.userDetailVisible = !this.userDetailVisible
+    },
+    handleGetUserDetail() {
+      this.columnParam = userDetailColumn
+      this.consoleParam = []
+      this.userDetailDialogVisible()
+    },
+    handleUserDetailClose() {
+      this.userDetailDialogVisible()
     }
   }
 }
