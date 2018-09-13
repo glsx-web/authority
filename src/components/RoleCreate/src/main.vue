@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { roleCreateStructure } from '@/common/roleCommon'
+import { roleCreateStructure } from '@/common/commonConst'
 export default {
   name: 'RoleCreate',
   props: {
