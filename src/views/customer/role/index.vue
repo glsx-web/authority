@@ -10,16 +10,10 @@
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
       <role-create :createVisible="createVisible" :roleParam="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
-        <gl-table :table="roleData"></gl-table>
-        <gl-pagination 
-        background
-        @size-change="handleSizeChange" 
-        @current-change="handleCurrentChange" 
-        :current-page="pagination.pageNum" 
-        :page-sizes="[10,20,30,40]" 
-        :page-size="pagination.pageSize" 
-        layout="total, sizes, prev, pager, next, jumper" 
-        :total="total">
+        <transition>
+          <gl-table :table="roleData"></gl-table>
+        </transition>
+        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.pageNum" :page-sizes="[10,20,30,40]" :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
         <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
@@ -125,7 +119,14 @@ export default {
     //   console.log(err)
     // })
   },
+  watch: {
+    roleName(val) {
+      !val
+    }
+  },
   methods: {
+    getRoleList() {
+    },
     message(message, type) {
       type && this.$message({
         showClose: true,
@@ -143,7 +144,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.roleData.data.splice(index, 1)
         rows.splice(index, 1)
         this.message('删除成功', 'success')
       }).catch(() => {
@@ -177,7 +177,12 @@ export default {
       this.pagination.pageNum = val
     },
     handleSearchRoleName() {
-      this.roleName = ''
+      this.roleData.data = this.roleData.data.filter(item => {
+        if (item.roleName.indexOf(this.roleName) !== -1) {
+          return item
+        }
+      })
+      // this.roleName = ''
     },
     handleGetRoleDetail(params) {
       this.roleParam = params
