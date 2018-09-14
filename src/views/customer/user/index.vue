@@ -9,8 +9,8 @@
     <div class="default p-t15">
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser(editUser={})">新增用户</gl-button>
-        <gl-button size="small" @click="delteSelected(index[rows])">删除选中</gl-button>
-        <user-form :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-form>
+        <gl-button size="small" @click="toggleSelection(this.toggle)">删除选中</gl-button>
+        <user-create :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-create>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
@@ -21,18 +21,19 @@
 </template>
 
 <script>
-import { UserForm, UserDetail } from '@/components/index'
+import { UserCreate, UserDetail } from '@/components/index'
 import { getUser } from '@/api/userApi'
 import { userDetailColumn } from '@/common/common'
 export default {
   name: 'user',
   components: {
-    UserForm,
+    UserCreate,
     UserDetail
   },
   data() {
     return {
       userName: '',
+      toggle: {},
       dialogFormVisible: false,
       editUser: {},
       userDetailVisible: false,
@@ -40,6 +41,7 @@ export default {
       columnParam: [],
       consoleParam: [],
       userData: {
+        select: this.handleSelectionChange,
         border: true,
         align: 'center',
         height: 500,
@@ -177,13 +179,24 @@ export default {
       return createTime
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val
+      // this.multipleSelection = val
+      alert(val)
+      this.toggle = val
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     },
     finduserName() {
       this.userName = ''
     },
-    delteSelected(index, rows) {
-      console.log(rows)
+    delteSelected(val) {
+      console.log(val)
     },
     confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {
