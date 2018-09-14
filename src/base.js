@@ -9,8 +9,9 @@ import './styles/role-user-common.scss'
 import './styles/index.scss'
 import './time.js'
 // import _ from 'lodash'
-import { Tree } from '@/components'
+import { MenuManager, Tree } from '@/components'
 Vue.use(GlsxVueComponents)
+Vue.component('menuManager', MenuManager)
 Vue.component('tree', Tree)
 Vue.use(GlsxVueCommon, common)
 
