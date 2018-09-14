@@ -24,9 +24,7 @@
 
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
-// easy mock接口
-// import { roleTest } from '@/api/api'
-// 后台接口
+// 接口
 import { getRoleList } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {

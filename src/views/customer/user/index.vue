@@ -24,6 +24,7 @@
 
 <script>
 import { UserForm, UserDetail } from '@/components/index'
+// 接口
 import { findAll } from '@/api/api'
 import { userDetailColumn } from '@/common/commonConst'
 export default {
