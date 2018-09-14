@@ -25,7 +25,7 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
-import { getRoleList } from '@/api/api'
+import { getRoleList, selectUserRoleByRoleId } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
@@ -37,12 +37,14 @@ export default {
   data() {
     return {
       roleName: '',
+      roleid: Number,
       createVisible: false,
       detailVisible: false,
       userDetailVisible: false,
       roleParam: roleCreateStructure,
       columnParam: [],
       consoleParam: [],
+      dataParam: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
@@ -104,6 +106,7 @@ export default {
   },
   mounted() {
     this.getList()
+    // this.selectUser()
   },
   // search--------------------
   // watch: {
@@ -138,18 +141,27 @@ export default {
     // 获取页面参数
     getParams() {
       return {
-        // pageSize: this.pageSize,
-        // pageNum: this.pageNum,
-        roleName: this.roleName
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
+        roleName: this.roleName,
+        roleId: 1006
       }
     },
     // 接口请求-start---------------------------------------
     // 获取展示数据，请求表格数据
     getList() {
-      // 接口
       const params = this.getParams()
       getRoleList.req(params).then(res => {
-        console.log(res)
+        this.total = res.total
+        this.roleData.data = res.list
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 获取角色的相关用户详细信息
+    selectUser() {
+      const params = this.getParams()
+      selectUserRoleByRoleId.req(params).then(res => {
         this.total = res.total
         this.roleData.data = res.list
       }).catch(err => {
@@ -200,7 +212,8 @@ export default {
     handleGetUserDetail() {
       this.columnParam = userRoleDetailColumn
       this.consoleParam = userRoleDetailConsole
-      this.userDetailDialogVisible()
+      this.dataParam =
+        this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
@@ -216,8 +229,8 @@ export default {
       this.roleParam = roleCreateStructure
       !data && this.message('取消创建角色')
       // 将数据提交给后台，根据返回结果做判断
-      data && !flagEOrC && this.aaaddRole(data)
-      data && flagEOrC && this.message('已经成功修改数据！', 'success')
+      // data && !flagEOrC && this.aaaddRole(data)
+      // data && flagEOrC && this.message('已经成功修改数据！', 'success')
     }
   }
 }

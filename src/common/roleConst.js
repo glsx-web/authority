@@ -1,5 +1,5 @@
 const roleCreateStructure = {
-  // id: Number,
+  id: Number,
   roleName: '',
   description: '',
   departName: '',

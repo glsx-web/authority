@@ -28,7 +28,7 @@
 
 <script>
 import { roleCreateStructure } from '@/common/commonConst'
-import { saveRoleList } from '@/api/api'
+import { saveRoleList, updateRole } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
@@ -64,28 +64,39 @@ export default {
     }
   },
   methods: {
-    // isRoleNameExit
-    addRole(editData) {
-      saveRoleList.req(editData).then((data) => {
+    getParams() {
+      return this.$deep_clone(this.createRuleForm)
+    },
+    // 接口
+    addRole() {
+      saveRoleList.req(this.getParams()).then((data) => {
         console.log(data)
       }).catch(err => {
         console.log(err)
       })
     },
+    updateRoleInfo() {
+      updateRole.req(this.getParams()).then((data) => {
+        console.log(data)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 接口
     handleCreateSubmit(formName) {
-      const editData = this.$deep_clone(this.createRuleForm)
+      const editData = this.getParams()
       // eidt:true;create:false
-      // const flagEOrC = role.id === Number
-      // flagEOrC &&
-      // const editData = { roleName: 'fhkdsajfakjfa' }
-      this.addRole(editData)
-      // this.$refs[formName].validate((valid) => {
-      //   if (valid) {
-      // this.$emit('createClose', flagEOrC, editData)
-      //   } else {
-      //     return false
-      //   }
-      // })
+      const flagEOrC = editData.id === Number
+      console.log(flagEOrC)
+      flagEOrC && this.addRole()
+      !flagEOrC && this.updateRoleInfo()
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$emit('createClose', flagEOrC, editData)
+        } else {
+          return false
+        }
+      })
     },
     handleCreateCancel() {
       this.$emit('createClose')
