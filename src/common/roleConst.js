@@ -1,10 +1,10 @@
 const roleCreateStructure = {
-  id: '',
+  // id: Number,
   roleName: '',
   description: '',
   departName: '',
-  right: [],
-  state: '启动',
+  right: Array,
+  state: 1,
   createTime: ''
 }
 

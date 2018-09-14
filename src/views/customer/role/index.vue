@@ -13,7 +13,7 @@
         <transition>
           <gl-table :table="roleData"></gl-table>
         </transition>
-        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.pageNum" :page-sizes="[10,20,30,40]" :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
         <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
@@ -48,11 +48,9 @@ export default {
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
-      total: 100,
-      pagination: {
-        pageNum: 1,
-        pageSize: 10
-      },
+      total: 10,
+      pageNum: 1,
+      pageSize: 10,
       // 分页所需参数-end
       roleData: {
         border: true,
@@ -110,14 +108,7 @@ export default {
     // roleTest.req().then(res => {
     //   this.roleData.data = res.roleData
     // })
-    // 请求表格数据
-    // console.log(this.pagination)
-    getRoleList.req(this.pagination).then(res => {
-      this.total = res.total
-      this.roleData.data = res.list
-    }).catch(err => {
-      console.log(err)
-    })
+    this.getList()
   },
   // search--------------------
   // watch: {
@@ -149,6 +140,26 @@ export default {
         this.message('取消删除')
       })
     },
+    // 获取页面参数
+    getParams() {
+      return {
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
+        roleName: this.roleName
+      }
+    },
+    // 接口请求-start---------------------------------------
+    // 获取展示数据，请求表格数据
+    getList() {
+      const params = this.getParams()
+      getRoleList.req(params).then(res => {
+        this.total = res.total
+        this.roleData.data = res.list
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 接口请求-end---------------------------------------
     // 新增用户到页面
     aaaddRole(data) {
       // 后台获取----------------------
@@ -170,17 +181,20 @@ export default {
     },
     // 调取接口相关函数
     handleSizeChange(val) {
-      this.pagination.pageSize = val
+      this.pageSize = val
+      this.getList()
     },
     handleCurrentChange(val) {
-      this.pagination.pageNum = val
+      this.pageNum = val
+      this.getList()
     },
     handleSearchRoleName() {
-      this.roleData.data = this.roleData.data.filter(item => {
-        if (item.roleName.indexOf(this.roleName) !== -1) {
-          return item
-        }
-      })
+      this.getList()
+      // this.roleData.data = this.roleData.data.filter(item => {
+      //   if (item.roleName.indexOf(this.roleName) !== -1) {
+      //     return item
+      //   }
+      // })
       // this.roleName = ''
     },
     handleGetRoleDetail(params) {

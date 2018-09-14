@@ -28,6 +28,7 @@
 
 <script>
 import { roleCreateStructure } from '@/common/commonConst'
+import { saveRoleList } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
@@ -63,17 +64,28 @@ export default {
     }
   },
   methods: {
+    // isRoleNameExit
+    addRole(editData) {
+      saveRoleList.req(editData).then((data) => {
+        console.log(data)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     handleCreateSubmit(formName) {
       const editData = this.$deep_clone(this.createRuleForm)
       // eidt:true;create:false
-      const flagEOrC = editData.id
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.$emit('createClose', flagEOrC, editData)
-        } else {
-          return false
-        }
-      })
+      // const flagEOrC = role.id === Number
+      // flagEOrC &&
+      // const editData = { roleName: 'fhkdsajfakjfa' }
+      this.addRole(editData)
+      // this.$refs[formName].validate((valid) => {
+      //   if (valid) {
+      // this.$emit('createClose', flagEOrC, editData)
+      //   } else {
+      //     return false
+      //   }
+      // })
     },
     handleCreateCancel() {
       this.$emit('createClose')
