@@ -105,9 +105,6 @@ export default {
     }
   },
   mounted() {
-    // roleTest.req().then(res => {
-    //   this.roleData.data = res.roleData
-    // })
     this.getList()
   },
   // search--------------------
@@ -143,16 +140,18 @@ export default {
     // 获取页面参数
     getParams() {
       return {
-        pageSize: this.pageSize,
-        pageNum: this.pageNum,
+        // pageSize: this.pageSize,
+        // pageNum: this.pageNum,
         roleName: this.roleName
       }
     },
     // 接口请求-start---------------------------------------
     // 获取展示数据，请求表格数据
     getList() {
+      // 接口
       const params = this.getParams()
       getRoleList.req(params).then(res => {
+        console.log(res)
         this.total = res.total
         this.roleData.data = res.list
       }).catch(err => {
@@ -190,11 +189,6 @@ export default {
     },
     handleSearchRoleName() {
       this.getList()
-      // this.roleData.data = this.roleData.data.filter(item => {
-      //   if (item.roleName.indexOf(this.roleName) !== -1) {
-      //     return item
-      //   }
-      // })
       // this.roleName = ''
     },
     handleGetRoleDetail(params) {

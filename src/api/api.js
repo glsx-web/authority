@@ -1,5 +1,4 @@
 import {
-  roleTest,
   deleteRoleById,
   deleteUserRoleById,
   getRoleDetail,
@@ -12,10 +11,9 @@ import {
 } from './roleApi'
 
 import {
-  getUser,
   batcheDelUser,
-  findUserList,
-  getUserInfo,
+  findAll,
+  getUser,
   getWithRoles,
   operatUser,
   updateUser
@@ -41,7 +39,6 @@ import {
 
 export {
   // role接口
-  roleTest,
   deleteRoleById,
   deleteUserRoleById,
   getRoleDetail,
@@ -52,10 +49,9 @@ export {
   selectUserRoleByRoleId,
   updateRole,
   // user接口
-  getUser,
   batcheDelUser,
-  findUserList,
-  getUserInfo,
+  findAll,
+  getUser,
   getWithRoles,
   operatUser,
   updateUser,

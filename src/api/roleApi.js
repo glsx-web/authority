@@ -2,7 +2,6 @@ import {
   GlAxios
 } from 'glsx-vue-common'
 const path = 'role'
-const __sTest = `${path}/roleList`
 const __sDeleteRole = `${path}/deleteRoleById`
 const __sDeleteUserRole = `${path}/deleteUserRoleById`
 const __sGetRoleDetail = `${path}/getRoleDetail`
@@ -12,11 +11,6 @@ const __sSaveRoleList = `${path}/saveRoleList`
 const __sSelectMenuTreeRoleId = `${path}/selectMenuTreeRoleId`
 const __sSelectUserRole = `${path}/selectUserRoleByRoleId`
 const __sUpdateRole = `${path}/updateRole`
-
-const roleTest = {
-  p: [__sTest],
-  req: params => GlAxios.post(__sTest, params)
-}
 
 const deleteRoleById = {
   p: [__sDeleteRole],
@@ -64,7 +58,6 @@ const updateRole = {
 }
 
 export {
-  roleTest,
   deleteRoleById,
   deleteUserRoleById,
   getRoleDetail,
