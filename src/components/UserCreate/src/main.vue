@@ -2,57 +2,57 @@
     <gl-dialog title="收货地址" :visible.sync="dialogFormVisible" :before-close="cancelForm">
         <gl-form :model="userManageForm" :rules="rules" ref="userManageForm" label-width="100px">
           <el-col :span="12">
-            <gl-form-item label="用户名" prop="userName">
-                <gl-input v-model="userManageForm.userName" value=""></gl-input>
+            <gl-form-item label="用户名" prop="username">
+                <gl-input v-model="userManageForm.username" clearable></gl-input>
             </gl-form-item>
           </el-col>
           <gl-col :span="12">
-            <gl-form-item label="真实姓名" prop="actualName">
-                <gl-input v-model="userManageForm.actualName"></gl-input>
+            <gl-form-item label="真实姓名" prop="realname">
+                <gl-input v-model="userManageForm.realname" clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="密码" prop="password">
-                <gl-input type='password' v-model="userManageForm.password"></gl-input>
+                <gl-input type='password' v-model="userManageForm.password" clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="手机号码" prop="phoneNumber">
-                <gl-input v-model="userManageForm.phoneNumber" 
+            <gl-form-item label="手机号码" prop="mobile">
+                <gl-input v-model="userManageForm.mobile" 
                           prefix-icon='el-icon-mobile-phone' 
-                          placeholder='请输入手机号码'></gl-input>
+                          placeholder='请输入手机号码' clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="注册IP" prop="registeredIP">
-                <gl-input v-model="userManageForm.registeredIP"></gl-input>
+                <gl-input v-model="userManageForm.registeredIP" clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="邮箱" prop="email">
-                <gl-input v-model='userManageForm.email' placeholder='请输入电子邮箱'>
+                <gl-input v-model='userManageForm.email' placeholder='请输入电子邮箱' clearable>
                       </gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="状态" prop="status">
-                <gl-select v-model="userManageForm.status" placeholder="启用">
-                <gl-option label="禁用" value="jinyong"></gl-option>
-                <gl-option label="启用" value="qiyong"></gl-option>
+            <gl-form-item label="状态" prop="state">
+                <gl-select v-model="userManageForm.state" placeholder="启用">
+                <gl-option label="启用" value="启用"></gl-option>
+                <gl-option label="禁用" value="禁用"></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="管理员">
-                <gl-select v-model="userManageForm.isAdministrator" placeholder="否">
-                <gl-option label="否" value="fou"></gl-option>
-                <gl-option label="是" value="shi"></gl-option>
+                <gl-select v-model="userManageForm.isadmin" placeholder="否">
+                <gl-option label="否" value="否"></gl-option>
+                <gl-option label="是" value="是"></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
-            <gl-form-item label="所属部门" prop="department">
-                <gl-select v-model="userManageForm.department" placeholder="请选择">
+            <gl-form-item label="所属部门" prop="departName">
+                <gl-select v-model="userManageForm.departName" placeholder="请选择">
                     <gl-option
                     v-for="item in userManageForm.options"
                     :key="item.value"
@@ -63,13 +63,17 @@
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
-            <gl-form-item label="角色选项" prop="roleOptions">
-                <gl-checkbox-group v-model="userManageForm.roleOptions">
-                    <gl-checkbox label="test2018-03"></gl-checkbox>
-                    <gl-checkbox label="复选框 B"></gl-checkbox>
-                    <gl-checkbox label="复选框 C"></gl-checkbox>
-                    <gl-checkbox label="禁用"></gl-checkbox>
-                    <gl-checkbox label="选中且禁用"></gl-checkbox>
+            <gl-form-item label="角色选项" prop="roles">
+                <gl-checkbox-group v-model="userManageForm.roles">
+                    <gl-checkbox label="诺威达-艺展-系统日志上报"></gl-checkbox>
+                    <gl-checkbox label="盗抢险"></gl-checkbox>
+                    <gl-checkbox label="研发工具-增量"></gl-checkbox>
+                    <gl-checkbox label="精品分期0329角色"></gl-checkbox>
+                    <gl-checkbox label="好车主"></gl-checkbox>
+                    <gl-checkbox label="云商分润"></gl-checkbox>
+                    <gl-checkbox label="营销系统"></gl-checkbox>
+                    <gl-checkbox label="GPS后台角色控制"></gl-checkbox>
+                    <gl-checkbox label="外场测试"></gl-checkbox>
                 </gl-checkbox-group>
             </gl-form-item>
           </gl-col>
@@ -85,65 +89,63 @@
 export default {
   name: 'UserForm',
   props: {
-    dialogFormVisible: Boolean
+    dialogFormVisible: Boolean,
+    editUser: Object
   },
   watch: {
     dialogFormVisible(val) {
       !val && this.$refs['userManageForm'].resetFields()
+    },
+    editUser(val) {
+      if (val) {
+        this.userManageForm = val
+      }
+      console.log(this.userManageForm)
     }
   },
   data() {
     return {
       tel: '[ 1, /[34578]/, /\d/{9}]',
       userManageForm: {
-        userName: '',
-        actualName: '',
+        username: '',
+        realname: '',
         password: '',
-        phoneNumber: '',
+        mobile: '',
         registeredIP: '',
         email: '',
-        status: '',
-        isAdministrator: '',
-        department: '',
-        roleOptions: [],
+        state: '',
+        isadmin: '',
+        departName: '',
+        roles: [],
         options: [{
           value: '选项1',
-          label: '黄金糕'
+          label: '总经办'
         }, {
           value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
+          label: '研发中心-网络软件部'
         }]
       },
       rules: {
-        userName: [
+        username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ],
-        actualName: [
+        realname: [
           { required: true, message: '请输入用户真实名字', trigger: 'blur' },
           { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入用户密码', trigger: 'blur' },
+          { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
+        ],
+        phoneNumber: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { length: 11, message: '长度为11个字符', trigger: 'blur' }
         ]
-        // password: [
-        //   { required: true, message: '请输入用户密码', trigger: 'blur' },
-        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        // ],
-        // phoneNumber: [
-        //   { required: true, message: '请输入手机号码', trigger: 'blur' },
-        //   { length: 11, message: '长度为11个字符', trigger: 'blur' }
-        // ],
         // registeredIP: [
         //   { required: true, message: '请输入注册IP', trigger: 'blur' },
         //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        // ]
+        // ],
         // email: [
         //   { required: true, message: '请输入邮箱', trigger: 'blur' },
         //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
@@ -164,12 +166,11 @@ export default {
       })
     },
     submitForm(formName) {
-      console.log(this.userManageForm)
-      // console.log(this.userManageForm)
       this.$refs[formName].validate((valid) => {
+        const userData = this.$deep_clone(this.userManageForm)
+        const isflagId = userData.id
         if (valid) {
-          this.$emit('userFormData', this.userManageForm)
-          this.message('创建角色成功', 'success')
+          this.$emit('userFormData', isflagId, userData)
         } else {
           return false
         }
@@ -177,7 +178,6 @@ export default {
     },
     cancelForm() {
       this.$emit('userFormData')
-      this.message('取消创建角色')
     }
   }
 }
