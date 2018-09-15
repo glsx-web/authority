@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tree :data='res' :title="'菜单列表'" :props='props' consoleItem></tree>
+    <menu-manager :title="'菜单列表'"></menu-manager>
   </div>
 </template>
 
@@ -9,10 +9,6 @@ export default {
   name: 'menuMG',
   data() {
     return {
-      res: this.$get_session_config().resources,
-      props: {
-        label: 'title'
-      }
     }
   }
 }
