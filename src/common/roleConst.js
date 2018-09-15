@@ -1,16 +1,16 @@
 const roleCreateStructure = {
-  id: Number,
+  roleId: Number,
   roleName: '',
   description: '',
   departName: '',
   right: Array,
-  state: 1,
+  state: Number,
   createTime: ''
 }
 
 const userRoleDetailColumn = [{
   label: '序号',
-  prop: 'id'
+  prop: 'userId'
 }, {
   label: '账号',
   prop: 'username'

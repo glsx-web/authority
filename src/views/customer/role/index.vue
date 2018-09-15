@@ -16,7 +16,8 @@
         <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
-        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
+        <!-- <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :resParam="resParam" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail> -->
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParams="apiParams" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       </div>
     </div>
   </div>
@@ -25,7 +26,7 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
-import { getRoleList, selectUserRoleByRoleId } from '@/api/api'
+import { getRoleList } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
@@ -37,14 +38,14 @@ export default {
   data() {
     return {
       roleName: '',
-      roleid: Number,
+      roleId: Number,
       createVisible: false,
       detailVisible: false,
       userDetailVisible: false,
       roleParam: roleCreateStructure,
       columnParam: [],
       consoleParam: [],
-      dataParam: [],
+      apiParams: Number,
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
@@ -97,7 +98,7 @@ export default {
             label: '用户',
             type: 'text',
             callback: (index, rows) => {
-              this.handleGetUserDetail()
+              this.handleGetUserDetail(index, rows)
             }
           }]
         }
@@ -143,36 +144,48 @@ export default {
       return {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
-        roleName: this.roleName,
-        roleId: 1006
+        roleName: this.roleName
       }
+    },
+    reqList() {
+      // const params = this.getParams()
     },
     // 接口请求-start---------------------------------------
     // 获取展示数据，请求表格数据
     getList() {
       const params = this.getParams()
       getRoleList.req(params).then(res => {
+        // console.log(res)
         this.total = res.total
         this.roleData.data = res.list
+        // console.log(this.roleData.data)
       }).catch(err => {
         console.log(err)
       })
     },
     // 获取角色的相关用户详细信息
-    selectUser() {
-      const params = this.getParams()
-      selectUserRoleByRoleId.req(params).then(res => {
-        this.total = res.total
-        this.roleData.data = res.list
-      }).catch(err => {
-        console.log(err)
-      })
-    },
+    // selectUser(roleId) {
+    //   // const params = this.getParams()
+    //   const params = {
+    //     pageSize: this.pageSize,
+    //     pageNum: this.pageNum,
+    //     roleName: this.roleName
+    //     // roleId: roleId
+    //   }
+    //   // console.log(params)
+    //   selectUserRoleByRoleId.req(params).then(res => {
+    //     console.log(res)
+    //     // this.total = res.total
+    //     this.resParam = res
+    //   }).catch(err => {
+    //     console.log(err)
+    //   })
+    // },
     // 接口请求-end---------------------------------------
     // 新增用户到页面
     aaaddRole(data) {
       // 后台获取----------------------
-      data.id = '1038'
+      // data.id = '1038'
       data.createTime = new Date().toLocaleString().split('/').join('-')
       // 后台获取----------------------
       const newData = data
@@ -209,14 +222,18 @@ export default {
       this.deleteDialogVisible()
       this.roleParam = roleCreateStructure
     },
-    handleGetUserDetail() {
+    handleGetUserDetail(index, rows) {
       this.columnParam = userRoleDetailColumn
       this.consoleParam = userRoleDetailConsole
-      this.dataParam =
-        this.userDetailDialogVisible()
+      this.apiParams = rows[index].id
+      // console.log(rows[index].id)
+      // this.selectUser({ roleId: rows[index].id })
+      // this.selectUser(rows[index].id)
+      this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
+      this.apiParams = Number
     },
     handleCreateOrEdit(params, title) {
       this.createDialogVisible()
