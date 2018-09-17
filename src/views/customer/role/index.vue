@@ -107,7 +107,6 @@ export default {
   },
   mounted() {
     this.getList()
-    // this.selectUser()
   },
   // search--------------------
   // watch: {
@@ -163,24 +162,6 @@ export default {
         console.log(err)
       })
     },
-    // 获取角色的相关用户详细信息
-    // selectUser(roleId) {
-    //   // const params = this.getParams()
-    //   const params = {
-    //     pageSize: this.pageSize,
-    //     pageNum: this.pageNum,
-    //     roleName: this.roleName
-    //     // roleId: roleId
-    //   }
-    //   // console.log(params)
-    //   selectUserRoleByRoleId.req(params).then(res => {
-    //     console.log(res)
-    //     // this.total = res.total
-    //     this.resParam = res
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
     // 接口请求-end---------------------------------------
     // 新增用户到页面
     aaaddRole(data) {

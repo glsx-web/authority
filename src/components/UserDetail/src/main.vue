@@ -90,7 +90,6 @@ export default {
 
     },
     callApi() {
-      // console.log(this.flag)
       this.flag && this.selectUser()
       !this.flag && this.getUserRoles()
     },
