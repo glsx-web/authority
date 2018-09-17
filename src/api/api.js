@@ -1,21 +1,19 @@
 import {
-  roleTest,
   deleteRoleById,
   deleteUserRoleById,
   getRoleDetail,
   getRoleList,
-  isRoleNameExit,
-  addRole,
+  // isRoleNameExit,
+  saveRoleList,
   selectMenuTreeRoleId,
   selectUserRoleByRoleId,
   updateRole
 } from './roleApi'
 
 import {
-  getUser,
   batcheDelUser,
-  findUserList,
-  getUserInfo,
+  findAll,
+  getUser,
   getWithRoles,
   operatUser,
   updateUser
@@ -41,21 +39,19 @@ import {
 
 export {
   // role接口
-  roleTest,
   deleteRoleById,
   deleteUserRoleById,
   getRoleDetail,
   getRoleList,
-  isRoleNameExit,
-  addRole,
+  // isRoleNameExit,
+  saveRoleList,
   selectMenuTreeRoleId,
   selectUserRoleByRoleId,
   updateRole,
   // user接口
-  getUser,
   batcheDelUser,
-  findUserList,
-  getUserInfo,
+  findAll,
+  getUser,
   getWithRoles,
   operatUser,
   updateUser,

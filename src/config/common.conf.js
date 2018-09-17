@@ -1,8 +1,8 @@
 export default {
   axios: {
-    // baseURL: 'http://cas.dev.glsx.net/cas/',
-    baseURL: 'http://192.168.3.171:7300/mock/5b91805391b67469b43e2921/subsystem',
-    whiteList: ['/role/deleteRoleById', '/role/deleteUserRoleById', '/role/getRoleDetail', '/role/getRoleDetail', '/role/getRoleList', '/role/isRoleNameExit', '/role/saveRoleList', '/role/selectMenuTreeRoleId', '/role/selectUserRoleByRoleId', '/role/updateRole', 'role/userList', 'role/roleList'],
+    baseURL: 'http://cas.dev.glsx.net/admin-operating-auth/',
+    // baseURL: 'http://192.168.3.171:7300/mock/5b91805391b67469b43e2921/subsystem/',
+    whiteList: ['role/deleteRoleById', 'role/deleteUserRoleById', 'role/getRoleDetail', 'role/getRoleDetail', 'role/getRoleList', 'role/isRoleNameExit', 'role/saveRoleList', 'role/selectMenuTreeRoleId', 'role/selectUserRoleByRoleId', 'role/updateRole', 'user/batcheDel', 'user/findAll', 'user/get', 'user/getWithRoles', 'user/operatUser', 'user/updateUser'],
     timeout: 15000,
     result: {
       data_key: 'data', // 返回值数据实体存放对象

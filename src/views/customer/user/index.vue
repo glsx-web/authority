@@ -9,11 +9,13 @@
     <div class="default p-t15">
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser(editUser={})">新增用户</gl-button>
-        <gl-button size="small" @click="toggleSelection(this.toggle)">删除选中</gl-button>
+        <gl-button size="small" @click="toggleRowSelection">删除选中</gl-button>
         <user-create :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-create>
       </div>
       <div class="m-b8">
-        <gl-table :table="userData" ref="multipleTable" :pagination="pagination"></gl-table>
+        <gl-table :table="userData" ref="multipleTable"></gl-table>
+        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </gl-pagination>
         <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
       </div>
     </div>
@@ -22,8 +24,9 @@
 
 <script>
 import { UserCreate, UserDetail } from '@/components/index'
-import { getUser } from '@/api/userApi'
-import { userDetailColumn } from '@/common/common'
+// 接口
+import { findAll } from '@/api/api'
+import { userDetailColumn } from '@/common/commonConst'
 export default {
   name: 'user',
   components: {
@@ -33,11 +36,16 @@ export default {
   data() {
     return {
       userName: '',
-      toggle: {},
+      toggle: [],
       dialogFormVisible: false,
       editUser: {},
       userDetailVisible: false,
       userDetailTitle: '用户详情',
+      // 分页所需参数-start
+      total: 10,
+      pageNum: 1,
+      pageSize: 10,
+      // 分页所需参数-end
       columnParam: [],
       consoleParam: [],
       userData: {
@@ -107,23 +115,32 @@ export default {
         },
         selection: {},
         multipleSelection: []
-      },
-      pagination: {
-        show: true,
-        layout: 'total, sizes, prev, pager, next, jumper',
-        style: {
-          marginTop: '20px'
-        }
       }
     }
   },
   mounted() {
-    getUser.req().then(res => {
-      this.userData.data = res.userData
-      console.log(res.userData)
-    })
+    this.findUserList()
   },
   methods: {
+    // 获取所需字段
+    getParams() {
+      return {
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
+        username: this.userName
+      }
+    },
+    // 接口请求-start
+    findUserList() {
+      const params = this.getParams()
+      findAll.req(params).then(res => {
+        this.total = res.total
+        this.userData.data = res.list
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 接口请求-end
     message(message, type) {
       type && this.$message({
         showClose: true,
@@ -178,22 +195,34 @@ export default {
       console.log(createTime)
       return createTime
     },
-    handleSelectionChange(val) {
+    handleSelectionChange(val, row) {
       // this.multipleSelection = val
-      alert(val)
       this.toggle = val
+      console.log(this.toggle)
     },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
+    toggleRowSelection() {
+      console.log(this.$refs.multipleTable, this.toggle)
+      if (this.toggle) {
+        this.toggle.forEach(row => {
+          this.userData.data.splice(this.toggle, 1)
+          // this.$refs.multipleTable.$refs.table.toggleRowSelection(row)
         })
       } else {
-        this.$refs.multipleTable.clearSelection()
+        // this.$refs.multipleTable.clearSelection()
       }
     },
     finduserName() {
-      this.userName = ''
+      // this.userName = ''
+      this.findUserList()
+    },
+    // 调取接口相关函数
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.findUserList()
+    },
+    handleCurrentChange(val) {
+      this.pageNum = val
+      this.findUserList()
     },
     delteSelected(val) {
       console.log(val)

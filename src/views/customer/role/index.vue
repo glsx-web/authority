@@ -10,16 +10,10 @@
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
       <role-create :createVisible="createVisible" :roleParam="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
-        <gl-table :table="roleData"></gl-table>
-        <gl-pagination 
-        background
-        @size-change="handleSizeChange" 
-        @current-change="handleCurrentChange" 
-        :current-page="pagination.pageNum" 
-        :page-sizes="[10,20,30,40]" 
-        :page-size="pagination.pageSize" 
-        layout="total, sizes, prev, pager, next, jumper" 
-        :total="total">
+        <transition>
+          <gl-table :table="roleData"></gl-table>
+        </transition>
+        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
         <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :dataParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
@@ -30,11 +24,9 @@
 
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
-// easy mock接口
-import { roleTest } from '@/api/api'
-// 后台接口
-// import { getRoleList } from '@/api/api'
-import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/common'
+// 接口
+import { getRoleList } from '@/api/api'
+import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
   components: {
@@ -54,11 +46,9 @@ export default {
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
-      total: 100,
-      pagination: {
-        pageNum: 1,
-        pageSize: 10
-      },
+      total: 10,
+      pageNum: 1,
+      pageSize: 10,
       // 分页所需参数-end
       roleData: {
         border: true,
@@ -113,18 +103,14 @@ export default {
     }
   },
   mounted() {
-    roleTest.req().then(res => {
-      this.roleData.data = res.roleData
-    })
-    // 请求表格数据
-    // getRoleList.req(this.pagination).then(res => {
-    //   console.log(res)
-    //   this.total = res.total
-    //   this.roleData.data = res.condition
-    // }).catch(err => {
-    //   console.log(err)
-    // })
+    this.getList()
   },
+  // search--------------------
+  // watch: {
+  //   roleName(val) {
+  //     !val
+  //   }
+  // },
   methods: {
     message(message, type) {
       type && this.$message({
@@ -143,13 +129,34 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.roleData.data.splice(index, 1)
         rows.splice(index, 1)
         this.message('删除成功', 'success')
       }).catch(() => {
         this.message('取消删除')
       })
     },
+    // 获取页面参数
+    getParams() {
+      return {
+        // pageSize: this.pageSize,
+        // pageNum: this.pageNum,
+        roleName: this.roleName
+      }
+    },
+    // 接口请求-start---------------------------------------
+    // 获取展示数据，请求表格数据
+    getList() {
+      // 接口
+      const params = this.getParams()
+      getRoleList.req(params).then(res => {
+        console.log(res)
+        this.total = res.total
+        this.roleData.data = res.list
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 接口请求-end---------------------------------------
     // 新增用户到页面
     aaaddRole(data) {
       // 后台获取----------------------
@@ -171,13 +178,16 @@ export default {
     },
     // 调取接口相关函数
     handleSizeChange(val) {
-      this.pagination.pageSize = val
+      this.pageSize = val
+      this.getList()
     },
     handleCurrentChange(val) {
-      this.pagination.pageNum = val
+      this.pageNum = val
+      this.getList()
     },
     handleSearchRoleName() {
-      this.roleName = ''
+      this.getList()
+      // this.roleName = ''
     },
     handleGetRoleDetail(params) {
       this.roleParam = params
