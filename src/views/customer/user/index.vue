@@ -9,8 +9,8 @@
     <div class="default p-t15">
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser(editUser={})">新增用户</gl-button>
-        <gl-button size="small" @click="delteSelected(index[rows])">删除选中</gl-button>
-        <!-- <user-form :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-form> -->
+        <gl-button size="small" @click="toggleRowSelection">删除选中</gl-button>
+        <user-create :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-create>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable"></gl-table>
@@ -24,19 +24,20 @@
 </template>
 
 <script>
-import { UserForm, UserDetail } from '@/components/index'
+import { UserCreate, UserDetail } from '@/components/index'
 // 接口
 import { findAll } from '@/api/api'
 import { userDetailColumn } from '@/common/commonConst'
 export default {
   name: 'user',
   components: {
-    UserForm,
+    UserCreate,
     UserDetail
   },
   data() {
     return {
       userName: '',
+      toggle: [],
       dialogFormVisible: false,
       editUser: {},
       userDetailVisible: false,
@@ -51,6 +52,7 @@ export default {
       apiParam: Number,
       flagRoleOrUser: Boolean,
       userData: {
+        select: this.handleSelectionChange,
         border: true,
         align: 'center',
         height: 500,
@@ -125,8 +127,8 @@ export default {
     // 获取所需字段
     getParams() {
       return {
-        // pageSize: this.pageSize,
-        // pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
         username: this.userName
       }
     },
@@ -195,8 +197,21 @@ export default {
       console.log(createTime)
       return createTime
     },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
+    handleSelectionChange(val, row) {
+      // this.multipleSelection = val
+      this.toggle = val
+      console.log(this.toggle)
+    },
+    toggleRowSelection() {
+      console.log(this.$refs.multipleTable, this.toggle)
+      if (this.toggle) {
+        this.toggle.forEach(row => {
+          this.userData.data.splice(this.toggle, 1)
+          // this.$refs.multipleTable.$refs.table.toggleRowSelection(row)
+        })
+      } else {
+        // this.$refs.multipleTable.clearSelection()
+      }
     },
     finduserName() {
       // this.userName = ''
@@ -211,8 +226,8 @@ export default {
       this.pageNum = val
       this.findUserList()
     },
-    delteSelected(index, rows) {
-      console.log(rows)
+    delteSelected(val) {
+      console.log(val)
     },
     confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {

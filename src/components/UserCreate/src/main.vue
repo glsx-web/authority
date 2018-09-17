@@ -87,7 +87,7 @@
 
 <script>
 export default {
-  name: 'UserForm',
+  name: 'UserCreate',
   props: {
     dialogFormVisible: Boolean,
     editUser: Object
