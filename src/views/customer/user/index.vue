@@ -16,7 +16,8 @@
         <gl-table :table="userData" ref="multipleTable"></gl-table>
         <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
-        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :resParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
+        <!-- <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :resParam="[]" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail> -->
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParam="apiParam" :columnParam="columnParam" :consoleParam="consoleParam" :flagRoleOrUser="flagRoleOrUser"></user-detail>
       </div>
     </div>
   </div>
@@ -47,6 +48,8 @@ export default {
       // 分页所需参数-end
       columnParam: [],
       consoleParam: [],
+      apiParam: Number,
+      flagRoleOrUser: Boolean,
       userData: {
         border: true,
         align: 'center',
@@ -94,7 +97,7 @@ export default {
             label: '详细',
             type: 'text',
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              this.handleGetUserDetail(index, rows)
             }
           }, {
             label: '删除',
@@ -106,8 +109,7 @@ export default {
             label: '用户',
             type: 'text',
             callback: (index, rows) => {
-              this.handleGetUserDetail()
-              // this.$alert(rows[index])
+              this.$alert(rows[index])
             }
           }]
         },
@@ -231,13 +233,16 @@ export default {
     userDetailDialogVisible() {
       this.userDetailVisible = !this.userDetailVisible
     },
-    handleGetUserDetail() {
+    handleGetUserDetail(index, rows) {
       this.columnParam = userDetailColumn
       this.consoleParam = []
+      this.flagRoleOrUser = false
+      this.apiParam = rows[index].id
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
+      this.apiParam = Number
     }
   }
 }

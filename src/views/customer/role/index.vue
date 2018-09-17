@@ -16,8 +16,7 @@
         <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
-        <!-- <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :resParam="resParam" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail> -->
-        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParams="apiParams" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParam="apiParam" :columnParam="columnParam" :consoleParam="consoleParam" :flagRoleOrUser="flagRoleOrUser"></user-detail>
       </div>
     </div>
   </div>
@@ -45,7 +44,8 @@ export default {
       roleParam: roleCreateStructure,
       columnParam: [],
       consoleParam: [],
-      apiParams: Number,
+      apiParam: Number,
+      flagRoleOrUser: Boolean,
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
@@ -225,15 +225,13 @@ export default {
     handleGetUserDetail(index, rows) {
       this.columnParam = userRoleDetailColumn
       this.consoleParam = userRoleDetailConsole
-      this.apiParams = rows[index].id
-      // console.log(rows[index].id)
-      // this.selectUser({ roleId: rows[index].id })
-      // this.selectUser(rows[index].id)
+      this.flagRoleOrUser = true
+      this.apiParam = rows[index].id
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
-      this.apiParams = Number
+      this.apiParam = Number
     },
     handleCreateOrEdit(params, title) {
       this.createDialogVisible()
