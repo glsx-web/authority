@@ -40,7 +40,7 @@
         width="30%"
         center>
         <div style="text-align:center">确定是否要删除</div>
-        <span slot="footer" class="dialog-footer">
+        <span slot="footer">
             <gl-button @click="cancel">取 消</gl-button>
             <gl-button type="primary" @click="delData">确 定</gl-button>
         </span>
@@ -66,24 +66,21 @@ export default {
   watch: {
     'value.form.name'(val) {
       if (val !== '') this.$refs.name[0].$el.classList.remove('err')
-    },
-    'value.showDatails'(val) {
-      console.log(val)
     }
   },
   methods: {
     // 删除
     delData() {
-      for (let index = 0; index < this.node.parent.childNodes.length; index++) {
-        if (this.node.parent.childNodes[index] === this.node) this.node.level === 1 ? this.node.parent.data.splice(index, 1) : this.node.parent.data.children.splice(index, 1)
+      for (let index = 0; index < this.value.node.parent.childNodes.length; index++) {
+        if (this.value.node.parent.childNodes[index] === this.value.node) this.value.node.level === 1 ? this.value.node.parent.data.splice(index, 1) : this.value.node.parent.data.children.splice(index, 1)
       }
       this.$notify({
         title: '删除成功',
         type: 'success'
       })
       this.centerDialogVisible = false
-      this.$set_session_config(this.data)
-      this.showDetails = false
+      this.$set_session_config(this.value.data)
+      this.value.showDetails = false
     },
     cancel() {
       this.centerDialogVisible = false
