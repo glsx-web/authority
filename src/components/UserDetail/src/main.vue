@@ -33,7 +33,7 @@ export default {
     },
     apiParam(val) {
       this.id = val
-      this.callApi()
+      this.id !== Number && this.callApi()
     }
   },
   data() {

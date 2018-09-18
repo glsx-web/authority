@@ -129,7 +129,7 @@ export default {
       return {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
-        username: this.userName
+        keyWork: this.userName
       }
     },
     // 接口请求-start

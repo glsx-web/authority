@@ -22,7 +22,7 @@
           ref='tree'
           :show-checkbox="show_checkbox"
           :defaultExpandAll="defaultExpandAll"
-          @input="input"
+          @input="getMenuOption"
         ></tree>
       </gl-form-item>
     </gl-form>
@@ -74,7 +74,8 @@ export default {
   },
   methods: {
     // tree-strat
-    input(params) {
+    getMenuOption(params) {
+      this.createRuleForm.right = params
       return params
     },
     // tree-end
@@ -99,6 +100,7 @@ export default {
     // 接口
     handleCreateSubmit(formName) {
       const editData = this.getParams()
+      console.log(editData)
       // eidt:true;create:false
       const flagEOrC = editData.id === Number
       // console.log(flagEOrC)
