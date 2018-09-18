@@ -24,8 +24,8 @@
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="注册IP" prop="registeredIP">
-                <gl-input v-model="userManageForm.registeredIP" clearable></gl-input>
+            <gl-form-item label="注册IP" prop="joinip">
+                <gl-input v-model="userManageForm.joinip" clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -37,44 +37,44 @@
           <gl-col :span="12">
             <gl-form-item label="状态" prop="state">
                 <gl-select v-model="userManageForm.state" placeholder="启用">
-                <gl-option label="启用" value="启用"></gl-option>
-                <gl-option label="禁用" value="禁用"></gl-option>
+                <gl-option label="启用" value='0'></gl-option>
+                <gl-option label="禁用" value='1'></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="管理员">
                 <gl-select v-model="userManageForm.isadmin" placeholder="否">
-                <gl-option label="否" value="否"></gl-option>
-                <gl-option label="是" value="是"></gl-option>
+                <gl-option label="否" value='0'></gl-option>
+                <gl-option label="是" value='1'></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-                <gl-select v-model="userManageForm.departName" placeholder="请选择">
+                <!-- <gl-select v-model="userManageForm.departName" placeholder="请选择">
                     <gl-option
                     v-for="item in userManageForm.options"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
                     </gl-option>
-                </gl-select>
+                </gl-select> -->
+            <gl-select v-model="value" placeholder="请选择">
+              <gl-option
+                        v-for="item in userManageForm.options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </gl-option>
+            </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="角色选项" prop="roles">
-                <gl-checkbox-group v-model="userManageForm.roles">
-                    <gl-checkbox label="诺威达-艺展-系统日志上报"></gl-checkbox>
-                    <gl-checkbox label="盗抢险"></gl-checkbox>
-                    <gl-checkbox label="研发工具-增量"></gl-checkbox>
-                    <gl-checkbox label="精品分期0329角色"></gl-checkbox>
-                    <gl-checkbox label="好车主"></gl-checkbox>
-                    <gl-checkbox label="云商分润"></gl-checkbox>
-                    <gl-checkbox label="营销系统"></gl-checkbox>
-                    <gl-checkbox label="GPS后台角色控制"></gl-checkbox>
-                    <gl-checkbox label="外场测试"></gl-checkbox>
-                </gl-checkbox-group>
+                  <gl-col :span="10">
+                    <gl-checkbox v-for="item in list" :key="item.id" v-model="item.isSelect">{{item.rolename}}</gl-checkbox>
+                  </gl-col>
             </gl-form-item>
           </gl-col>
       </gl-form>
@@ -90,41 +90,63 @@ export default {
   name: 'UserCreate',
   props: {
     dialogFormVisible: Boolean,
-    editUser: Object
+    userManageForm: Object
   },
   watch: {
     dialogFormVisible(val) {
-      !val && this.$refs['userManageForm'].resetFields()
-    },
-    editUser(val) {
-      if (val) {
-        this.userManageForm = val
-      }
       console.log(this.userManageForm)
+      // !val && this.$refs['userManageForm'].resetFields()
     }
+    // editUser(val) {
+    //   if (val) {
+    //     console.log(val)
+    //     this.userManageForm = val
+    //   }
+    // }
+  },
+  mounted() {
+    this.list.forEach(element => {
+      element.isSelect = true
+    })
   },
   data() {
     return {
-      tel: '[ 1, /[34578]/, /\d/{9}]',
-      userManageForm: {
-        username: '',
-        realname: '',
-        password: '',
-        mobile: '',
-        registeredIP: '',
-        email: '',
-        state: '',
-        isadmin: '',
-        departName: '',
-        roles: [],
-        options: [{
-          value: '选项1',
-          label: '总经办'
-        }, {
-          value: '选项2',
-          label: '研发中心-网络软件部'
-        }]
-      },
+      tel: '[ 1, /[34578]/, /d/{9}]',
+      value: '',
+      list: [
+        {
+          id: 1,
+          rolename: '诺威达-艺展-系统日志上报'
+        },
+        {
+          id: 2,
+          rolename: '盗抢险'
+        },
+        {
+          id: 3,
+          rolename: '研发工具-增量'
+        },
+        {
+          id: 4,
+          rolename: '精品分期0329角色'
+        },
+        {
+          id: 5,
+          rolename: '云商分润'
+        },
+        {
+          id: 6,
+          rolename: '营销系统'
+        },
+        {
+          id: 7,
+          rolename: 'GPS后台角色控制'
+        },
+        {
+          id: 8,
+          rolename: '外场测试'
+        }
+      ],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -155,19 +177,23 @@ export default {
   },
   methods: {
     message(message, type) {
-      type && this.$message({
-        showClose: true,
-        type: type,
-        message: message
-      })
-      !type && this.$message({
-        showClose: true,
-        message: message
-      })
+      type &&
+        this.$message({
+          showClose: true,
+          type: type,
+          message: message
+        })
+      !type &&
+        this.$message({
+          showClose: true,
+          message: message
+        })
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         const userData = this.$deep_clone(this.userManageForm)
+        // userData.roles = userData.roles.join(',')
+        console.log(userData.roles)
         const isflagId = userData.id
         if (valid) {
           this.$emit('userFormData', isflagId, userData)
@@ -183,11 +209,10 @@ export default {
 }
 </script>
 <style scoped>
-.el-checkbox+.el-checkbox {
-  margin-left: 0!important;
+.el-checkbox + .el-checkbox {
+  margin-left: 0 !important;
 }
 </style>
 
 <style>
-
 </style>

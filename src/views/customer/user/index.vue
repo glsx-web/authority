@@ -8,9 +8,9 @@
     <hr>
     <div class="default p-t15">
       <div class="control-tabledata-button">
-        <gl-button size="small" @click="createUser(editUser={})">新增用户</gl-button>
+        <gl-button size="small" @click="createUser()">新增用户</gl-button>
         <gl-button size="small" @click="toggleRowSelection">删除选中</gl-button>
-        <user-create :dialogFormVisible="dialogFormVisible" :editUser="editUser" @userFormData="handleUserFormData"></user-create>
+        <user-create :dialogFormVisible="dialogFormVisible" :userManageForm="userManageForm" @userFormData="handleUserFormData"></user-create>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable"></gl-table>
@@ -25,20 +25,43 @@
 <script>
 import { UserCreate, UserDetail } from '@/components/index'
 // 接口
-import { findAll } from '@/api/api'
+import { findAll, updateUser, getRoleList } from '@/api/api'
 import { userDetailColumn } from '@/common/commonConst'
 export default {
   name: 'user',
   components: {
     UserCreate,
-    UserDetail
+    UserDetail,
+    updateUser
   },
   data() {
     return {
       userName: '',
       toggle: [],
       dialogFormVisible: false,
-      editUser: {},
+      userManageForm: {},
+      userForm: {
+        username: '',
+        realname: '',
+        password: '',
+        mobile: '',
+        joinip: '',
+        email: '',
+        state: '',
+        isadmin: '',
+        departName: '',
+        roles: ['1', '2'],
+        options: [
+          {
+            value: '1',
+            label: '总经办'
+          },
+          {
+            value: '2',
+            label: '研发中心-网络软件部'
+          }
+        ]
+      },
       userDetailVisible: false,
       userDetailTitle: '用户详情',
       // 分页所需参数-start
@@ -96,6 +119,13 @@ export default {
             label: '详细',
             type: 'text',
             callback: (index, rows) => {
+              this.handleGetUserDetail()
+              // this.$alert(rows[index])
+            }
+          }, {
+            label: '禁用',
+            type: 'text',
+            callback: (index, rows) => {
               this.$alert(rows[index])
             }
           }, {
@@ -103,13 +133,6 @@ export default {
             type: 'text',
             callback: (index, rows) => {
               this.confirmDeleteOrNot(index, rows)
-            }
-          }, {
-            label: '用户',
-            type: 'text',
-            callback: (index, rows) => {
-              this.handleGetUserDetail()
-              // this.$alert(rows[index])
             }
           }]
         },
@@ -120,6 +143,7 @@ export default {
   },
   mounted() {
     this.findUserList()
+    this.getRoleOptions()
   },
   methods: {
     // 获取所需字段
@@ -152,24 +176,41 @@ export default {
         message: message
       })
     },
+    // 获取所有角色选项
+    getRoleOptions() {
+      getRoleList.req().then(res => {
+        console.log(res)
+      })
+    },
+    // 新增更新用户接口请求
+    updateUser_Post(params) {
+      if (params) {
+        updateUser.req(params).then(res => {
+          console.log(res)
+        })
+      } else {
+        console.log('no data!')
+      }
+    },
     // 接受子组件传递的值
     handleUserFormData(isflag, params) {
       this.dialogFormVisible = !this.dialogFormVisible
+      // this.userManageForm = {}
       !params && this.message('取消操作')
       params && !isflag && this.userDataCreate(params)
       params && isflag && this.message('已经成功修改数据！', 'success')
+      this.updateUser_Post(params)
     },
     // 新增按钮
-    createUser(editUser) {
-      console.log(editUser)
-      this.editUser = editUser
+    createUser(userManageForm) {
+      this.userManageForm = userManageForm ? this.$deep_clone(userManageForm) : this.userForm
       this.dialogFormVisible = !this.dialogFormVisible
     },
     // 新增事件
     userDataCreate(params) {
       // this.dateFormat()
-      params.id = '100' + this.userData.data.length
-      params.createTime = this.dateFormat()
+      // params.id = '100' + this.userData.data.length
+      // params.createTime = this.dateFormat()
       const newData = params
       //  { id: '100' + this.userData.data.length, username: params.username, realname: params.realname, isadmin: params.isadmin, mobile: params.mobile, state: params.state, createTime: this.dateFormat() }
       this.userData.data.push(newData)
@@ -192,23 +233,21 @@ export default {
       const m = zeroize(currentTime.getHours())
       const s = zeroize(currentTime.getSeconds())
       const createTime = year + '-' + month + '-' + day + ' ' + h + ':' + m + ':' + s
-      console.log(createTime)
       return createTime
     },
+    // 获取选中的行
     handleSelectionChange(val, row) {
       // this.multipleSelection = val
       this.toggle = val
-      console.log(this.toggle)
     },
+    // 删除选中的行
     toggleRowSelection() {
-      console.log(this.$refs.multipleTable, this.toggle)
       if (this.toggle) {
         this.toggle.forEach(row => {
           this.userData.data.splice(this.toggle, 1)
-          // this.$refs.multipleTable.$refs.table.toggleRowSelection(row)
         })
       } else {
-        // this.$refs.multipleTable.clearSelection()
+        this.message('', '操作失败')
       }
     },
     finduserName() {
@@ -223,9 +262,6 @@ export default {
     handleCurrentChange(val) {
       this.pageNum = val
       this.findUserList()
-    },
-    delteSelected(val) {
-      console.log(val)
     },
     confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {
@@ -259,9 +295,9 @@ export default {
 </script>
 <style scoped>
 .search-w250 {
-    width: 250px;
+  width: 250px;
 }
 .m-b8 {
-    margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 </style>
