@@ -25,7 +25,7 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
-import { getRoleList } from '@/api/api'
+import { getRoleList, deleteRoleById } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
@@ -132,6 +132,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // 删除角色，根据返回的code值来判断是否删除成功
+        this.deleteRole(rows[index].id)
         rows.splice(index, 1)
         this.message('删除成功', 'success')
       }).catch(() => {
@@ -158,6 +160,14 @@ export default {
         this.total = res.total
         this.roleData.data = res.list
         // console.log(this.roleData.data)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 删除角色
+    deleteRole(params) {
+      deleteRoleById.req(params).then(res => {
+        console.log(res)
       }).catch(err => {
         console.log(err)
       })
