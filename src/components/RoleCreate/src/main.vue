@@ -76,24 +76,29 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      this.createRuleForm.right = params
-      return params
+      this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
     },
     // tree-end
     getParams() {
       return this.$deep_clone(this.createRuleForm)
     },
     // 接口
-    addRole() {
-      saveRoleList.req(this.getParams()).then((data) => {
+    addRole(flagEOrC, editData) {
+      // editData = { roleName: editData.roleName }
+      // const aa = JSON.stringify(editData)
+      // console.log(aa)
+      // console.log(editData)
+      saveRoleList.req(editData).then((data) => {
         console.log(data)
+        this.$emit('createClose', flagEOrC, editData)
       }).catch(err => {
         console.log(err)
       })
     },
-    updateRoleInfo() {
-      updateRole.req(this.getParams()).then((data) => {
+    updateRoleInfo(flagEOrC, editData) {
+      updateRole.req(editData).then((data) => {
         console.log(data)
+        this.$emit('createClose', flagEOrC, editData)
       }).catch(err => {
         console.log(err)
       })
@@ -103,13 +108,13 @@ export default {
       const editData = this.getParams()
       console.log(editData)
       // eidt:true;create:false
-      const flagEOrC = editData.id === Number
+      const flagEOrC = editData.id !== Number
       // console.log(flagEOrC)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          !flagEOrC && this.addRole()
-          flagEOrC && this.updateRoleInfo()
-          this.$emit('createClose', flagEOrC, editData)
+          !flagEOrC && this.addRole(flagEOrC, editData)
+          flagEOrC && this.updateRoleInfo(flagEOrC, editData)
+          // this.$emit('createClose', flagEOrC, editData)
         } else {
           return false
         }

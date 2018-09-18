@@ -74,7 +74,7 @@ export default {
         }, {
           label: '状态',
           prop: 'state',
-          formatter: (row, column, cellValue, index) => {
+          formatter: (cellValue) => {
             return cellValue < 1 ? '禁止' : '启动'
           }
         }, {
@@ -124,6 +124,11 @@ export default {
   },
   mounted() {
     this.findUserList()
+  },
+  watch: {
+    userName(val) {
+      !val && this.findUserList()
+    }
   },
   methods: {
     // 获取所需字段

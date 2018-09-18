@@ -1,10 +1,10 @@
 const roleCreateStructure = {
-  roleId: Number,
+  id: Number,
   roleName: '',
   description: '',
   departName: '',
-  right: Array,
-  state: Number,
+  rights: Array,
+  state: 1,
   createTime: ''
 }
 
@@ -19,7 +19,10 @@ const userRoleDetailColumn = [{
   prop: 'realname'
 }, {
   label: '状态',
-  prop: 'state'
+  prop: 'state',
+  formatter: (cellValue) => {
+    return cellValue < 1 ? '禁止' : '启动'
+  }
 }]
 
 const userRoleDetailConsole = {

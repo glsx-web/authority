@@ -69,7 +69,7 @@ export default {
         }, {
           label: '状态',
           prop: 'state',
-          formatter: (row, column, cellValue, index) => {
+          formatter: (cellValue) => {
             return cellValue < 1 ? '禁止' : '启动'
           }
         }, {
@@ -111,7 +111,6 @@ export default {
   mounted() {
     this.getList()
   },
-  // search--------------------
   watch: {
     roleName(val) {
       !val && this.getList()
@@ -137,8 +136,6 @@ export default {
       }).then(() => {
         // 删除角色，根据返回的code值来判断是否删除成功
         this.deleteRole(rows[index].id)
-        rows.splice(index, 1)
-        this.message('删除成功', 'success')
       }).catch(() => {
         this.message('取消删除')
       })
@@ -150,9 +147,6 @@ export default {
         pageNum: this.pageNum,
         keyWork: this.roleName
       }
-    },
-    reqList() {
-      // const params = this.getParams()
     },
     // 接口请求-start---------------------------------------
     // 获取展示数据，请求表格数据
@@ -169,8 +163,9 @@ export default {
     },
     // 删除角色
     deleteRole(params) {
-      deleteRoleById.req(params).then(res => {
-        console.log(res)
+      deleteRoleById.req({ roleId: params }).then(res => {
+        this.message('删除成功', 'success')
+        this.getList()
       }).catch(err => {
         console.log(err)
       })
@@ -206,7 +201,6 @@ export default {
     },
     handleSearchRoleName() {
       this.getList()
-      // this.roleName = ''
     },
     handleGetRoleDetail(params) {
       this.roleParam = params

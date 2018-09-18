@@ -45,6 +45,7 @@ export default {
       flag: Number,
       tableParam: {
         border: true,
+        align: 'center',
         data: [],
         column: [],
         console: []
