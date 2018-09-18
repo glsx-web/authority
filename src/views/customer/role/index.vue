@@ -68,7 +68,10 @@ export default {
           prop: 'departName'
         }, {
           label: '状态',
-          prop: 'state'
+          prop: 'state',
+          formatter: (row, column, cellValue, index) => {
+            return cellValue < 1 ? '禁止' : '启动'
+          }
         }, {
           label: '创建时间',
           prop: 'createTime'
@@ -109,11 +112,11 @@ export default {
     this.getList()
   },
   // search--------------------
-  // watch: {
-  //   roleName(val) {
-  //     !val
-  //   }
-  // },
+  watch: {
+    roleName(val) {
+      !val && this.getList()
+    }
+  },
   methods: {
     message(message, type) {
       type && this.$message({
@@ -174,15 +177,15 @@ export default {
     },
     // 接口请求-end---------------------------------------
     // 新增用户到页面
-    aaaddRole(data) {
-      // 后台获取----------------------
-      // data.id = '1038'
-      data.createTime = new Date().toLocaleString().split('/').join('-')
-      // 后台获取----------------------
-      const newData = data
-      this.roleData.data.push(newData)
-      this.message('创建角色成功！', 'success')
-    },
+    // addRole(data) {
+    // 后台获取----------------------
+    // data.id = '1038'
+    // data.createTime = new Date().toLocaleString().split('/').join('-')
+    // 后台获取----------------------
+    //   const newData = data
+    //   this.roleData.data.push(newData)
+    //   this.message('创建角色成功！', 'success')
+    // },
     createDialogVisible() {
       this.createVisible = !this.createVisible
     },
@@ -235,8 +238,8 @@ export default {
       this.roleParam = roleCreateStructure
       !data && this.message('取消创建角色')
       // 将数据提交给后台，根据返回结果做判断
-      // data && !flagEOrC && this.aaaddRole(data)
-      // data && flagEOrC && this.message('已经成功修改数据！', 'success')
+      data && !flagEOrC && this.getList() && this.message('创建角色成功！', 'success')
+      data && flagEOrC && this.getList() && this.message('已经成功修改数据！', 'success')
     }
   }
 }

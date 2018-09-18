@@ -73,7 +73,10 @@ export default {
           prop: 'mobile'
         }, {
           label: '状态',
-          prop: 'state'
+          prop: 'state',
+          formatter: (row, column, cellValue, index) => {
+            return cellValue < 1 ? '禁止' : '启动'
+          }
         }, {
           label: '创建时间',
           prop: 'createTime'
