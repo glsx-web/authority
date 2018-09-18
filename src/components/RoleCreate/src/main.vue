@@ -23,6 +23,7 @@
           :show-checkbox="show_checkbox"
           :defaultExpandAll="defaultExpandAll"
           @input="getMenuOption"
+          style="height:160px"
         ></tree>
       </gl-form-item>
     </gl-form>
@@ -106,8 +107,8 @@ export default {
       // console.log(flagEOrC)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          flagEOrC && this.addRole()
-          !flagEOrC && this.updateRoleInfo()
+          !flagEOrC && this.addRole()
+          flagEOrC && this.updateRoleInfo()
           this.$emit('createClose', flagEOrC, editData)
         } else {
           return false

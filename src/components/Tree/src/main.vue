@@ -15,13 +15,15 @@
 </template>
 
 <script>
+import { findMenuTree } from '@/api/api'
 export default {
   name: 'Tree',
   data() {
     return {
-      data: this.$get_session_config().resources || this.$get_session_config(),
+      // data: this.$get_session_config().resources || this.$get_session_config(),
+      data: Object,
       props: {
-        label: 'title'
+        label: 'text'
       }
     }
   },
@@ -30,6 +32,15 @@ export default {
     value: null,
     defaultExpandAll: Boolean,
     treeStyle: null
+  },
+  mounted() {
+    findMenuTree.req().then(res => {
+      console.log(res)
+      // this.data = res
+      this.data = this.$get_menus(res, 0, 'parent')
+    }).catch(err => {
+      console.log(err)
+    })
   },
   methods: {
     nodeClick(data, treeData, vue) {

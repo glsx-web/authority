@@ -156,7 +156,7 @@ export default {
     getList() {
       const params = this.getParams()
       getRoleList.req(params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.total = res.total
         this.roleData.data = res.list
         // console.log(this.roleData.data)
