@@ -8,6 +8,7 @@
       node-key='id'
       :props='props'
       :default-expand-all='defaultExpandAll'
+      :default-checked-keys="defaultCheckedKeys"
       @check='check'
       @node-click='nodeClick'
     ></gl-tree>
@@ -29,7 +30,11 @@ export default {
     showCheckbox: Boolean,
     value: null,
     defaultExpandAll: Boolean,
-    treeStyle: null
+    treeStyle: null,
+    defaultCheckedKeys: {
+      type: Array,
+      default: () => []
+    }
   },
   methods: {
     nodeClick(data, treeData, vue) {
