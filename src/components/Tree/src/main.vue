@@ -1,6 +1,21 @@
 <template>
   <div class="tree" :style="treeStyle">
+<<<<<<< HEAD
     <gl-tree ref='tree' highlight-current :data='data' :show-checkbox='showCheckbox' node-key='id' :props='props' :default-expand-all='defaultExpandAll' @check='check' @node-click='nodeClick'></gl-tree>
+=======
+     <gl-tree
+      ref='tree'
+      highlight-current
+      :data='data'
+      :show-checkbox='showCheckbox'
+      node-key='id'
+      :props='props'
+      :default-expand-all='defaultExpandAll'
+      :default-checked-keys="defaultCheckedKeys"
+      @check='check'
+      @node-click='nodeClick'
+    ></gl-tree>
+>>>>>>> 9bf4d2fc7a08913f8a8bbac501752e7dc6d5f705
   </div>
 </template>
 
@@ -36,7 +51,11 @@ export default {
     showCheckbox: Boolean,
     value: null,
     defaultExpandAll: Boolean,
-    treeStyle: null
+    treeStyle: null,
+    defaultCheckedKeys: {
+      type: Array,
+      default: () => []
+    }
   },
   mounted() {
     findMenuTree.req().then(res => {
