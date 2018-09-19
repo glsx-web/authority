@@ -1,8 +1,5 @@
 <template>
   <div class="tree" :style="treeStyle">
-<<<<<<< HEAD
-    <gl-tree ref='tree' highlight-current :data='data' :show-checkbox='showCheckbox' node-key='id' :props='props' :default-expand-all='defaultExpandAll' @check='check' @node-click='nodeClick'></gl-tree>
-=======
      <gl-tree
       ref='tree'
       highlight-current
@@ -15,34 +12,17 @@
       @check='check'
       @node-click='nodeClick'
     ></gl-tree>
->>>>>>> 9bf4d2fc7a08913f8a8bbac501752e7dc6d5f705
   </div>
 </template>
 
 <script>
-import { findMenuTree } from '@/api/api'
-function fn(data, pid) {
-  var result = []
-  let temp = null
-  for (var i in data) {
-    if (data[i].parent == pid) {
-      result.push(data[i])
-      temp = fn(data, data[i].id)
-      if (temp.length > 0) {
-        data[i].children = temp
-      }
-    }
-  }
-  return result
-}
+import { findMenuTree, findDepartTree } from '@/api/api'
 export default {
   name: 'Tree',
   data() {
     return {
-      // data: this.$get_session_config().resources || this.$get_session_config(),
-      data: [Array, Function],
+      data: null,
       props: {
-        // label: 'title'
         label: 'text'
       }
     }
@@ -55,17 +35,8 @@ export default {
     defaultCheckedKeys: {
       type: Array,
       default: () => []
-    }
-  },
-  mounted() {
-    findMenuTree.req().then(res => {
-      // this.data = res
-      // this.data = this.$get_menus(res, '#', 'parent')
-      this.data = fn(res, '#')
-      // console.log(this.data)
-    }).catch(err => {
-      console.log(err)
-    })
+    },
+    isDepart: Boolean
   },
   methods: {
     nodeClick(data, treeData, vue) {
@@ -74,7 +45,34 @@ export default {
     check(data, treeData) {
       this.$emit('input', { data, treeData })
     }
+  },
+  mounted() {
+    !this.isDepart
+      ? findMenuTree.req().then(res => {
+        this.data = fn(res, '#')
+      }).catch(err => {
+        console.log(err)
+      })
+      : findDepartTree.req().then(res => {
+        this.data = fn(res, '#')
+      }).catch(err => {
+        console.log(err)
+      })
   }
+}
+function fn(data, pid) {
+  var result = []
+  var temp = null
+  for (var i in data) {
+    if (data[i].parent == pid) {
+      result.push(data[i])
+      temp = fn(data, data[i].id)
+      if (temp.length > 0) {
+        data[i].children = temp
+      }
+    }
+  }
+  return result
 }
 </script>
 <style scoped>
