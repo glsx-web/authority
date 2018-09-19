@@ -259,7 +259,7 @@ export default {
       this.columnParam = userDetailColumn
       this.consoleParam = []
       this.flagRoleOrUser = false
-      this.apiParam = rows[index].id
+      this.apiParam = rows[index]
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {

@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import { selectUserRoleByRoleId, getWithRoles } from '@/api/api'
+import { selectUserRoleByRoleId } from '@/api/api'
 export default {
   name: 'UserDetail',
   props: {
     userDetailTitle: String,
     userDetailVisible: Boolean,
-    apiParam: [Number, Function],
+    apiParam: [Object, Function],
     flagRoleOrUser: [Boolean, Function],
     columnParam: Array,
     consoleParam: [Array, Object]
@@ -28,11 +28,8 @@ export default {
     consoleParam(val) {
       this.tableParam.console = val
     },
-    flagRoleOrUser(val) {
-      this.flag = val
-    },
     apiParam(val) {
-      this.id = val
+      this.id = val.id
       this.id !== Number && this.callApi()
     }
   },
@@ -42,7 +39,6 @@ export default {
       pageSize: 5,
       total: 10,
       id: Number,
-      flag: Number,
       tableParam: {
         border: true,
         align: 'center',
@@ -60,13 +56,13 @@ export default {
         roleId: this.id
       }
     },
-    getUserParams() {
-      return {
-        pageSize: this.pageSize,
-        pageNum: this.pageNum,
-        userId: this.id
-      }
-    },
+    // getUserParams() {
+    //   return {
+    //     pageSize: this.pageSize,
+    //     pageNum: this.pageNum,
+    //     userId: this.id
+    //   }
+    // },
     // 获取角色的相关用户详细信息
     selectUser() {
       const params = this.getRoleParams()
@@ -78,21 +74,19 @@ export default {
       })
     },
     // 获取用户详情，包括角色
-    getUserRoles() {
-      const params = this.getUserParams()
-      getWithRoles.req(params).then(res => {
-        this.total = 1
-        this.tableParam.data = [res]
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    objectToArray() {
-
-    },
+    // getUserRoles() {
+    //   const params = this.getUserParams()
+    //   getWithRoles.req(params).then(res => {
+    //     this.total = 1
+    //     this.tableParam.data = [res]
+    //   }).catch(err => {
+    //     console.log(err)
+    //   })
+    // },
     callApi() {
-      this.flag && this.selectUser()
-      !this.flag && this.getUserRoles()
+      this.flagRoleOrUser && this.selectUser()
+      // !this.flagRoleOrUser && this.getUserRoles()
+      !this.flagRoleOrUser && (this.tableParam.data = [this.apiParam])
     },
     handleClose() {
       this.$emit('userDetailClose')

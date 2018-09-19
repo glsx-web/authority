@@ -7,8 +7,8 @@
     </div>
     <hr>
     <div class="default p-t15">
-      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(roleParam, '新增角色')">创建</gl-button>
-      <role-create :createVisible="createVisible" :roleParam="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
+      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit('新增角色')">创建</gl-button>
+      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <transition>
           <gl-table :table="roleData"></gl-table>
@@ -83,7 +83,8 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              this.handleCreateOrEdit(rows[index], '角色列表')
+              this.roleParam = this.$deep_clone(rows[index])
+              this.handleCreateOrEdit('角色列表')
             }
           }, {
             label: '详细',
@@ -214,17 +215,17 @@ export default {
       this.columnParam = userRoleDetailColumn
       this.consoleParam = userRoleDetailConsole
       this.flagRoleOrUser = true
-      this.apiParam = rows[index].id
+      this.apiParam = rows[index]
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
       this.apiParam = Number
     },
-    handleCreateOrEdit(params, title) {
+    handleCreateOrEdit(title) {
       this.createDialogVisible()
       this.createOrEditTitle = title
-      this.roleParam = params
+      this.roleParam !== roleCreateStructure ? this.roleParam : roleCreateStructure
     },
     // 关闭新增用户组件
     handleCreateClose(flagEOrC, data) {

@@ -35,28 +35,22 @@
 </template>
 
 <script>
-import { roleCreateStructure } from '@/common/commonConst'
+// import { roleCreateStructure } from '@/common/commonConst'
 import { saveRoleList, updateRole } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
     createOrEditTitle: String,
     createVisible: Boolean,
-    roleParam: Object
+    createRuleForm: Object
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
-    },
-    roleParam(val) {
-      if (val !== this.createRuleForm) {
-        this.createRuleForm = this.$deep_clone(val)
-      }
     }
   },
   data() {
     return {
-      createRuleForm: roleCreateStructure,
       show_checkbox: true,
       defaultExpandAll: true,
       createRules: {
@@ -85,10 +79,10 @@ export default {
     // 接口
     addRole(flagEOrC, editData) {
       // editData = { roleName: editData.roleName }
-      // const aa = JSON.stringify(editData)
+      const aa = JSON.stringify(editData)
       // console.log(aa)
       // console.log(editData)
-      saveRoleList.req(editData).then((data) => {
+      saveRoleList.req(aa).then((data) => {
         console.log(data)
         this.$emit('createClose', flagEOrC, editData)
       }).catch(err => {
