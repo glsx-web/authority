@@ -9,6 +9,7 @@
     <tree
       ref='tree'
       @node-click='nodeClick'
+      :isDepart='isDepart'
     ></tree>
   </div>
 </template>
@@ -33,7 +34,8 @@ export default {
       default: () => {
         return null
       }
-    }
+    },
+    isDepart: Boolean
   },
   methods: {
     // 展开与关闭
@@ -60,6 +62,7 @@ export default {
       this.clearFrom()
     },
     clearFrom() {
+      this.value.showDetails = true
       this.value.btnTxt = '保存'
       this.value.del = false
       for (const key in this.value.form) {

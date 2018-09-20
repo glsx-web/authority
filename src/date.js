@@ -1,10 +1,10 @@
 function format(formatStr) {
   const date = this
   var zeroize = function(value, length) {
-    if (!length) {
-      length = 2
-    }
-    for (var i = 0, zeros = ''; i < (length - value.length); i++) {
+    let zeros = ''
+    if (!length) length = 2
+    value = value.toString()
+    for (let i = 0; i < (length - value.length); i++) {
       zeros += '0'
     }
     return zeros + value
