@@ -32,7 +32,9 @@ export default {
   components: {
     RoleCreate,
     RoleDetail,
-    UserDetail
+    UserDetail,
+    saveRoleList,
+    updateRole
   },
   data() {
     return {
@@ -176,23 +178,23 @@ export default {
       // console.log(aa)
       // console.log(editData)
       // const cc = { roleName: 'ggg' }
-      saveRoleList.req(params).then((data) => {
-        //   console.log(data)
-        //   this.createOrEditSuccess()
-      }).catch(err => {
-        console.log(err)
-      })
+      // saveRoleList.req(params).then((data) => {
+      //   console.log(data)
+      //   this.createOrEditSuccess()
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     // 编辑角色
     updateRoleInfo(params) {
       console.log(params)
       this.createOrEditSuccess()
-      updateRole.req(params).then((data) => {
-        //   console.log(data)
-        //   this.createOrEditSuccess()
-      }).catch(err => {
-        console.log(err)
-      })
+      // updateRole.req(params).then((data) => {
+      //   console.log(data)
+      //   this.createOrEditSuccess()
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     // 接口请求-end---------------------------------------
     createDialogVisible() {

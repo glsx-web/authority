@@ -24,8 +24,8 @@
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="注册IP" prop="registeredIP">
-                <gl-input v-model="userManageForm.registeredIP" clearable></gl-input>
+            <gl-form-item label="注册IP" prop="joinip">
+                <gl-input v-model="userManageForm.joinip" clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -37,44 +37,44 @@
           <gl-col :span="12">
             <gl-form-item label="状态" prop="state">
                 <gl-select v-model="userManageForm.state" placeholder="启用">
-                <gl-option label="启用" value="启用"></gl-option>
-                <gl-option label="禁用" value="禁用"></gl-option>
+                <gl-option label="启用" value='0'></gl-option>
+                <gl-option label="禁用" value='1'></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="管理员">
                 <gl-select v-model="userManageForm.isadmin" placeholder="否">
-                <gl-option label="否" value="否"></gl-option>
-                <gl-option label="是" value="是"></gl-option>
+                <gl-option label="否" value='0'></gl-option>
+                <gl-option label="是" value='1'></gl-option>
                 </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-                <gl-select v-model="userManageForm.departName" placeholder="请选择">
+                <!-- <gl-select v-model="userManageForm.departName" placeholder="请选择">
                     <gl-option
                     v-for="item in userManageForm.options"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
                     </gl-option>
-                </gl-select>
+                </gl-select> -->
+            <gl-select v-model="userManageForm.departId" placeholder="请选择">
+              <gl-option
+                        v-for="item in userManageForm.options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </gl-option>
+            </gl-select>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="角色选项" prop="roles">
-                <gl-checkbox-group v-model="userManageForm.roles">
-                    <gl-checkbox label="诺威达-艺展-系统日志上报"></gl-checkbox>
-                    <gl-checkbox label="盗抢险"></gl-checkbox>
-                    <gl-checkbox label="研发工具-增量"></gl-checkbox>
-                    <gl-checkbox label="精品分期0329角色"></gl-checkbox>
-                    <gl-checkbox label="好车主"></gl-checkbox>
-                    <gl-checkbox label="云商分润"></gl-checkbox>
-                    <gl-checkbox label="营销系统"></gl-checkbox>
-                    <gl-checkbox label="GPS后台角色控制"></gl-checkbox>
-                    <gl-checkbox label="外场测试"></gl-checkbox>
-                </gl-checkbox-group>
+                  <gl-col :span="10">
+                    <gl-checkbox v-for="item in userManageForm.roleList" :key="item.id" v-model="item.isSelect" @change="handleCheckedChange">{{item.roleName}}</gl-checkbox>
+                  </gl-col>
             </gl-form-item>
           </gl-col>
       </gl-form>
@@ -86,108 +86,94 @@
 </template>
 
 <script>
+import { userForm } from '@/common/userConst'
 export default {
   name: 'UserCreate',
   props: {
     dialogFormVisible: Boolean,
-    editUser: Object
+    userManageForm: Object
+  },
+  components: {
+    userForm
   },
   watch: {
     dialogFormVisible(val) {
+      val && console.log(this.userManageForm)
       !val && this.$refs['userManageForm'].resetFields()
-    },
-    editUser(val) {
-      if (val) {
-        this.userManageForm = val
-      }
-      console.log(this.userManageForm)
     }
+  },
+  mounted() {
+    this.userManageForm.roleList.forEach(element => {
+      element.isSelect = false
+    })
   },
   data() {
     return {
-      tel: '[ 1, /[34578]/, /\d/{9}]',
-      userManageForm: {
-        username: '',
-        realname: '',
-        password: '',
-        mobile: '',
-        registeredIP: '',
-        email: '',
-        state: '',
-        isadmin: '',
-        departName: '',
-        roles: [],
-        options: [{
-          value: '选项1',
-          label: '总经办'
-        }, {
-          value: '选项2',
-          label: '研发中心-网络软件部'
-        }]
-      },
+      state: '1',
+      tel: '[ 1, /[34578]/, /d/{9}]',
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+          // { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ],
         realname: [
-          { required: true, message: '请输入用户真实名字', trigger: 'blur' },
-          { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户真实名字', trigger: 'blur' }
+          // { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入用户密码', trigger: 'blur' },
-          { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        ],
-        phoneNumber: [
-          { required: true, message: '请输入手机号码', trigger: 'blur' },
-          { length: 11, message: '长度为11个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户密码', trigger: 'blur' }
         ]
-        // registeredIP: [
-        //   { required: true, message: '请输入注册IP', trigger: 'blur' },
-        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        // ],
-        // email: [
-        //   { required: true, message: '请输入邮箱', trigger: 'blur' },
-        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        // ]
       }
     }
   },
   methods: {
     message(message, type) {
-      type && this.$message({
-        showClose: true,
-        type: type,
-        message: message
-      })
-      !type && this.$message({
-        showClose: true,
-        message: message
-      })
+      type &&
+        this.$message({
+          showClose: true,
+          type: type,
+          message: message
+        })
+      !type &&
+        this.$message({
+          showClose: true,
+          message: message
+        })
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         const userData = this.$deep_clone(this.userManageForm)
+        console.log(userData.roleList)
+        // userData.roleList = userData.roleList.map(item => item.id).join(',')
+        userData.roles = userData.roles.join(',')
+        // userData.departId = userData.options.map(item => item.value).join(',')
+        console.log(userData)
         const isflagId = userData.id
         if (valid) {
           this.$emit('userFormData', isflagId, userData)
         } else {
           return false
         }
+        console.log(userData)
       })
     },
     cancelForm() {
       this.$emit('userFormData')
+    },
+    handleCheckedChange(value) {
+      // console.log(value)
+      // this.userManageForm.roleList.map(item => {
+      //   item.isSelect = value
+      // })
     }
   }
 }
 </script>
 <style scoped>
-.el-checkbox+.el-checkbox {
-  margin-left: 0!important;
+.el-checkbox + .el-checkbox {
+  margin-left: 0 !important;
 }
 </style>
 
 <style>
-
 </style>
