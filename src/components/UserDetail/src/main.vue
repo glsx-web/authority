@@ -30,7 +30,7 @@ export default {
     },
     apiParam(val) {
       this.id = val.id
-      this.id !== Number && this.callApi()
+      this.id && this.callApi()
     }
   },
   data() {
@@ -85,7 +85,6 @@ export default {
     // },
     callApi() {
       this.flagRoleOrUser && this.selectUser()
-      // !this.flagRoleOrUser && this.getUserRoles()
       !this.flagRoleOrUser && (this.tableParam.data = [this.apiParam])
     },
     handleClose() {

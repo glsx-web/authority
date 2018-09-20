@@ -26,7 +26,7 @@
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
 import { getRoleList, deleteRoleById } from '@/api/api'
-import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
+import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
   components: {
@@ -57,25 +57,7 @@ export default {
         border: true,
         height: 400,
         data: [],
-        column: [{
-          label: '序号',
-          prop: 'id'
-        }, {
-          label: '角色名字',
-          prop: 'roleName'
-        }, {
-          label: '所属部门',
-          prop: 'departName'
-        }, {
-          label: '状态',
-          prop: 'state',
-          formatter: (cellValue) => {
-            return cellValue < 1 ? '禁止' : '启动'
-          }
-        }, {
-          label: '创建时间',
-          prop: 'createTime'
-        }],
+        column: roleDataColumn,
         console: {
           label: '操作',
           prop: 'roleOptions',
@@ -135,7 +117,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // 删除角色，根据返回的code值来判断是否删除成功
+        // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
         this.deleteRole(rows[index].id)
       }).catch(() => {
         this.message('取消删除')
@@ -157,7 +139,6 @@ export default {
         // console.log(res)
         this.total = res.total
         this.roleData.data = res.list
-        // console.log(this.roleData.data)
       }).catch(err => {
         console.log(err)
       })
@@ -167,21 +148,11 @@ export default {
       deleteRoleById.req({ roleId: params }).then(res => {
         this.message('删除成功', 'success')
         this.getList()
-      }).catch(err => {
-        console.log(err)
+      }).catch(message => {
+        this.message(message, 'error')
       })
     },
     // 接口请求-end---------------------------------------
-    // 新增用户到页面
-    // addRole(data) {
-    // 后台获取----------------------
-    // data.id = '1038'
-    // data.createTime = new Date().toLocaleString().split('/').join('-')
-    // 后台获取----------------------
-    //   const newData = data
-    //   this.roleData.data.push(newData)
-    //   this.message('创建角色成功！', 'success')
-    // },
     createDialogVisible() {
       this.createVisible = !this.createVisible
     },
@@ -220,12 +191,13 @@ export default {
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
+      this.getList()
       this.apiParam = Number
     },
     handleCreateOrEdit(title) {
-      this.createDialogVisible()
       this.createOrEditTitle = title
       this.roleParam !== roleCreateStructure ? this.roleParam : roleCreateStructure
+      this.createDialogVisible()
     },
     // 关闭新增用户组件
     handleCreateClose(flagEOrC, data) {

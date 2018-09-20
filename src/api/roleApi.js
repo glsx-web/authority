@@ -39,7 +39,9 @@ const getRoleList = {
 
 const saveRoleList = {
   p: [__sSaveRoleList],
-  // req: params => GlAxios.post(__sSaveRoleList, JSON.stringify(params), { headers: { 'Content/-Type': 'application/json;charset=UTF-8' }})
+  // req: params => GlAxios.get(__sSaveRoleList, params)
+  // req: params => GlAxios.post(__sSaveRoleList, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' }})
+  // req: params => GlAxios.post(__sSaveRoleList, params, { headers: { 'Content-Type': 'application/json; charset=utf-8' }})
   req: params => GlAxios.post(__sSaveRoleList, params)
 }
 

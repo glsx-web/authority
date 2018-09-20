@@ -18,13 +18,13 @@
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项：">
-        <tree
+        <!-- <tree
           ref='tree'
           :show-checkbox="show_checkbox"
           :defaultExpandAll="defaultExpandAll"
           @input="getMenuOption"
           style="height:160px"
-        ></tree>
+        ></tree> -->
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -40,7 +40,7 @@ import { saveRoleList, updateRole } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
-    createOrEditTitle: String,
+    // createOrEditTitle: String,
     createVisible: Boolean,
     createRuleForm: Object
   },
@@ -53,6 +53,7 @@ export default {
     return {
       show_checkbox: true,
       defaultExpandAll: true,
+      createOrEditTitle: String,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -70,7 +71,7 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+      // this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
     },
     // tree-end
     getParams() {
@@ -78,11 +79,13 @@ export default {
     },
     // 接口
     addRole(flagEOrC, editData) {
-      // editData = { roleName: editData.roleName }
-      const aa = JSON.stringify(editData)
-      // console.log(aa)
-      // console.log(editData)
-      saveRoleList.req(aa).then((data) => {
+      editData = { roleName: editData.roleName }
+      const aa = { role: editData }
+      // const aa = JSON.stringify(editData)
+      console.log(aa)
+      console.log(editData)
+      const cc = { roleName: 'ggg' }
+      saveRoleList.req(cc).then((data) => {
         console.log(data)
         this.$emit('createClose', flagEOrC, editData)
       }).catch(err => {
