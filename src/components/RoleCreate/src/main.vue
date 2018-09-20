@@ -1,6 +1,6 @@
 <!-- createRoleComponent -->
 <template>
-  <gl-dialog :title="createOrEditTitle" :visible.sync="createVisible" :before-close="handleCreateCancel">
+  <gl-dialog :title="title" :visible.sync="createVisible" :before-close="handleCreateCancel">
     <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
       <gl-form-item label="角色名称：" prop="roleName">
         <gl-input v-model="createRuleForm.roleName" clearable></gl-input>
@@ -17,14 +17,16 @@
           <gl-option label="运营平台" value="运营平台"></gl-option>
         </gl-select>
       </gl-form-item>
-      <gl-form-item label="菜单选项：">
-        <!-- <tree
+      <gl-form-item label="菜单选项：" prop="rights">
+        <tree
           ref='tree'
+          v-model="createRuleForm.rights"
           :show-checkbox="show_checkbox"
           :defaultExpandAll="defaultExpandAll"
+          :defaultCheckedKeys="roleMenuTree"
           @input="getMenuOption"
           style="height:160px"
-        ></tree> -->
+        ></tree>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -35,25 +37,31 @@
 </template>
 
 <script>
-// import { roleCreateStructure } from '@/common/commonConst'
-import { saveRoleList, updateRole } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
-    createOrEditTitle: String,
     createVisible: Boolean,
-    createRuleForm: Object
+    createRuleForm: Object,
+    flagCOrE: [Boolean, Array, Function],
+    roleMenuTree: Array
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
+      // 考虑一下放这里还是放下面
+      this.changeMenuTree = this.roleMenuTree
+    },
+    flagCOrE(val) {
+      this.title = val ? '新建角色' : '角色列表'
+      // this.changeMenuTree = this.roleMenuTree
     }
   },
   data() {
     return {
       show_checkbox: true,
       defaultExpandAll: true,
-      // createOrEditTitle: String,
+      changeMenuTree: [],
+      title: '',
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -64,6 +72,9 @@ export default {
         ],
         departName: [
           { required: true, message: '请输入所属部门！', trigger: 'change' }
+        ],
+        rights: [
+          { required: true, message: '请选择菜单选项！', trigger: 'change' }
         ]
       }
     }
@@ -71,54 +82,26 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      // this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+      this.changeMenuTree = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
     },
     // tree-end
     getParams() {
+      this.createRuleForm.rights = this.changeMenuTree
       return this.$deep_clone(this.createRuleForm)
     },
-    // 接口
-    addRole(flagEOrC, editData) {
-      editData = { roleName: editData.roleName }
-      const aa = { role: editData }
-      // const aa = JSON.stringify(editData)
-      console.log(aa)
-      console.log(editData)
-      const cc = { roleName: 'ggg' }
-      saveRoleList.req(cc).then((data) => {
-        console.log(data)
-        this.$emit('createClose', flagEOrC, editData)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    updateRoleInfo(flagEOrC, editData) {
-      updateRole.req(editData).then((data) => {
-        console.log(data)
-        this.$emit('createClose', flagEOrC, editData)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    // 接口
     handleCreateSubmit(formName) {
       const editData = this.getParams()
-      console.log(editData)
-      // eidt:true;create:false
-      const flagEOrC = editData.id !== Number
-      // console.log(flagEOrC)
+      // console.log(editData)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          !flagEOrC && this.addRole(flagEOrC, editData)
-          flagEOrC && this.updateRoleInfo(flagEOrC, editData)
-          // this.$emit('createClose', flagEOrC, editData)
+          this.$emit('createClose', editData)
         } else {
           return false
         }
       })
     },
     handleCreateCancel() {
-      this.$emit('createClose')
+      this.$emit('createClose', false)
     }
   }
 }

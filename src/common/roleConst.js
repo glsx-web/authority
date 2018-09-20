@@ -5,7 +5,7 @@ const roleCreateStructure = {
   roleName: '',
   description: '',
   departName: '',
-  // rights: Array,
+  rights: Array,
   state: 1,
   createTime: ''
 }

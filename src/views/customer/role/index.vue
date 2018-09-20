@@ -7,8 +7,8 @@
     </div>
     <hr>
     <div class="default p-t15">
-      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit('新增角色')">创建</gl-button>
-      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :createOrEditTitle="createOrEditTitle" @createClose="handleCreateClose"></role-create>
+      <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
+      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :flagCOrE="flagCOrE" :roleMenuTree="roleMenuTree" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <transition>
           <gl-table :table="roleData"></gl-table>
@@ -25,7 +25,7 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
-import { getRoleList, deleteRoleById } from '@/api/api'
+import { getRoleList, deleteRoleById, selectMenuTreeRoleId, saveRoleList, updateRole } from '@/api/api'
 import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
@@ -45,7 +45,9 @@ export default {
       columnParam: [],
       consoleParam: [],
       apiParam: Number,
-      flagRoleOrUser: Boolean,
+      flagRoleOrUser: true,
+      flagCOrE: Boolean,
+      roleMenuTree: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
@@ -66,7 +68,7 @@ export default {
             type: 'text',
             callback: (index, rows) => {
               this.roleParam = this.$deep_clone(rows[index])
-              this.handleCreateOrEdit('角色列表')
+              this.handleCreateOrEdit(this.flagCOrE = false)
             }
           }, {
             label: '详细',
@@ -139,6 +141,7 @@ export default {
         // console.log(res)
         this.total = res.total
         this.roleData.data = res.list
+        // console.log(this.roleData.data)
       }).catch(err => {
         console.log(err)
       })
@@ -152,6 +155,45 @@ export default {
         this.message(message, 'error')
       })
     },
+    // 获得角色的相关权限详细信息，并返回树形数据
+    getMenuTree(params) {
+      selectMenuTreeRoleId.req({ id: params }).then(res => {
+        res.forEach(item => {
+          this.roleMenuTree.push(item.id)
+        })
+        this.createDialogVisible()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 添加角色
+    addRole(params) {
+      console.log(params)
+      this.createOrEditSuccess()
+      // editData = { roleName: editData.roleName }
+      // const aa = { role: editData }
+      // const aa = JSON.stringify(editData)
+      // console.log(aa)
+      // console.log(editData)
+      // const cc = { roleName: 'ggg' }
+      saveRoleList.req(params).then((data) => {
+        //   console.log(data)
+        //   this.createOrEditSuccess()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 编辑角色
+    updateRoleInfo(params) {
+      console.log(params)
+      this.createOrEditSuccess()
+      updateRole.req(params).then((data) => {
+        //   console.log(data)
+        //   this.createOrEditSuccess()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 接口请求-end---------------------------------------
     createDialogVisible() {
       this.createVisible = !this.createVisible
@@ -161,6 +203,11 @@ export default {
     },
     userDetailDialogVisible() {
       this.userDetailVisible = !this.userDetailVisible
+    },
+    createOrEditSuccess() {
+      this.createDialogVisible()
+      this.message(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！', 'success')
+      this.getList()
     },
     // 调取接口相关函数
     handleSizeChange(val) {
@@ -194,19 +241,22 @@ export default {
       this.getList()
       this.apiParam = Number
     },
-    handleCreateOrEdit(title) {
-      this.createOrEditTitle = title
-      this.roleParam !== roleCreateStructure ? this.roleParam : roleCreateStructure
-      this.createDialogVisible()
+    handleCreateOrEdit() {
+      this.roleParam = this.flagCOrE ? roleCreateStructure : this.roleParam
+      this.flagCOrE && this.createDialogVisible()
+      !this.flagCOrE && this.getMenuTree(this.roleParam.id)
     },
     // 关闭新增用户组件
-    handleCreateClose(flagEOrC, data) {
-      this.createDialogVisible()
-      this.roleParam = roleCreateStructure
-      !data && this.message('取消创建角色')
+    handleCreateClose(data) {
+      this.roleMenuTree = []
+      if (!data) {
+        this.createDialogVisible()
+        this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色')
+        return false
+      }
       // 将数据提交给后台，根据返回结果做判断
-      data && !flagEOrC && this.getList() && this.message('创建角色成功！', 'success')
-      data && flagEOrC && this.getList() && this.message('已经成功修改数据！', 'success')
+      this.flagCOrE && this.addRole(data)
+      !this.flagCOrE && this.updateRoleInfo(data)
     }
   }
 }
