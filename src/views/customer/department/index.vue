@@ -1,17 +1,18 @@
 <!-- departmentManagement -->
 <template>
-    <gl-row :gutter="100">
+    <gl-row :gutter="50">
     <gl-col :span='8'>
-      <left-manager :title='"部门列表"' v-model="department" :nodeClick='nodeClick'></left-manager>
+      <left-manager :title='"部门列表"' isDepart v-model="department" :nodeClick='nodeClick'></left-manager>
     </gl-col>
     <gl-col :span='16'>
-      <right-form :form='form' v-model="department"></right-form>
+      <right-form :form='form' isDepart v-model="department"></right-form>
     </gl-col>
   </gl-row>
 </template>
 
 <script>
 import { LeftManager, RightForm } from '@/components/index'
+import { getDepartTreeNode } from '@/api/api'
 export default {
   name: 'department',
   data() {
@@ -30,13 +31,13 @@ export default {
         form: {
           name: '',
           upDepartment: '',
-          index: ''
+          iorder: ''
         }
       },
       form: [
         { label: '部门名称', value: 'name' },
         { label: '上级部门', value: 'upDepartment', disabled: true },
-        { label: '排序', value: 'index' }
+        { label: '排序', value: 'iorder' }
       ]
     }
   },
@@ -56,9 +57,13 @@ export default {
       this.department.children = false
       this.department.del = true
       this.department.push = false
-      this.department.form.name = data[props.label]
       this.department.form.upDepartment = node.level === 1 ? '广联赛讯' : node.parent.data[props.label]
-      this.department.form.index = node.data.id
+      getDepartTreeNode.req({ id: data.id }).then(res => {
+        this.department.form.name = res.name
+        this.department.form.iorder = res.iorder
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }

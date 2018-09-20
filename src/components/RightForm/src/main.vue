@@ -30,13 +30,13 @@
       </gl-form-item>
       <gl-form-item>
         <gl-button type="primary" @click="submit">{{value.btnTxt}}</gl-button>
-        <gl-button type="danger" v-show='value.del' @click="centerDialogVisible = true ">删除</gl-button>
+        <gl-button type="danger" v-show='value.del' @click="dialog = true ">删除</gl-button>
         <gl-button @click='value.showDetails = false' style="float:right">取消</gl-button>
       </gl-form-item>
     </gl-form>
     <gl-dialog
         title="提示"
-        :visible.sync="centerDialogVisible"
+        :visible.sync="dialog"
         width="30%"
         center>
         <div style="text-align:center">确定是否要删除</div>
@@ -47,13 +47,13 @@
     </gl-dialog>
   </div>
 </template>
-
 <script type='text/ecmascript-6'>
+import { delDepartment, delMenu, editMenu } from '@/api/api'
 export default {
   name: 'rightForm',
   data() {
     return {
-      centerDialogVisible: false
+      dialog: false
     }
   },
   props: {
@@ -61,29 +61,43 @@ export default {
     form: {
       type: Array,
       default: () => []
-    }
+    },
+    isDepart: Boolean
   },
   watch: {
-    'value.form.name'(val) {
-      if (val !== '') this.$refs.name[0].$el.classList.remove('err')
-    }
+  },
+  mounted() {
   },
   methods: {
     // 删除
     delData() {
-      for (let index = 0; index < this.value.node.parent.childNodes.length; index++) {
-        if (this.value.node.parent.childNodes[index] === this.value.node) this.value.node.level === 1 ? this.value.node.parent.data.splice(index, 1) : this.value.node.parent.data.children.splice(index, 1)
-      }
-      this.$notify({
-        title: '删除成功',
-        type: 'success'
-      })
-      this.centerDialogVisible = false
-      this.$set_session_config(this.value.data)
-      this.value.showDetails = false
+      delete this.value.form['name']
+      console.log(this.value.form)
+      this.isDepart
+        ? delDepartment.req(this.value.form).then(res => {
+          this.$notify({
+            title: '删除成功',
+            type: 'success'
+          })
+          this.dialog = false
+          this.value.showDetails = false
+        }).catch(err => {
+          console.log(err)
+        })
+        : delMenu.req(this.value.form).then(res => {
+          console.log(res)
+          this.$notify({
+            title: '删除成功',
+            type: 'success'
+          })
+          this.dialog = false
+          this.value.showDetails = false
+        }).catch(err => {
+          console.log(err)
+        })
     },
     cancel() {
-      this.centerDialogVisible = false
+      this.dialog = false
       this.$notify({
         title: '已取消',
         type: 'info'
@@ -91,47 +105,29 @@ export default {
     },
     // 保存修改
     submit() {
-      if (this.value.form.name !== '' && this.value.form.name !== null) {
-        let arr = {}
+      delete this.value.form['name']
+      if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
         // 添加同级
         if (this.value.sublings) {
-          arr = {
-            id: this.value.form.index,
-            level: this.value.node.level,
-            createTime: new Date().format('yyyy-MM-dd HH:mm:ss')
-          }
-          arr[this.value.props.label] = this.value.form.name
-          if (this.value.node.level === 1) {
-            this.value.data.push(arr)
-          } else {
-            if (this.value.node.parent.data.children === undefined) this.$set(this.value.node.parent.data, 'children', [])
-            this.value.node.parent.data.children.push(arr)
-          }
+          console.log(1)
         // 添加子级
         } else if (this.value.children) {
-          arr = {
-            id: this.value.form.index,
-            level: this.value.node.level + 1,
-            createTime: new Date().format('yyyy-MM-dd HH:mm:ss')
-          }
-          arr[this.value.props.label] = this.value.form.name
-          if (this.value.allNode.children === undefined) this.$set(this.value.allNode, 'children', [])
-          this.value.allNode.children.push(arr)
+          console.log(2)
         // 修改
         } else {
-          this.value.node.data.id = this.value.form.index
-          this.value.node.data[this.value.props.label] = this.value.form.name
-          if (this.value.node.data.changeTime === undefined) this.$set(this.value.node.data, 'changeTime', '')
-          this.value.node.data.changeTime = new Date().format('yyyy-MM-dd HH:mm:ss')
+          editMenu.req(this.value.form).then(res => {
+            console.log(res)
+            this.$notify({
+              title: '操作成功',
+              type: 'success'
+            })
+          }).catch(err => {
+            console.log(err)
+          })
         }
         this.value.showDetails = false
-        this.$notify({
-          title: '操作成功',
-          type: 'success'
-        })
-        this.$set_session_config(this.value.data)
       } else {
-        this.$refs.name[0].$el.classList.add('err')
+        this.$refs.urlName[0].$el.classList.add('err')
       }
     }
   }

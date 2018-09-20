@@ -11,6 +11,7 @@
 
 <script>
 import { LeftManager, RightForm } from '@/components/index'
+import { findMenuById } from '@/api/api'
 export default {
   name: 'menuMG',
   data() {
@@ -27,49 +28,57 @@ export default {
         allNode: null,
         data: [],
         form: {
+          urlName: '',
+          hostName: '',
+          openStyle: '新系统',
+          menuType: '',
           name: '',
-          newName: '',
-          open: '新系统',
-          type: '',
-          upMenu: '',
+          path: '',
           url: '',
-          router: '',
-          defaultUrl: '',
-          index: '',
-          Show: true,
+          baseUrl: '',
+          iorder: null,
+          isHidden: 0,
           createTime: null,
-          changeTime: null
+          updateTime: null,
+          grade: 0,
+          iconUrl: '',
+          id: 0,
+          lastOperatorId: 0,
+          lastOperatorName: '',
+          parentId: 0,
+          state: 0,
+          title: ''
         }
       },
       form: [
-        { label: '名称', value: 'name' },
-        { label: '主机自定义名称', value: 'newName' },
+        { label: '名称', value: 'urlName' },
+        { label: '主机自定义名称', value: 'hostName' },
         {
           label: '打开模式',
-          value: 'open',
+          value: 'openStyle',
           type: 'select',
           options: [
             {
-              value: '选项1',
+              value: 0,
               label: '本系统'
             },
             {
-              value: '选项2',
+              value: 1,
               label: '新系统'
             }
           ]
         },
         {
           label: '功能类型',
-          value: 'type',
+          value: 'menuType',
           type: 'select',
           options: [
             {
-              value: '选项1',
+              value: 0,
               label: '菜单路由'
             },
             {
-              value: '选项2',
+              value: 1,
               label: '菜单'
             },
             {
@@ -78,14 +87,14 @@ export default {
             }
           ]
         },
-        { label: '上级菜单', value: 'upMenu', disabled: true },
-        { label: '菜单路径', value: 'url', disabled: true },
-        { label: '路由', value: 'router' },
-        { label: '基础路径', value: 'defaultUrl' },
-        { label: '排序', value: 'index' },
-        { label: '是否隐藏', value: 'Show', type: 'switch' },
+        { label: '上级菜单', value: 'name', disabled: true },
+        { label: '菜单路径', value: 'path', disabled: true },
+        { label: '路由', value: 'url' },
+        { label: '基础路径', value: 'baseUrl' },
+        { label: '排序', value: 'iorder' },
+        { label: '是否隐藏', value: 'isHidden', type: 'switch' },
         { label: '创建时间', value: 'createTime', disabled: true },
-        { label: '修改时间', value: 'changeTime', disabled: true }
+        { label: '修改时间', value: 'updateTime', disabled: true }
       ]
     }
   },
@@ -105,12 +114,22 @@ export default {
       this.menuMG.children = false
       this.menuMG.del = true
       this.menuMG.push = false
-      this.menuMG.form.name = data[props.label]
-      this.menuMG.form.upMenu = node.level === 1 ? '顶级菜单' : node.parent.data[props.label]
-      this.menuMG.form.defaultUrl = data.path
-      this.menuMG.form.index = node.data.id
-      this.menuMG.form.createTime = data.createTime
-      this.menuMG.form.changeTime = data.changeTime
+      findMenuById.req({ id: data.id }).then(res => {
+        console.log(res)
+        for (const key in this.menuMG.form) {
+          if (key === 'isHidden') {
+            this.menuMG.form[key] = res[key] === 0
+          } else if (key === 'createTime' || key === 'updateTime') {
+            this.menuMG.form[key] = new Date(res[key]).format('yyyy-MM-dd HH:mm:ss')
+          } else if (key === 'name') {
+            this.menuMG.form[key] = node.level === 1 ? '顶级菜单' : node.parent.data[props.label]
+          } else {
+            this.menuMG.form[key] = res[key]
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
