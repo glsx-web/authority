@@ -70,7 +70,7 @@ export default {
       }
       if (this.value.form.createTime !== undefined) {
         this.value.form.createTime = timeTip
-        this.value.form.changeTime = timeTip
+        this.value.form.updateTime = timeTip
       }
     }
   }
