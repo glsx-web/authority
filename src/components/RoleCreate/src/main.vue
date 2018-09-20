@@ -40,7 +40,7 @@ import { saveRoleList, updateRole } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
-    // createOrEditTitle: String,
+    createOrEditTitle: String,
     createVisible: Boolean,
     createRuleForm: Object
   },
@@ -53,7 +53,7 @@ export default {
     return {
       show_checkbox: true,
       defaultExpandAll: true,
-      createOrEditTitle: String,
+      // createOrEditTitle: String,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
