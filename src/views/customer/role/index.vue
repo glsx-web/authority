@@ -16,8 +16,7 @@
         <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
         <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
-        <!-- <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :resParam="resParam" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail> -->
-        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParams="apiParams" :columnParam="columnParam" :consoleParam="consoleParam"></user-detail>
+        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParam="apiParam" :columnParam="columnParam" :consoleParam="consoleParam" :flagRoleOrUser="flagRoleOrUser"></user-detail>
       </div>
     </div>
   </div>
@@ -26,7 +25,7 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
-import { getRoleList } from '@/api/api'
+import { getRoleList, deleteRoleById } from '@/api/api'
 import { roleCreateStructure, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
 export default {
   name: 'role',
@@ -45,7 +44,8 @@ export default {
       roleParam: roleCreateStructure,
       columnParam: [],
       consoleParam: [],
-      apiParams: Number,
+      apiParam: Number,
+      flagRoleOrUser: Boolean,
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       // 分页所需参数-start
@@ -68,7 +68,10 @@ export default {
           prop: 'departName'
         }, {
           label: '状态',
-          prop: 'state'
+          prop: 'state',
+          formatter: (cellValue) => {
+            return cellValue < 1 ? '禁止' : '启动'
+          }
         }, {
           label: '创建时间',
           prop: 'createTime'
@@ -107,14 +110,12 @@ export default {
   },
   mounted() {
     this.getList()
-    // this.selectUser()
   },
-  // search--------------------
-  // watch: {
-  //   roleName(val) {
-  //     !val
-  //   }
-  // },
+  watch: {
+    roleName(val) {
+      !val && this.getList()
+    }
+  },
   methods: {
     message(message, type) {
       type && this.$message({
@@ -133,8 +134,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        rows.splice(index, 1)
-        this.message('删除成功', 'success')
+        // 删除角色，根据返回的code值来判断是否删除成功
+        this.deleteRole(rows[index].id)
       }).catch(() => {
         this.message('取消删除')
       })
@@ -144,11 +145,8 @@ export default {
       return {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
-        roleName: this.roleName
+        keyWork: this.roleName
       }
-    },
-    reqList() {
-      // const params = this.getParams()
     },
     // 接口请求-start---------------------------------------
     // 获取展示数据，请求表格数据
@@ -163,35 +161,26 @@ export default {
         console.log(err)
       })
     },
-    // 获取角色的相关用户详细信息
-    // selectUser(roleId) {
-    //   // const params = this.getParams()
-    //   const params = {
-    //     pageSize: this.pageSize,
-    //     pageNum: this.pageNum,
-    //     roleName: this.roleName
-    //     // roleId: roleId
-    //   }
-    //   // console.log(params)
-    //   selectUserRoleByRoleId.req(params).then(res => {
-    //     console.log(res)
-    //     // this.total = res.total
-    //     this.resParam = res
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
+    // 删除角色
+    deleteRole(params) {
+      deleteRoleById.req({ roleId: params }).then(res => {
+        this.message('删除成功', 'success')
+        this.getList()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 接口请求-end---------------------------------------
     // 新增用户到页面
-    aaaddRole(data) {
-      // 后台获取----------------------
-      // data.id = '1038'
-      data.createTime = new Date().toLocaleString().split('/').join('-')
-      // 后台获取----------------------
-      const newData = data
-      this.roleData.data.push(newData)
-      this.message('创建角色成功！', 'success')
-    },
+    // addRole(data) {
+    // 后台获取----------------------
+    // data.id = '1038'
+    // data.createTime = new Date().toLocaleString().split('/').join('-')
+    // 后台获取----------------------
+    //   const newData = data
+    //   this.roleData.data.push(newData)
+    //   this.message('创建角色成功！', 'success')
+    // },
     createDialogVisible() {
       this.createVisible = !this.createVisible
     },
@@ -212,7 +201,6 @@ export default {
     },
     handleSearchRoleName() {
       this.getList()
-      // this.roleName = ''
     },
     handleGetRoleDetail(params) {
       this.roleParam = params
@@ -225,15 +213,13 @@ export default {
     handleGetUserDetail(index, rows) {
       this.columnParam = userRoleDetailColumn
       this.consoleParam = userRoleDetailConsole
-      this.apiParams = rows[index].id
-      // console.log(rows[index].id)
-      // this.selectUser({ roleId: rows[index].id })
-      // this.selectUser(rows[index].id)
+      this.flagRoleOrUser = true
+      this.apiParam = rows[index].id
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
-      this.apiParams = Number
+      this.apiParam = Number
     },
     handleCreateOrEdit(params, title) {
       this.createDialogVisible()
@@ -246,8 +232,8 @@ export default {
       this.roleParam = roleCreateStructure
       !data && this.message('取消创建角色')
       // 将数据提交给后台，根据返回结果做判断
-      // data && !flagEOrC && this.aaaddRole(data)
-      // data && flagEOrC && this.message('已经成功修改数据！', 'success')
+      data && !flagEOrC && this.getList() && this.message('创建角色成功！', 'success')
+      data && flagEOrC && this.getList() && this.message('已经成功修改数据！', 'success')
     }
   }
 }

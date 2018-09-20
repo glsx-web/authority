@@ -17,7 +17,15 @@
           <gl-option label="运营平台" value="运营平台"></gl-option>
         </gl-select>
       </gl-form-item>
-      <gl-form-item label="菜单选项："></gl-form-item>
+      <gl-form-item label="菜单选项：">
+        <tree
+          ref='tree'
+          :show-checkbox="show_checkbox"
+          :defaultExpandAll="defaultExpandAll"
+          @input="getMenuOption"
+          style="height:160px"
+        ></tree>
+      </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
       <gl-button type="primary" @click="handleCreateSubmit('createRuleForm')">提交</gl-button>
@@ -49,6 +57,8 @@ export default {
   data() {
     return {
       createRuleForm: roleCreateStructure,
+      show_checkbox: true,
+      defaultExpandAll: true,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -64,20 +74,31 @@ export default {
     }
   },
   methods: {
+    // tree-strat
+    getMenuOption(params) {
+      this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+    },
+    // tree-end
     getParams() {
       return this.$deep_clone(this.createRuleForm)
     },
     // 接口
-    addRole() {
-      saveRoleList.req(this.getParams()).then((data) => {
+    addRole(flagEOrC, editData) {
+      // editData = { roleName: editData.roleName }
+      // const aa = JSON.stringify(editData)
+      // console.log(aa)
+      // console.log(editData)
+      saveRoleList.req(editData).then((data) => {
         console.log(data)
+        this.$emit('createClose', flagEOrC, editData)
       }).catch(err => {
         console.log(err)
       })
     },
-    updateRoleInfo() {
-      updateRole.req(this.getParams()).then((data) => {
+    updateRoleInfo(flagEOrC, editData) {
+      updateRole.req(editData).then((data) => {
         console.log(data)
+        this.$emit('createClose', flagEOrC, editData)
       }).catch(err => {
         console.log(err)
       })
@@ -85,14 +106,15 @@ export default {
     // 接口
     handleCreateSubmit(formName) {
       const editData = this.getParams()
+      console.log(editData)
       // eidt:true;create:false
-      const flagEOrC = editData.id === Number
-      console.log(flagEOrC)
-      flagEOrC && this.addRole()
-      !flagEOrC && this.updateRoleInfo()
+      const flagEOrC = editData.id !== Number
+      // console.log(flagEOrC)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('createClose', flagEOrC, editData)
+          !flagEOrC && this.addRole(flagEOrC, editData)
+          flagEOrC && this.updateRoleInfo(flagEOrC, editData)
+          // this.$emit('createClose', flagEOrC, editData)
         } else {
           return false
         }

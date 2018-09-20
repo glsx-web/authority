@@ -3,20 +3,21 @@
   <div>
     <gl-dialog :title="userDetailTitle" :visible.sync="userDetailVisible" :before-close="handleClose">
       <gl-table :table="tableParam"></gl-table>
-      <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[1,2,3,4]" :page-size="pageSize" layout="total, prev, pager, next" :total="total">
+      <gl-pagination background v-show="flagRoleOrUser" @current-change="handleCurrentChange" :current-page="pageNum" :page-size="pageSize" layout="total, prev, pager, next" :total="total">
       </gl-pagination>
     </gl-dialog>
   </div>
 </template>
 
 <script>
-import { selectUserRoleByRoleId } from '@/api/api'
+import { selectUserRoleByRoleId, getWithRoles } from '@/api/api'
 export default {
   name: 'UserDetail',
   props: {
     userDetailTitle: String,
     userDetailVisible: Boolean,
-    resParam: [Array, Object],
+    apiParam: [Number, Function],
+    flagRoleOrUser: [Boolean, Function],
     columnParam: Array,
     consoleParam: [Array, Object]
   },
@@ -27,29 +28,24 @@ export default {
     consoleParam(val) {
       this.tableParam.console = val
     },
-    apiParams(val) {
-      // this.tableParam.data = val.list
-      // this.total = val.total
+    flagRoleOrUser(val) {
+      this.flag = val
+    },
+    apiParam(val) {
       this.id = val
-      console.log(this.id)
-      this.selectUser()
+      this.id !== Number && this.callApi()
     }
   },
   data() {
     return {
       pageNum: 1,
-      pageSize: 10,
+      pageSize: 5,
       total: 10,
       id: Number,
+      flag: Number,
       tableParam: {
         border: true,
-        // role-data
-        // data: [{
-        //   userId: '1006',
-        //   username: 'text11',
-        //   realname: '陈婉清',
-        //   state: '启动'
-        // }],
+        align: 'center',
         data: [],
         column: [],
         console: []
@@ -57,41 +53,53 @@ export default {
     }
   },
   methods: {
-    getParams() {
+    getRoleParams() {
       return {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
         roleId: this.id
       }
     },
+    getUserParams() {
+      return {
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
+        userId: this.id
+      }
+    },
     // 获取角色的相关用户详细信息
     selectUser() {
-      const params = this.getParams()
-      // const params = {
-      //   pageSize: this.pageSize,
-      //   pageNum: this.pageNum,
-      //   roleName: this.roleName
-      // roleId: roleId
-      // }
-      // console.log(params)
+      const params = this.getRoleParams()
       selectUserRoleByRoleId.req(params).then(res => {
-        console.log(res)
         this.total = res.total
-        this.resParam = res.list
+        this.tableParam.data = res.list
       }).catch(err => {
         console.log(err)
       })
     },
+    // 获取用户详情，包括角色
+    getUserRoles() {
+      const params = this.getUserParams()
+      getWithRoles.req(params).then(res => {
+        this.total = 1
+        this.tableParam.data = [res]
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    objectToArray() {
+
+    },
+    callApi() {
+      this.flag && this.selectUser()
+      !this.flag && this.getUserRoles()
+    },
     handleClose() {
       this.$emit('userDetailClose')
     },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.selectUser()
-    },
     handleCurrentChange(val) {
       this.pageNum = val
-      this.selectUser()
+      this.callApi()
     }
   }
 }

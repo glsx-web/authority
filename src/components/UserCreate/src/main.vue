@@ -60,7 +60,7 @@
                     :value="item.value">
                     </gl-option>
                 </gl-select> -->
-            <gl-select v-model="value" placeholder="请选择">
+            <gl-select v-model="userManageForm.departId" placeholder="请选择">
               <gl-option
                         v-for="item in userManageForm.options"
                         :key="item.value"
@@ -73,7 +73,7 @@
           <gl-col :span="24">
             <gl-form-item label="角色选项" prop="roles">
                   <gl-col :span="10">
-                    <gl-checkbox v-for="item in list" :key="item.id" v-model="item.isSelect">{{item.rolename}}</gl-checkbox>
+                    <gl-checkbox v-for="item in userManageForm.roleList" :key="item.id" v-model="item.isSelect" @change="handleCheckedChange">{{item.roleName}}</gl-checkbox>
                   </gl-col>
             </gl-form-item>
           </gl-col>
@@ -86,92 +86,43 @@
 </template>
 
 <script>
+import { userForm } from '@/common/userConst'
 export default {
   name: 'UserCreate',
   props: {
     dialogFormVisible: Boolean,
     userManageForm: Object
   },
+  components: {
+    userForm
+  },
   watch: {
     dialogFormVisible(val) {
-      console.log(this.userManageForm)
-      // !val && this.$refs['userManageForm'].resetFields()
+      val && console.log(this.userManageForm)
+      !val && this.$refs['userManageForm'].resetFields()
     }
-    // editUser(val) {
-    //   if (val) {
-    //     console.log(val)
-    //     this.userManageForm = val
-    //   }
-    // }
   },
   mounted() {
-    this.list.forEach(element => {
-      element.isSelect = true
+    this.userManageForm.roleList.forEach(element => {
+      element.isSelect = false
     })
   },
   data() {
     return {
+      state: '1',
       tel: '[ 1, /[34578]/, /d/{9}]',
-      value: '',
-      list: [
-        {
-          id: 1,
-          rolename: '诺威达-艺展-系统日志上报'
-        },
-        {
-          id: 2,
-          rolename: '盗抢险'
-        },
-        {
-          id: 3,
-          rolename: '研发工具-增量'
-        },
-        {
-          id: 4,
-          rolename: '精品分期0329角色'
-        },
-        {
-          id: 5,
-          rolename: '云商分润'
-        },
-        {
-          id: 6,
-          rolename: '营销系统'
-        },
-        {
-          id: 7,
-          rolename: 'GPS后台角色控制'
-        },
-        {
-          id: 8,
-          rolename: '外场测试'
-        }
-      ],
       rules: {
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+          // { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ],
         realname: [
-          { required: true, message: '请输入用户真实名字', trigger: 'blur' },
-          { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户真实名字', trigger: 'blur' }
+          // { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入用户密码', trigger: 'blur' },
-          { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        ],
-        phoneNumber: [
-          { required: true, message: '请输入手机号码', trigger: 'blur' },
-          { length: 11, message: '长度为11个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户密码', trigger: 'blur' }
         ]
-        // registeredIP: [
-        //   { required: true, message: '请输入注册IP', trigger: 'blur' },
-        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        // ],
-        // email: [
-        //   { required: true, message: '请输入邮箱', trigger: 'blur' },
-        //   { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
-        // ]
       }
     }
   },
@@ -192,18 +143,28 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         const userData = this.$deep_clone(this.userManageForm)
-        // userData.roles = userData.roles.join(',')
-        console.log(userData.roles)
+        console.log(userData.roleList)
+        // userData.roleList = userData.roleList.map(item => item.id).join(',')
+        userData.roles = userData.roles.join(',')
+        // userData.departId = userData.options.map(item => item.value).join(',')
+        console.log(userData)
         const isflagId = userData.id
         if (valid) {
           this.$emit('userFormData', isflagId, userData)
         } else {
           return false
         }
+        console.log(userData)
       })
     },
     cancelForm() {
       this.$emit('userFormData')
+    },
+    handleCheckedChange(value) {
+      // console.log(value)
+      // this.userManageForm.roleList.map(item => {
+      //   item.isSelect = value
+      // })
     }
   }
 }
