@@ -13,20 +13,15 @@
         <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
       <gl-form-item label="所属部门：" prop="departName">
-        <gl-select v-model="createRuleForm.departName" placeholder="请选择">
-          <gl-option label="运营平台" value="运营平台"></gl-option>
+        <gl-select placeholder="请选择" v-model="createRuleForm.departName">
+          <gl-option style="height:160px">
+            <tree ref='tree' :isDepart="isDepart" v-model="createRuleForm.departName" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
+          </gl-option>
+          <!-- <gl-option label="运营平台" value="运营平台"></gl-option> -->
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
-        <tree
-          ref='tree'
-          v-model="createRuleForm.rights"
-          :show-checkbox="show_checkbox"
-          :defaultExpandAll="defaultExpandAll"
-          :defaultCheckedKeys="roleMenuTree"
-          @input="getMenuOption"
-          style="height:160px"
-        ></tree>
+        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="roleMenuTree" @input="getMenuOption" style="height:160px"></tree>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -49,18 +44,19 @@ export default {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
       // 考虑一下放这里还是放下面
-      this.changeMenuTree = this.roleMenuTree
+      this.createRuleForm.rights = this.roleMenuTree
     },
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
-      // this.changeMenuTree = this.roleMenuTree
+      // this.createRuleForm.rights = this.roleMenuTree
     }
   },
   data() {
     return {
+      isDepart: true,
       show_checkbox: true,
       defaultExpandAll: true,
-      changeMenuTree: [],
+      departName: [],
       title: '',
       createRules: {
         roleName: [
@@ -82,11 +78,27 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      this.changeMenuTree = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+      this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+    },
+    clickDepart(data, treeData, vue, props) {
+      if (data.parent !== '#' || !data.children) {
+        this.createRuleForm.departId = data.id
+        this.createRuleForm.departPath = data.type
+        this.getDepartName(treeData)
+        this.createRuleForm.departName = this.departName.join(' - ')
+        this.departName = []
+      }
+    },
+    getDepartName(params) {
+      this.departName.unshift(params.data.text)
+      if (params.data.parent !== '#') {
+        this.getDepartName(params.parent)
+      } else {
+        return true
+      }
     },
     // tree-end
     getParams() {
-      this.createRuleForm.rights = this.changeMenuTree
       return this.$deep_clone(this.createRuleForm)
     },
     handleCreateSubmit(formName) {

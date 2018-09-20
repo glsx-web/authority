@@ -4,7 +4,9 @@ const roleCreateStructure = {
   id: Number,
   roleName: '',
   description: '',
+  departId: '',
   departName: '',
+  departPath: '',
   rights: Array,
   state: 1,
   createTime: ''
