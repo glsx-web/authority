@@ -56,13 +56,6 @@ export default {
         roleId: this.id
       }
     },
-    // getUserParams() {
-    //   return {
-    //     pageSize: this.pageSize,
-    //     pageNum: this.pageNum,
-    //     userId: this.id
-    //   }
-    // },
     // 获取角色的相关用户详细信息
     selectUser() {
       const params = this.getRoleParams()
@@ -73,16 +66,6 @@ export default {
         console.log(err)
       })
     },
-    // 获取用户详情，包括角色
-    // getUserRoles() {
-    //   const params = this.getUserParams()
-    //   getWithRoles.req(params).then(res => {
-    //     this.total = 1
-    //     this.tableParam.data = [res]
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
     callApi() {
       this.flagRoleOrUser && this.selectUser()
       !this.flagRoleOrUser && (this.tableParam.data = [this.apiParam])
