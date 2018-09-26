@@ -18,9 +18,7 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="手机号码" prop="mobile">
-                <gl-input v-model="userManageForm.mobile" 
-                          prefix-icon='el-icon-mobile-phone' 
-                          placeholder='请输入手机号码' clearable></gl-input>
+                <gl-input v-model="userManageForm.mobile" placeholder='请输入手机号码' :prop="/1[358]\d{9}/" clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -29,9 +27,8 @@
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="邮箱" prop="email">
-                <gl-input v-model='userManageForm.email' placeholder='请输入电子邮箱' clearable>
-                      </gl-input>
+              <gl-form-item prop="email" label="邮箱">
+                <gl-input v-model='userManageForm.email' placeholder='请输入电子邮箱' clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -39,7 +36,7 @@
                 <gl-select v-model="userManageForm.state" placeholder="启用">
                 <gl-option label="启用" value='0'></gl-option>
                 <gl-option label="禁用" value='1'></gl-option>
-                </gl-select>
+                </gl-select>               
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -52,14 +49,11 @@
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-                <!-- <gl-select v-model="userManageForm.departName" placeholder="请选择">
-                    <gl-option
-                    v-for="item in userManageForm.options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                    </gl-option>
-                </gl-select> -->
+              <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
+                <gl-option style="height:160px">
+                  <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
+                </gl-option>
+              </gl-select> -->
             <gl-select v-model="userManageForm.departId" placeholder="请选择">
               <gl-option
                         v-for="item in userManageForm.options"
@@ -71,10 +65,10 @@
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
-            <gl-form-item label="角色选项" prop="roles">
-                  <gl-col :span="10">
-                    <gl-checkbox v-for="item in userManageForm.roleList" :key="item.id" v-model="item.isSelect" @change="handleCheckedChange">{{item.roleName}}</gl-checkbox>
-                  </gl-col>
+            <gl-form-item  label="角色选项" prop="roles">
+                    <gl-checkbox-group class="height" v-model="list" @change="handleCheckedChange">
+                      <gl-checkbox v-for="item in userManageForm.roleList" :key="item.id"  :label='item.id'>{{item.roleName}}</gl-checkbox>
+                    </gl-checkbox-group>
             </gl-form-item>
           </gl-col>
       </gl-form>
@@ -103,13 +97,13 @@ export default {
     }
   },
   mounted() {
-    this.userManageForm.roleList.forEach(element => {
-      element.isSelect = false
-    })
+    // this.list = this.userManageForm.roleList.map(item => item.roleName)
   },
   data() {
     return {
-      state: '1',
+      isDepart: true,
+      defaultExpandAll: true,
+      list: [],
       tel: '[ 1, /[34578]/, /d/{9}]',
       rules: {
         username: [
@@ -118,10 +112,22 @@ export default {
         ],
         realname: [
           { required: true, message: '请输入用户真实名字', trigger: 'blur' }
-          // { min: 2, max: 4, message: '长度在 2 到 4 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入用户密码', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入正确的手机号码', trigger: 'blur' }
+        ],
+        joinip: [
+          { required: true, message: '请输入注册IP', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ],
+        departName: [
+          { required: true, message: '请输入所属部门', trigger: 'blur' }
         ]
       }
     }
@@ -140,14 +146,24 @@ export default {
           message: message
         })
     },
+    clickDepart(data, treeData, vue, props) {
+      if (data.parent !== '#' || !data.children) {
+        this.createRuleForm.departId = data.id
+        this.createRuleForm.departPath = data.type
+        this.getDepartName(treeData)
+        this.createRuleForm.departName = this.departName.join(' - ')
+        this.departName = []
+      }
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         const userData = this.$deep_clone(this.userManageForm)
         console.log(userData.roleList)
         // userData.roleList = userData.roleList.map(item => item.id).join(',')
         userData.roles = userData.roles.join(',')
+        // userData.roles = this.handleCheckedChange()
         // userData.departId = userData.options.map(item => item.value).join(',')
-        console.log(userData)
+        console.log(userData.roles)
         const isflagId = userData.id
         if (valid) {
           this.$emit('userFormData', isflagId, userData)
@@ -161,10 +177,8 @@ export default {
       this.$emit('userFormData')
     },
     handleCheckedChange(value) {
-      // console.log(value)
-      // this.userManageForm.roleList.map(item => {
-      //   item.isSelect = value
-      // })
+      console.log(value.join(','))
+      return value.join(',')
     }
   }
 }
@@ -172,8 +186,17 @@ export default {
 <style scoped>
 .el-checkbox + .el-checkbox {
   margin-left: 0 !important;
+  width: 100%;
 }
+.height {
+  height: 100px;
+  overflow-y: auto;
+}
+
 </style>
 
 <style>
+.el-form-item__content{
+  line-height: 22px !important;
+}
 </style>
