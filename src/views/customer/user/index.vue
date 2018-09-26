@@ -23,6 +23,7 @@
 </template>
 
 <script>
+var consoleState = '禁用'
 import { UserCreate, UserDetail } from '@/components/index'
 // 接口
 import { findAll, updateUser, getRoleList, batcheDelUser, operatUser } from '@/api/api'
@@ -39,6 +40,7 @@ export default {
     return {
       userName: '',
       toggle: [],
+      state: '0',
       dialogFormVisible: false,
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
@@ -77,19 +79,19 @@ export default {
           label: '状态',
           prop: 'state',
           formatter: (cellValue) => {
-            return cellValue < 1 ? '禁止' : '启动'
+            return +cellValue.state < 1 ? '禁止' : '启动'
           }
         }, {
           label: '创建时间',
           prop: 'createTime'
         }],
-        // number: {
-        //   label: '序号',
-        //   index: (index) => {
-        //     ++index
-        //     return index < 10 && index > 0 ? '0' + index : index
-        //   }
-        // },
+        number: {
+          label: '序号',
+          index: (index) => {
+            ++index
+            return index < 10 && index > 0 ? '0' + index : index
+          }
+        },
         console: {
           label: '操作',
           prop: 'operation',
@@ -106,10 +108,20 @@ export default {
               this.handleGetUserDetail(index, rows)
             }
           }, {
-            label: '禁用',
+            label: consoleState,
             type: 'text',
+            formatter(cellValue) {
+            },
             callback: (index, rows) => {
-              this.$alert(rows[index])
+              // rows[index].state = '0'
+              console.log(rows[index].state)
+              this.$set(rows[index], 'state', '1')
+              console.log(rows[index].state)
+              // this.state = '1'
+              // console.log(this.updateState())
+              // this.updateState()
+              // console.log(consoleState)
+              // this.$alert(rows[index])
             }
           }, {
             label: '删除',
@@ -169,7 +181,6 @@ export default {
     getRoleOptions() {
       getRoleList.req().then(res => {
         userForm.roleList = res.list
-        console.log(res)
       })
     },
     // 新增更新用户接口请求
@@ -184,7 +195,6 @@ export default {
     },
     // 删除用户接口
     batcheDel(params) {
-      console.log(params)
       if (params) {
         batcheDelUser.req({ ids: params }).then(res => {
           this.findUserList()
@@ -195,7 +205,6 @@ export default {
     },
     // 删除、禁用、启用接口
     operatUser(params) {
-      console.log(params)
       if (params) {
         operatUser.req(params).then(res => {
           this.findUserList()
@@ -214,10 +223,8 @@ export default {
     },
     // 新增按钮
     createUser(userManageForm) {
-      console.log(userManageForm)
       if (userManageForm) {
         userManageForm.roleList = this.$deep_clone(userForm.roleList)
-        console.log(userManageForm.roleList)
         userManageForm.options = userForm.options
         userManageForm.state = userManageForm.state + ''
         userManageForm.isadmin = userManageForm.isadmin + ''
@@ -226,27 +233,20 @@ export default {
           arr.forEach(index => {
             userManageForm.roleList.forEach(item => {
               if (+item.id === +index) {
-                console.log(item.id)
                 item.isSelect = true
-                console.log(item)
                 return false
               }
             })
           })
           this.userManageForm = this.$deep_clone(userManageForm)
         })
-        // this.userManageForm = this.$deep_clone(userManageForm)
       } else {
         this.userManageForm = this.$deep_clone(userForm)
       }
-      console.log(userManageForm)
-      // this.userManageForm = userManageForm ? this.$deep_clone(userManageForm) : this.$deep_clone(userForm)
-      // console.log(userManageForm)
       this.dialogFormVisible = !this.dialogFormVisible
     },
     // 获取选中的行
     handleSelectionChange(val, row) {
-      // this.multipleSelection = val
       this.toggle = val
     },
     // 删除选中的行
@@ -275,21 +275,7 @@ export default {
       this.findUserList()
     },
     confirmDeleteOrNot(index, rows) {
-      console.log(rows[index].id)
       this.operatUser({ id: rows[index].id, state: 2 })
-
-      // this.delectUser(rows[index].id)
-      // this.$confirm('确定要删除这条数据？', '', {
-      //   confirmButtonTest: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   // this.userData.data.splice(index, 1)
-      //   rows.splice(index, 1)
-      //   this.message('success', '删除成功')
-      // }).catch(() => {
-      //   this.message('', '取消删除')
-      // })
     },
     changeShowNumber(command) {
       this.showNumber = command
@@ -307,6 +293,16 @@ export default {
     handleUserDetailClose() {
       this.userDetailDialogVisible()
       this.apiParam = Number
+    },
+    // 修改启用禁用
+    updateState() {
+      if (this.state === '0') {
+        consoleState = '禁用'
+        return consoleState
+      } else {
+        consoleState = '启用'
+        return consoleState
+      }
     }
   }
 }
