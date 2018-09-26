@@ -49,6 +49,7 @@ export default {
       apiParam: Number,
       flagRoleOrUser: true,
       flagCOrE: Boolean,
+      editOrDetail: Boolean,
       roleMenuTree: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
@@ -76,7 +77,8 @@ export default {
             label: '详细',
             type: 'text',
             callback: (index, rows) => {
-              this.handleGetRoleDetail(rows[index])
+              this.roleParam = this.$deep_clone(rows[index])
+              this.handleGetRoleDetail()
             }
           }, {
             label: '删除',
@@ -143,6 +145,7 @@ export default {
         // console.log(res)
         this.total = res.total
         this.roleData.data = res.list
+        // this.$set(this.roleData, 'data', res.list)
         // console.log(this.roleData.data)
       }).catch(err => {
         console.log(err)
@@ -159,11 +162,14 @@ export default {
     },
     // 获得角色的相关权限详细信息，并返回树形数据
     getMenuTree(params) {
+      console.log(typeof (this.roleParam.rights))
       selectMenuTreeRoleId.req({ id: params }).then(res => {
         res.forEach(item => {
           this.roleMenuTree.push(item.id)
+          this.roleParam.rights.push(item.id)
         })
-        this.createDialogVisible()
+        this.editOrDetail && this.createDialogVisible()
+        !this.editOrDetail && this.deleteDialogVisible()
       }).catch(err => {
         console.log(err)
       })
@@ -223,9 +229,8 @@ export default {
     handleSearchRoleName() {
       this.getList()
     },
-    handleGetRoleDetail(params) {
-      this.roleParam = params
-      this.deleteDialogVisible()
+    handleGetRoleDetail() {
+      this.getMenuTree(this.roleParam.id, this.editOrDetail = false)
     },
     handleDetailClose() {
       this.deleteDialogVisible()
@@ -246,7 +251,7 @@ export default {
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? roleCreateStructure : this.roleParam
       this.flagCOrE && this.createDialogVisible()
-      !this.flagCOrE && this.getMenuTree(this.roleParam.id)
+      !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
     handleCreateClose(data) {

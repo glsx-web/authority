@@ -68,10 +68,10 @@ export default {
       for (const key in this.value.form) {
         this.value.form[key] = null
       }
-      if (this.value.form.createTime !== undefined) {
-        this.value.form.createTime = timeTip
-        this.value.form.updateTime = timeTip
-      }
+      // if (this.value.form.createTime !== undefined) {
+      //   this.value.form.createTime = timeTip
+      //   this.value.form.updateTime = timeTip
+      // }
     }
   }
 }

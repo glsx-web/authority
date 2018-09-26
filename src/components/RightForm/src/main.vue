@@ -131,7 +131,7 @@ export default {
       const treeData = this.value.allNode
       if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
         const obj = this.getMenuObj()
-        obj.updateTime = new Date().getTime()
+        // obj.updateTime = new Date().getTime()
         obj.isHidden = this.value.form.isHidden === true ? 0 : 1
         console.log(obj)
         // 添加同级
@@ -148,7 +148,7 @@ export default {
           this.addData(obj)
         // 修改
         } else {
-          obj.createTime = this.unix(this.value.form.createTime)
+          // obj.createTime = this.unix(this.value.form.createTime)
           editMenu.req(obj).then(res => {
             console.log(res)
             this.Tip(true)
@@ -167,7 +167,11 @@ export default {
       return new Date(time).getTime()
     },
     addData(obj) {
-      obj.createTime = new Date().getTime()
+      // obj.createTime = new Date().getTime()
+      // const objPackge = { menu: obj }
+      // console.log(objPackge)
+      // delete obj.createTime
+      // delete obj.updateTime
       if (!this.isDepart) {
         addMenu.req(obj).then(res => {
           console.log(res)

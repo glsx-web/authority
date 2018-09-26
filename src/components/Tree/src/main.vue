@@ -38,26 +38,34 @@ export default {
     },
     isDepart: Boolean
   },
+  watch: {
+    defaultCheckedKeys(val) {
+      this.loadingTree()
+    }
+  },
   methods: {
     nodeClick(data, treeData, vue) {
       this.$emit('node-click', data, treeData, vue, this.props)
     },
     check(data, treeData) {
       this.$emit('input', { data, treeData })
+    },
+    loadingTree() {
+      !this.isDepart
+        ? findMenuTree.req().then(res => {
+          this.data = fn(res, '#')
+        }).catch(err => {
+          console.log(err)
+        })
+        : findDepartTree.req().then(res => {
+          this.data = fn(res, '#')
+        }).catch(err => {
+          console.log(err)
+        })
     }
   },
   mounted() {
-    !this.isDepart
-      ? findMenuTree.req().then(res => {
-        this.data = fn(res, '#')
-      }).catch(err => {
-        console.log(err)
-      })
-      : findDepartTree.req().then(res => {
-        this.data = fn(res, '#')
-      }).catch(err => {
-        console.log(err)
-      })
+    this.loadingTree()
   }
 }
 function fn(data, pid) {

@@ -15,9 +15,9 @@
       <gl-form-item label="所属部门：" prop="departName">
         <gl-select placeholder="请选择" v-model="createRuleForm.departName">
           <gl-option style="height:160px">
+            <!-- <gl-input-tree :data=''></gl-input-tree> -->
             <tree ref='tree' :isDepart="isDepart" v-model="createRuleForm.departName" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
           </gl-option>
-          <!-- <gl-option label="运营平台" value="运营平台"></gl-option> -->
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
