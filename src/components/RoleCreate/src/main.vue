@@ -9,7 +9,7 @@
         <gl-input v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
       </gl-form-item>
       <gl-form-item>
-        <span style="position:absolute; right:35px; top:-20px;">{{createRuleForm.description.length}}</span>
+        <span :class="numberErr? 'err': false" style="position:absolute; right:35px; top:-20px;">{{createRuleForm.description.length}}</span>
         <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
       <gl-form-item label="所属部门：" prop="departName">
@@ -49,6 +49,9 @@ export default {
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
       // this.createRuleForm.rights = this.roleMenuTree
+    },
+    'createRuleForm.description.length'(val) {
+      this.numberErr = val > 200 ? 1 : 0
     }
   },
   data() {
@@ -57,6 +60,7 @@ export default {
       show_checkbox: true,
       defaultExpandAll: true,
       departName: [],
+      numberErr: false,
       title: '',
       createRules: {
         roleName: [
@@ -119,4 +123,7 @@ export default {
 }
 </script>
 <style scoped>
+.err {
+    color: red;
+}
 </style>

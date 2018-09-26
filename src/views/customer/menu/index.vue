@@ -28,6 +28,7 @@ export default {
         allNode: null,
         data: [],
         form: {
+          id: 0,
           urlName: '',
           hostName: '',
           openStyle: '新系统',
@@ -42,7 +43,6 @@ export default {
           updateTime: null,
           grade: 0,
           iconUrl: '',
-          id: 0,
           lastOperatorId: 0,
           lastOperatorName: '',
           parentId: 0,
@@ -82,7 +82,7 @@ export default {
               label: '菜单'
             },
             {
-              value: '选项3',
+              value: 2,
               label: '按钮'
             }
           ]
@@ -115,7 +115,10 @@ export default {
       this.menuMG.del = true
       this.menuMG.push = false
       findMenuById.req({ id: data.id }).then(res => {
-        console.log(res)
+        // for (const key in res) {
+        //   console.log(res[key], typeof res[key], key)
+        // }
+        // console.log(this.menuMG.allNode, this.menuMG.node)
         for (const key in this.menuMG.form) {
           if (key === 'isHidden') {
             this.menuMG.form[key] = res[key] === 0
