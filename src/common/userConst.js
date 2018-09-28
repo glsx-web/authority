@@ -10,17 +10,7 @@ const userForm = {
   departName: '',
   roles: [],
   departId: '',
-  roleList: [],
-  options: [
-    {
-      value: '1006',
-      label: '总经办'
-    },
-    {
-      value: '1001',
-      label: '研发中心-网络软件部'
-    }
-  ]
+  roleList: []
 }
 const userDetailColumn = [{
   label: '用户名',
@@ -47,7 +37,8 @@ const userDetailColumn = [{
   label: '状态',
   prop: 'state',
   formatter: (cellValue) => {
-    return cellValue < 1 ? '禁止' : '启动'
+    console.log(cellValue)
+    return cellValue.state < 1 ? '禁用' : '启动'
   }
 }]
 

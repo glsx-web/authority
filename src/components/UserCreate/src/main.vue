@@ -12,8 +12,10 @@
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="密码" prop="password">
-                <gl-input type='password' v-model="userManageForm.password" placeholder='不填为不修改' clearable></gl-input>
+            <gl-form-item label="密码" prop="password" :rules="[
+                { required: !userManageForm.id, message: '请输入用户密码', trigger: 'blur' }
+            ]">
+                <gl-input type='password' v-model="userManageForm.password" :placeholder='placeholder' clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -85,7 +87,8 @@ export default {
   name: 'UserCreate',
   props: {
     dialogFormVisible: Boolean,
-    userManageForm: Object
+    userManageForm: Object,
+    isEdit: Boolean
   },
   components: {
     userForm
@@ -95,6 +98,11 @@ export default {
       this.key = Date.now()
       val && console.log(this.userManageForm)
       !val && this.$refs['userManageForm'].resetFields()
+    },
+    'userManageForm.id'(val) {
+      console.log(val)
+      val && (this.placeholder = '不填为不修改')
+      !val && (this.placeholder = '')
     }
   },
   mounted() {
@@ -104,6 +112,8 @@ export default {
     return {
       key: Date.now(),
       isDepart: true,
+      // userData: {},
+      placeholder: '',
       defaultExpandAll: true,
       val: '',
       tel: '[ 1, /[34578]/, /d/{9}]',
@@ -115,9 +125,9 @@ export default {
         realname: [
           { required: true, message: '请输入用户真实名字', trigger: 'blur' }
         ],
-        password: [
-          { required: false, message: '请输入用户密码', trigger: 'blur' }
-        ],
+        // password: [
+        //   { required: false, message: '请输入用户密码', trigger: 'blur' }
+        // ],
         mobile: [
           { required: true, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
@@ -128,7 +138,10 @@ export default {
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
         ],
-        departId: [
+        departName: [
+          { required: true, message: '请输入所属部门', trigger: 'blur' }
+        ],
+        roles: [
           { required: true, message: '请输入所属部门', trigger: 'blur' }
         ]
       }
@@ -149,11 +162,9 @@ export default {
         })
     },
     clickDepart(data, treeData, vue, props) {
-      console.log(data)
       if (data.parent !== '#' || !data.children) {
         this.userManageForm.departId = data.id
         this.userManageForm.departName = data.text
-        console.log(this.userManageForm.departName)
         this.getDepartName(treeData)
         // this.userManageForm.departName = this.departName.join(' - ')
         this.departName = []
@@ -161,7 +172,6 @@ export default {
     },
     getDepartName(params) {
       this.userManageForm.departName.split().push(params.data.text)
-      console.log(this.userManageForm.departName)
       if (params.data.parent !== '#') {
         this.getDepartName(params.parent)
       } else {
@@ -170,25 +180,16 @@ export default {
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
-        const userData = this.$deep_clone(this.userManageForm)
-        console.log(userData.roleList)
-        // userData.roleList = userData.roleList.map(item => item.id).join(',')
-        // userData.roles = userData.roles.join(',')
-        console.log(this.val)
-        console.log(userData.password)
-        !userData.password && delete userForm.password
-        userData.roles = this.val
-        delete userData.createTime
-        delete userData.updateTime
-        // userData.departId = userData.options.map(item => item.value).join(',')
-        console.log(userData)
-        const isflagId = userData.id
+        this.userData = this.$deep_clone(this.userManageForm)
+        !this.userData.password && delete userForm.password
+        this.userData.roles = this.val
+        delete this.userData.createTime
+        delete this.userData.updateTime
         if (valid) {
-          this.$emit('userFormData', isflagId, userData)
+          this.$emit('userFormData', this.isEdit, this.userData)
         } else {
           return false
         }
-        console.log(userData)
       })
     },
     cancelForm() {
@@ -196,7 +197,6 @@ export default {
     },
     handleCheckedChange(value) {
       if (!value) return
-      console.log(value)
       this.val = value.join(',')
     }
   }

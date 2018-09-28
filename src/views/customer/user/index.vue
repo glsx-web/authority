@@ -10,7 +10,7 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser()">新增用户</gl-button>
         <gl-button size="small" @click="toggleRowSelection">删除选中</gl-button>
-        <user-create :dialogFormVisible="dialogFormVisible" :userManageForm="userManageForm" @userFormData="handleUserFormData"></user-create>
+        <user-create :dialogFormVisible="dialogFormVisible" :userManageForm="userManageForm" :isEdit="isEdit" @userFormData="handleUserFormData"></user-create>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable"></gl-table>
@@ -23,7 +23,6 @@
 </template>
 
 <script>
-var consoleState = '禁用'
 import { UserCreate, UserDetail } from '@/components/index'
 // 接口
 import { findAll, updateUser, getRoleList, batcheDelUser, operatUser, findDepartTree } from '@/api/api'
@@ -40,7 +39,7 @@ export default {
     return {
       userName: '',
       toggle: [],
-      state: '0',
+      isEdit: true,
       departList: [],
       dialogFormVisible: false,
       userManageForm: this.$deep_clone(userForm),
@@ -83,11 +82,16 @@ export default {
           label: '状态',
           prop: 'state',
           formatter: (cellValue) => {
-            return +cellValue.state < 1 ? '禁止' : '启动'
+            return +cellValue.state < 1 ? '禁用' : '启动'
           }
         }, {
           label: '创建时间',
-          prop: 'createTime'
+          prop: 'createTime',
+          formatter: (cellValue) => {
+            if (cellValue.createTime) {
+              return new Date(cellValue.createTime).format('yyyy-MM-dd HH:mm:ss')
+            }
+          }
         }],
         number: {
           label: '序号',
@@ -104,7 +108,7 @@ export default {
             type: 'text',
             callback: (index, rows) => {
               console.log(rows[index])
-              this.createUser(rows[index])
+              this.editUser(rows[index])
             }
           }, {
             label: '详细',
@@ -115,18 +119,17 @@ export default {
           }, {
             label: '禁用',
             type: 'text',
-            formatter(cellValue) {
+            formatter(index, column, rows) {
+              column.label = rows[index].state < 1 ? '启动' : '禁用'
             },
             callback: (index, rows) => {
-              // rows[index].state = '0'
               console.log(rows[index].state)
-              this.$set(rows[index], 'state', '1')
+              if (rows[index].state < 1) {
+                this.$set(rows[index], 'state', '1')
+              } else {
+                this.$set(rows[index], 'state', '0')
+              }
               console.log(rows[index].state)
-              // this.state = '1'
-              // console.log(this.updateState())
-              // this.updateState()
-              // console.log(consoleState)
-              // this.$alert(rows[index])
             }
           }, {
             label: '删除',
@@ -168,21 +171,19 @@ export default {
       findAll.req(params).then(res => {
         this.total = res.total
         this.userData.data = res.list
-        console.log(this.userData.data)
       }).catch(err => {
         console.log(err)
       })
     },
-    // 接口请求-end
     message(message, type) {
-      type && this.$message({
-        showClose: true,
+      type && this.$notify({
         type: type,
-        message: message
+        title: message,
+        duration: 2000
       })
-      !type && this.$message({
-        showClose: true,
-        message: message
+      !type && this.$notify({
+        title: message,
+        duration: 2000
       })
     },
     // 获取所有角色选项
@@ -196,9 +197,12 @@ export default {
       if (params) {
         updateUser.req(params).then(res => {
           console.log(res)
-        }).catch(res => {
-          console.log(res)
-          // this.message(message, 'error')
+          this.message('操作成功', 'success')
+          // this.createOrEditSuccess()
+          this.findUserList()
+        }).catch(message => {
+          console.log(message)
+          this.message(message, 'error')
         })
       }
     },
@@ -212,7 +216,7 @@ export default {
         console.log('无数据！')
       }
     },
-    // 删除、禁用、启用接口
+    // 删除、禁用、启用接口f
     operatUser(params) {
       if (params) {
         operatUser.req(params).then(res => {
@@ -223,55 +227,40 @@ export default {
       }
     },
     // 接受子组件传递的值
-    handleUserFormData(isflag, params) {
-      this.dialogFormVisible = !this.dialogFormVisible
+    handleUserFormData(isEdit, params) {
+      console.log(isEdit)
       this.userManageForm = {}
-      !params && this.message('取消操作')
-      params && !isflag && this.updateUser_Post(params) && this.message('已经添加用户！', 'success')
-      params && isflag && this.updateUser_Post(params) && this.message('已经成功修改数据！', 'success')
+      !params && this.message('取消操作', 'warning')
+      params && this.updateUser_Post(params)
+      this.dialogFormVisible = !this.dialogFormVisible
     },
     // 新增按钮
     createUser(userManageForm) {
-      this.userManageForm = {}
-      if (userManageForm) {
-        userManageForm.password = ''
-        userManageForm.roleList = this.$deep_clone(userForm.roleList)
-        // userManageForm.options = userForm.options
-        userManageForm.state = userManageForm.state + ''
-        userManageForm.isadmin = userManageForm.isadmin + ''
-        this.departList.forEach(item => {
-          if (item.id === userManageForm.departId) {
-            userManageForm.departName = item.text
-          }
-        })
-        Promise.all([findAll, getRoleList]).then((result) => {
-          // error
-          console.log(typeof (userManageForm.roles))
-          if (userManageForm.roles && typeof (userManageForm.roles) === 'string') {
-            console.log(userManageForm.roles)
-            userManageForm.roles = (userManageForm.roles + '').split(',').map(role => +role)
-          } else {
-            userManageForm.roles = []
-          }
-          console.log(userManageForm.roles)
-          // arr.forEach(index => {
-          //   userManageForm.roleList.forEach(item => {
-          //     if (+item.id === +index) {
-          //       item.isSelect = true
-          //       return false
-          //     }
-          //   })
-          // })
-          // userManageForm.roleList = [{ id: 1, roleName: 'aaa' }]
-          this.userManageForm = this.$deep_clone(userManageForm)
-        })
-      } else {
-        this.userManageForm = this.$deep_clone(userForm)
-      }
+      this.userManageForm = this.$deep_clone(userForm)
       this.dialogFormVisible = !this.dialogFormVisible
+      this.isEdit = false
     },
     // 编辑按钮
     editUser(row) {
+      row.password = ''
+      row.roleList = this.$deep_clone(userForm.roleList)
+      row.state = row.state + ''
+      row.isadmin = row.isadmin + ''
+      this.departList.forEach(item => {
+        if (item.id === row.departId) {
+          row.departName = item.text
+        }
+      })
+      Promise.all([findAll, getRoleList]).then((result) => {
+        if (row.roles && typeof (row.roles) === 'string') {
+          row.roles = (row.roles + '').split(',').map(role => +role)
+        } else {
+          row.roles = []
+        }
+        this.userManageForm = this.$deep_clone(row)
+      })
+      this.dialogFormVisible = !this.dialogFormVisible
+      this.isEdit = this.isEdit
     },
     // 获取选中的行
     handleSelectionChange(val, row) {
@@ -290,18 +279,25 @@ export default {
           type: 'warning'
         }).then(() => {
           this.batcheDel(ids.join(','))
+          this.message('删除成功', 'success')
         }).catch(() => {
-          this.message('取消删除')
+          this.message('取消删除', 'info')
         })
       } else {
         this.message('', '操作失败')
       }
     },
-    finduserName() {
-      // this.userName = ''
+    // 提示
+    createOrEditSuccess() {
+      this.dialogFormVisible = !this.dialogFormVisible
+      this.message(!this.isEdit ? '创建角色成功' : '已经成功修改数据', 'success')
       this.findUserList()
     },
-    // 调取接口相关函数
+    // 搜索
+    finduserName() {
+      this.findUserList()
+    },
+    // 调取接口相关函数  分页
     handleSizeChange(val) {
       this.pageSize = val
       this.findUserList()
@@ -310,42 +306,42 @@ export default {
       this.pageNum = val
       this.findUserList()
     },
+    // 单行删除
     confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
         this.operatUser({ id: rows[index].id, state: 2 })
+        this.message('成功删除该用户', 'success')
       }).catch(() => {
-        this.message('取消删除')
+        this.message('取消删除', 'info')
       })
     },
-    userDetailDialogVisible() {
-      this.userDetailVisible = !this.userDetailVisible
-    },
+    // 详细操作
     handleGetUserDetail(index, rows) {
       this.columnParam = userDetailColumn
       this.consoleParam = []
       this.flagRoleOrUser = false
       this.apiParam = rows[index]
-      this.userDetailDialogVisible()
+      console.log(this.apiParam)
+      this.userDetailVisible = !this.userDetailVisible
     },
     handleUserDetailClose() {
-      this.userDetailDialogVisible()
+      this.userDetailVisible = !this.userDetailVisible
       this.apiParam = Number
-    },
-    // 修改启用禁用
-    updateState() {
-      if (this.state === '0') {
-        consoleState = '禁用'
-        return consoleState
-      } else {
-        consoleState = '启用'
-        return consoleState
-      }
     }
+    // 修改启用禁用
+    // updateState() {
+    //   if (this.state === '0') {
+    //     consoleState = '禁用'
+    //     return consoleState
+    //   } else {
+    //     consoleState = '启用'
+    //     return consoleState
+    //   }
+    // }
   }
 }
 </script>
