@@ -21,7 +21,7 @@
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
-        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="roleMenuTree" @input="getMenuOption" style="height:160px"></tree>
+        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="createRuleForm.rights" @input="getMenuOption" style="height:160px" :key="key"></tree>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -37,14 +37,15 @@ export default {
   props: {
     createVisible: Boolean,
     createRuleForm: Object,
-    flagCOrE: [Boolean, Array, Function],
-    roleMenuTree: Array
+    flagCOrE: [Boolean, Array, Function]
+    // roleMenuTree: Array
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
+      val && (this.key = Date.now())
       // 考虑一下放这里还是放下面
-      this.createRuleForm.rights = this.roleMenuTree
+      // this.createRuleForm.rights = this.roleMenuTree
     },
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
@@ -62,6 +63,7 @@ export default {
       departName: [],
       numberErr: false,
       title: '',
+      key1: Date.now(),
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -82,7 +84,8 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+      this.createRuleForm.rights = params.treeData.checkedKeys
+      // this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
     },
     clickDepart(data, treeData, vue, props) {
       if (data.parent !== '#' || !data.children) {
@@ -110,6 +113,11 @@ export default {
       // console.log(editData)
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          // console.log('------------------------------')
+          // for (const key in editData) {
+          //   console.log(editData[key], typeof editData[key], key)
+          // }
+          // console.log('------------------------------')
           this.$emit('createClose', editData)
         } else {
           return false

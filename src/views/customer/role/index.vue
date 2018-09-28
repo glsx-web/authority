@@ -8,14 +8,14 @@
     <hr>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
-      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :flagCOrE="flagCOrE" :roleMenuTree="roleMenuTree" @createClose="handleCreateClose"></role-create>
+      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <transition>
           <gl-table :table="roleData"></gl-table>
         </transition>
         <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </gl-pagination>
-        <role-detail :detailVisible="detailVisible" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
+        <role-detail :detailVisible="detailVisible" :roleMenuTree="roleMenuTree" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
         <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParam="apiParam" :columnParam="columnParam" :consoleParam="consoleParam" :flagRoleOrUser="flagRoleOrUser"></user-detail>
       </div>
     </div>
@@ -49,7 +49,6 @@ export default {
       apiParam: Number,
       flagRoleOrUser: true,
       flagCOrE: Boolean,
-      editOrDetail: Boolean,
       roleMenuTree: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
@@ -107,14 +106,9 @@ export default {
   },
   methods: {
     message(message, type) {
-      type && this.$message({
-        showClose: true,
+      this.$notify({
         type: type,
-        message: message
-      })
-      !type && this.$message({
-        showClose: true,
-        message: message
+        title: message
       })
     },
     confirmDeleteOrNot(index, rows) {
@@ -126,7 +120,7 @@ export default {
         // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
         this.deleteRole(rows[index].id)
       }).catch(() => {
-        this.message('取消删除')
+        this.message('取消删除', 'info')
       })
     },
     // 获取页面参数
@@ -162,14 +156,9 @@ export default {
     },
     // 获得角色的相关权限详细信息，并返回树形数据
     getMenuTree(params) {
-      console.log(typeof (this.roleParam.rights))
       selectMenuTreeRoleId.req({ id: params }).then(res => {
-        res.forEach(item => {
-          this.roleMenuTree.push(item.id)
-          this.roleParam.rights.push(item.id)
-        })
-        this.editOrDetail && this.createDialogVisible()
-        !this.editOrDetail && this.deleteDialogVisible()
+        this.roleMenuTree = res
+        this.deleteDialogVisible()
       }).catch(err => {
         console.log(err)
       })
@@ -230,11 +219,12 @@ export default {
       this.getList()
     },
     handleGetRoleDetail() {
-      this.getMenuTree(this.roleParam.id, this.editOrDetail = false)
+      this.getMenuTree(this.roleParam.id)
     },
     handleDetailClose() {
       this.deleteDialogVisible()
       this.roleParam = roleCreateStructure
+      this.roleMenuTree = []
     },
     handleGetUserDetail(index, rows) {
       this.columnParam = userRoleDetailColumn
@@ -250,15 +240,16 @@ export default {
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? roleCreateStructure : this.roleParam
-      this.flagCOrE && this.createDialogVisible()
-      !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
+      this.createDialogVisible()
+      // this.flagCOrE && this.createDialogVisible()
+      // !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
-      this.roleMenuTree = []
+      this.roleParam = roleCreateStructure
       if (!data) {
         this.createDialogVisible()
-        this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色')
+        this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色', 'info')
         return false
       }
       // 将数据提交给后台，根据返回结果做判断

@@ -26,7 +26,9 @@
           v-model="value.form[i.value]" 
           :disabled="i.disabled">
         </gl-input>
-        <div v-show="err && index === 0" class="err">{{errText}}</div>
+        <div v-show="err && index === 0" class="err">{{textName}}</div>
+        <div v-show="errExist && index === 0" class="err">{{textExist}}</div>
+        <div v-show="errIorder && index === 8" class="err">{{textType}}</div>
       </gl-form-item>
       <gl-form-item>
         <gl-button type="primary" @click="submit">{{value.btnTxt}}</gl-button>
@@ -48,14 +50,18 @@
   </div>
 </template>
 <script type='text/ecmascript-6'>
-import { delDepartment, delMenu, editMenu, addMenu } from '@/api/api'
+import { delDepartment, delMenu, editMenu, addMenu, updateDepartment } from '@/api/api'
 export default {
   name: 'rightForm',
   data() {
     return {
       dialog: false,
       err: false,
-      errText: this.isDepart ? '请填写部门名称' : '请填写列表名称'
+      textName: this.isDepart ? '请填写部门名称' : '请填写列表名称',
+      errExist: false,
+      textExist: '',
+      errIorder: false,
+      textType: '请填写数字'
     }
   },
   props: {
@@ -68,13 +74,29 @@ export default {
   },
   watch: {
     'value.form.urlName'(val) {
-      if (val !== '') this.err = false
+      if (val !== '') this.nameTip()
     },
     'value.form.name'(val) {
-      if (val !== '') this.err = false
+      if (val !== '') this.nameTip()
+    },
+    'value.form.iorder'(val) {
+      if (val && !parseInt(val)) {
+        this.errIorder = true
+      } else {
+        this.errIorder = false
+      }
     }
   },
   methods: {
+    nameTip() {
+      this.err = false
+      this.errExist = false
+      this.textExist = ''
+    },
+    nameExitTip(err) {
+      this.errExist = true
+      this.textExist = err
+    },
     getMenuObj(obj = {}) {
       for (const key in this.value.form) {
         obj[key] = this.value.form[key]
@@ -82,6 +104,19 @@ export default {
       if (!this.isDepart) delete obj.name
       return obj
     },
+    // 接口调用-start
+    addOrEditDepart(params) {
+      // console.log(obj)
+      // const params = this.getDepartParams()
+      console.log(params)
+      updateDepartment.req(params).then(res => {
+        this.Tip(true)
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 接口调用-end
     // 删除
     delData() {
       const obj = this.getMenuObj()
@@ -131,9 +166,8 @@ export default {
       const treeData = this.value.allNode
       if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
         const obj = this.getMenuObj()
-        // obj.updateTime = new Date().getTime()
         obj.isHidden = this.value.form.isHidden === true ? 0 : 1
-        console.log(obj)
+        // console.log(obj)
         // 添加同级
         if (this.value.sublings) {
           if (treeData.parent === '#') {
@@ -148,14 +182,17 @@ export default {
           this.addData(obj)
         // 修改
         } else {
-          // obj.createTime = this.unix(this.value.form.createTime)
-          editMenu.req(obj).then(res => {
-            console.log(res)
-            this.Tip(true)
-          }).catch(err => {
-            console.log(err)
-            this.Tip(false)
-          })
+          if (!this.isDepart) {
+            editMenu.req(obj).then(res => {
+              console.log(res)
+              this.Tip(true)
+            }).catch(err => {
+              console.log(err)
+              this.Tip(false)
+            })
+          } else {
+            this.addOrEditDepart(obj)
+          }
         }
       } else {
         this.err = true
@@ -167,19 +204,15 @@ export default {
       return new Date(time).getTime()
     },
     addData(obj) {
-      // obj.createTime = new Date().getTime()
-      // const objPackge = { menu: obj }
-      // console.log(objPackge)
-      // delete obj.createTime
-      // delete obj.updateTime
       if (!this.isDepart) {
         addMenu.req(obj).then(res => {
-          console.log(res)
           this.Tip(true)
         }).catch(err => {
-          console.log(err)
-          this.Tip(false)
+          this.nameExitTip(err)
+          // this.Tip(false)
         })
+      } else {
+        this.addOrEditDepart(obj)
       }
     },
     Tip(val) {

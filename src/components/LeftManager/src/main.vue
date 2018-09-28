@@ -15,7 +15,7 @@
 </template>
 
 <script type='text/ecmascript-6'>
-const timeTip = '系统自动生成(格式yyyy-MM-dd HH:mm:ss)'
+// const timeTip = '系统自动生成(格式yyyy-MM-dd HH:mm:ss)'
 export default {
   name: 'leftManager',
   data() {

@@ -29,7 +29,12 @@ const roleDataColumn = [{
   }
 }, {
   label: '创建时间',
-  prop: 'createTime'
+  prop: 'createTime',
+  formatter: (cellValue) => {
+    if (cellValue.createTime) {
+      return new Date(cellValue.createTime).format('yyyy-MM-dd HH:mm:ss')
+    }
+  }
 }]
 
 const userRoleDetailColumn = [{
