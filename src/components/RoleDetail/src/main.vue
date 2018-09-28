@@ -8,7 +8,9 @@
       <gl-form-item label="角色描述：">
         <span style="word-wrap: break-word;">{{roleParam.description}}</span>
       </gl-form-item>
-      <gl-form-item label="菜单选项："></gl-form-item>
+      <gl-form-item label="菜单选项：">
+        <tree ref='tree' :propsData="roleMenuTree" :defaultExpandAll="defaultExpandAll" style="height:160px"></tree>
+      </gl-form-item>
     </gl-form>
   </gl-dialog>
 </template>
@@ -18,13 +20,12 @@ export default {
   name: 'RoleDetail',
   props: {
     detailVisible: Boolean,
-    roleParam: Object
-  },
-  mounted() {
-    console.log(this.roleParam)
+    roleParam: Object,
+    roleMenuTree: Array
   },
   data() {
     return {
+      defaultExpandAll: true
     }
   },
   methods: {

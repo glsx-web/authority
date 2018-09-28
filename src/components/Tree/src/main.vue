@@ -1,5 +1,5 @@
 <template>
-  <div class="tree" :style="treeStyle">
+  <div class="tree" :style="treeStyle" :key="key">
      <gl-tree
       ref='tree'
       highlight-current
@@ -28,6 +28,7 @@ export default {
     }
   },
   props: {
+    key: Number,
     showCheckbox: Boolean,
     value: null,
     defaultExpandAll: Boolean,
@@ -36,10 +37,11 @@ export default {
       type: Array,
       default: () => []
     },
-    isDepart: Boolean
+    isDepart: Boolean,
+    propsData: null
   },
   watch: {
-    defaultCheckedKeys(val) {
+    propsData(val) {
       this.loadingTree()
     }
   },
@@ -51,8 +53,16 @@ export default {
       this.$emit('input', { data, treeData })
     },
     loadingTree() {
+      !this.propsData && this.getData()
+      this.propsData && (this.data = fn(this.propsData, '#'))
+      // console.log(this.propsData)
+      // console.log(this.data)
+    },
+    getData() {
+      console.log(this.defaultCheckedKeys)
       !this.isDepart
         ? findMenuTree.req().then(res => {
+          // console.log(res)
           this.data = fn(res, '#')
         }).catch(err => {
           console.log(err)
@@ -75,6 +85,10 @@ function fn(data, pid) {
     if (data[i].parent == pid) {
       result.push(data[i])
       temp = fn(data, data[i].id)
+      // if (data[i].id === 1013 || data[i].id === 1014) {
+      //   console.log(`i = ${i}`)
+      //   console.log(`pid = ${pid}`)
+      // }
       if (temp.length > 0) {
         data[i].children = temp
       }
