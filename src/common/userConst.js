@@ -8,7 +8,7 @@ const userForm = {
   state: '',
   isadmin: '',
   departName: '',
-  roles: ['1', '2'],
+  roles: [],
   departId: '',
   roleList: [],
   options: [

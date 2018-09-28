@@ -1,5 +1,5 @@
 <template>
-    <gl-dialog title="收货地址" :visible.sync="dialogFormVisible" :before-close="cancelForm">
+    <gl-dialog title="收货地址" :visible.sync="dialogFormVisible" :before-close="cancelForm" >
         <gl-form :model="userManageForm" :rules="rules" ref="userManageForm" label-width="100px">
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
@@ -13,7 +13,7 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="密码" prop="password">
-                <gl-input type='password' v-model="userManageForm.password" clearable></gl-input>
+                <gl-input type='password' v-model="userManageForm.password" placeholder='不填为不修改' clearable></gl-input>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -34,8 +34,8 @@
           <gl-col :span="12">
             <gl-form-item label="状态" prop="state">
                 <gl-select v-model="userManageForm.state" placeholder="启用">
-                <gl-option label="启用" value='0'></gl-option>
-                <gl-option label="禁用" value='1'></gl-option>
+                <gl-option label="禁用" value='0'></gl-option>
+                <gl-option label="启用" value='1'></gl-option>
                 </gl-select>               
             </gl-form-item>
           </gl-col>
@@ -49,24 +49,24 @@
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-              <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
+              <gl-select v-model="userManageForm.departName" placeholder="请选择">
                 <gl-option style="height:160px">
                   <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
                 </gl-option>
-              </gl-select> -->
-            <gl-select v-model="userManageForm.departId" placeholder="请选择">
+              </gl-select>
+            <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
               <gl-option
-                        v-for="item in userManageForm.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                        </gl-option>
-            </gl-select>
+                  v-for="item in userManageForm.options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                  </gl-option>
+            </gl-select> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
-            <gl-form-item  label="角色选项" prop="roles">
-                    <gl-checkbox-group class="height" v-model="list" @change="handleCheckedChange">
+            <gl-form-item  label="角色选项" prop="roles" :key="key">
+                    <gl-checkbox-group class="height" v-model="userManageForm.roles" @change="handleCheckedChange">
                       <gl-checkbox v-for="item in userManageForm.roleList" :key="item.id"  :label='item.id'>{{item.roleName}}</gl-checkbox>
                     </gl-checkbox-group>
             </gl-form-item>
@@ -92,6 +92,7 @@ export default {
   },
   watch: {
     dialogFormVisible(val) {
+      this.key = Date.now()
       val && console.log(this.userManageForm)
       !val && this.$refs['userManageForm'].resetFields()
     }
@@ -101,9 +102,10 @@ export default {
   },
   data() {
     return {
+      key: Date.now(),
       isDepart: true,
       defaultExpandAll: true,
-      list: [],
+      val: '',
       tel: '[ 1, /[34578]/, /d/{9}]',
       rules: {
         username: [
@@ -114,7 +116,7 @@ export default {
           { required: true, message: '请输入用户真实名字', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入用户密码', trigger: 'blur' }
+          { required: false, message: '请输入用户密码', trigger: 'blur' }
         ],
         mobile: [
           { required: true, message: '请输入正确的手机号码', trigger: 'blur' }
@@ -126,7 +128,7 @@ export default {
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
         ],
-        departName: [
+        departId: [
           { required: true, message: '请输入所属部门', trigger: 'blur' }
         ]
       }
@@ -147,12 +149,23 @@ export default {
         })
     },
     clickDepart(data, treeData, vue, props) {
+      console.log(data)
       if (data.parent !== '#' || !data.children) {
-        this.createRuleForm.departId = data.id
-        this.createRuleForm.departPath = data.type
+        this.userManageForm.departId = data.id
+        this.userManageForm.departName = data.text
+        console.log(this.userManageForm.departName)
         this.getDepartName(treeData)
-        this.createRuleForm.departName = this.departName.join(' - ')
+        // this.userManageForm.departName = this.departName.join(' - ')
         this.departName = []
+      }
+    },
+    getDepartName(params) {
+      this.userManageForm.departName.split().push(params.data.text)
+      console.log(this.userManageForm.departName)
+      if (params.data.parent !== '#') {
+        this.getDepartName(params.parent)
+      } else {
+        return true
       }
     },
     submitForm(formName) {
@@ -160,10 +173,15 @@ export default {
         const userData = this.$deep_clone(this.userManageForm)
         console.log(userData.roleList)
         // userData.roleList = userData.roleList.map(item => item.id).join(',')
-        userData.roles = userData.roles.join(',')
-        // userData.roles = this.handleCheckedChange()
+        // userData.roles = userData.roles.join(',')
+        console.log(this.val)
+        console.log(userData.password)
+        !userData.password && delete userForm.password
+        userData.roles = this.val
+        delete userData.createTime
+        delete userData.updateTime
         // userData.departId = userData.options.map(item => item.value).join(',')
-        console.log(userData.roles)
+        console.log(userData)
         const isflagId = userData.id
         if (valid) {
           this.$emit('userFormData', isflagId, userData)
@@ -177,8 +195,9 @@ export default {
       this.$emit('userFormData')
     },
     handleCheckedChange(value) {
-      console.log(value.join(','))
-      return value.join(',')
+      if (!value) return
+      console.log(value)
+      this.val = value.join(',')
     }
   }
 }

@@ -26,7 +26,7 @@
 var consoleState = '禁用'
 import { UserCreate, UserDetail } from '@/components/index'
 // 接口
-import { findAll, updateUser, getRoleList, batcheDelUser, operatUser } from '@/api/api'
+import { findAll, updateUser, getRoleList, batcheDelUser, operatUser, findDepartTree } from '@/api/api'
 import { userForm, userDetailColumn } from '@/common/userConst'
 export default {
   name: 'user',
@@ -41,6 +41,7 @@ export default {
       userName: '',
       toggle: [],
       state: '0',
+      departList: [],
       dialogFormVisible: false,
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
@@ -71,7 +72,10 @@ export default {
           prop: 'realname'
         }, {
           label: '管理员',
-          prop: 'isadmin'
+          prop: 'isadmin',
+          formatter: (cellValue) => {
+            return +cellValue.isadmin < 1 ? '否' : '是'
+          }
         }, {
           label: '手机号码',
           prop: 'mobile'
@@ -99,6 +103,7 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
+              console.log(rows[index])
               this.createUser(rows[index])
             }
           }, {
@@ -108,7 +113,7 @@ export default {
               this.handleGetUserDetail(index, rows)
             }
           }, {
-            label: consoleState,
+            label: '禁用',
             type: 'text',
             formatter(cellValue) {
             },
@@ -139,6 +144,9 @@ export default {
   mounted() {
     this.findUserList()
     this.getRoleOptions()
+    findDepartTree.req().then(res => {
+      this.departList = res
+    })
   },
   watch: {
     userName(val) {
@@ -188,9 +196,10 @@ export default {
       if (params) {
         updateUser.req(params).then(res => {
           console.log(res)
+        }).catch(res => {
+          console.log(res)
+          // this.message(message, 'error')
         })
-      } else {
-        console.log('no data!')
       }
     },
     // 删除用户接口
@@ -218,32 +227,51 @@ export default {
       this.dialogFormVisible = !this.dialogFormVisible
       this.userManageForm = {}
       !params && this.message('取消操作')
-      params && !isflag && this.updateUser_Post(params)
-      params && isflag && this.message('已经成功修改数据！', 'success')
+      params && !isflag && this.updateUser_Post(params) && this.message('已经添加用户！', 'success')
+      params && isflag && this.updateUser_Post(params) && this.message('已经成功修改数据！', 'success')
     },
     // 新增按钮
     createUser(userManageForm) {
+      this.userManageForm = {}
       if (userManageForm) {
+        userManageForm.password = ''
         userManageForm.roleList = this.$deep_clone(userForm.roleList)
-        userManageForm.options = userForm.options
+        // userManageForm.options = userForm.options
         userManageForm.state = userManageForm.state + ''
         userManageForm.isadmin = userManageForm.isadmin + ''
-        Promise.all([findAll, updateUser]).then((result) => {
-          const arr = userManageForm.roles.split(',')
-          arr.forEach(index => {
-            userManageForm.roleList.forEach(item => {
-              if (+item.id === +index) {
-                item.isSelect = true
-                return false
-              }
-            })
-          })
+        this.departList.forEach(item => {
+          if (item.id === userManageForm.departId) {
+            userManageForm.departName = item.text
+          }
+        })
+        Promise.all([findAll, getRoleList]).then((result) => {
+          // error
+          console.log(typeof (userManageForm.roles))
+          if (userManageForm.roles && typeof (userManageForm.roles) === 'string') {
+            console.log(userManageForm.roles)
+            userManageForm.roles = (userManageForm.roles + '').split(',').map(role => +role)
+          } else {
+            userManageForm.roles = []
+          }
+          console.log(userManageForm.roles)
+          // arr.forEach(index => {
+          //   userManageForm.roleList.forEach(item => {
+          //     if (+item.id === +index) {
+          //       item.isSelect = true
+          //       return false
+          //     }
+          //   })
+          // })
+          // userManageForm.roleList = [{ id: 1, roleName: 'aaa' }]
           this.userManageForm = this.$deep_clone(userManageForm)
         })
       } else {
         this.userManageForm = this.$deep_clone(userForm)
       }
       this.dialogFormVisible = !this.dialogFormVisible
+    },
+    // 编辑按钮
+    editUser(row) {
     },
     // 获取选中的行
     handleSelectionChange(val, row) {
@@ -256,7 +284,15 @@ export default {
         this.toggle.forEach(row => {
           ids.push(row.id + '')
         })
-        this.batcheDel(ids.join(','))
+        this.$confirm('确定要删除这条数据？', '', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.batcheDel(ids.join(','))
+        }).catch(() => {
+          this.message('取消删除')
+        })
       } else {
         this.message('', '操作失败')
       }
@@ -275,10 +311,16 @@ export default {
       this.findUserList()
     },
     confirmDeleteOrNot(index, rows) {
-      this.operatUser({ id: rows[index].id, state: 2 })
-    },
-    changeShowNumber(command) {
-      this.showNumber = command
+      this.$confirm('确定要删除这条数据？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
+        this.operatUser({ id: rows[index].id, state: 2 })
+      }).catch(() => {
+        this.message('取消删除')
+      })
     },
     userDetailDialogVisible() {
       this.userDetailVisible = !this.userDetailVisible
