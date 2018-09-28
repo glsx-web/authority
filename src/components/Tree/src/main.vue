@@ -59,7 +59,7 @@ export default {
       // console.log(this.data)
     },
     getData() {
-      console.log(this.defaultCheckedKeys)
+      // console.log(this.defaultCheckedKeys)
       !this.isDepart
         ? findMenuTree.req().then(res => {
           // console.log(res)
