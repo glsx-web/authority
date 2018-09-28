@@ -7,9 +7,9 @@ const roleCreateStructure = {
   departId: '',
   departName: '',
   departPath: '',
-  rights: Array,
-  state: 1,
-  createTime: ''
+  rights: [],
+  state: 1
+  // createTime: ''
 }
 
 const roleDataColumn = [{

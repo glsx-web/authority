@@ -20,6 +20,9 @@ export default {
     detailVisible: Boolean,
     roleParam: Object
   },
+  mounted() {
+    console.log(this.roleParam)
+  },
   data() {
     return {
     }

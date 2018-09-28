@@ -29,7 +29,7 @@ export default {
         data: [],
         form: {
           id: 0,
-          urlName: '',
+          urlName: 'ttt',
           hostName: '',
           openStyle: '新系统',
           menuType: '',
@@ -39,8 +39,8 @@ export default {
           baseUrl: '',
           iorder: null,
           isHidden: 0,
-          createTime: null,
-          updateTime: null,
+          // createTime: null,
+          // updateTime: null,
           grade: 0,
           iconUrl: '',
           lastOperatorId: 0,
@@ -119,11 +119,14 @@ export default {
         //   console.log(res[key], typeof res[key], key)
         // }
         // console.log(this.menuMG.allNode, this.menuMG.node)
+        console.log(res)
         for (const key in this.menuMG.form) {
           if (key === 'isHidden') {
             this.menuMG.form[key] = res[key] === 0
           } else if (key === 'createTime' || key === 'updateTime') {
-            this.menuMG.form[key] = new Date(res[key]).format('yyyy-MM-dd HH:mm:ss')
+            console.log(res[key])
+            this.menuMG.form[key] = res[key]
+            // this.menuMG.form[key] = new Date(res[key]).format('yyyy-MM-dd HH:mm:ss')
           } else if (key === 'name') {
             this.menuMG.form[key] = node.level === 1 ? '顶级菜单' : node.parent.data[props.label]
           } else {
