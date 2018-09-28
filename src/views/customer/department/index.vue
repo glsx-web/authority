@@ -59,8 +59,10 @@ export default {
       this.department.push = false
       this.department.form.upDepartment = node.level === 1 ? '广联赛讯' : node.parent.data[props.label]
       getDepartTreeNode.req({ id: data.id }).then(res => {
+        this.department.form.id = res.id
         this.department.form.name = res.name
         this.department.form.iorder = res.iorder
+        this.department.form.parentId = res.parentId
       }).catch(err => {
         console.log(err)
       })

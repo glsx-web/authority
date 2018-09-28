@@ -106,14 +106,9 @@ export default {
   },
   methods: {
     message(message, type) {
-      type && this.$message({
-        showClose: true,
+      this.$notify({
         type: type,
-        message: message
-      })
-      !type && this.$message({
-        showClose: true,
-        message: message
+        title: message
       })
     },
     confirmDeleteOrNot(index, rows) {
@@ -125,7 +120,7 @@ export default {
         // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
         this.deleteRole(rows[index].id)
       }).catch(() => {
-        this.message('取消删除')
+        this.message('取消删除', 'info')
       })
     },
     // 获取页面参数
@@ -162,21 +157,7 @@ export default {
     // 获得角色的相关权限详细信息，并返回树形数据
     getMenuTree(params) {
       selectMenuTreeRoleId.req({ id: params }).then(res => {
-        // console.log(res)
-        // let count = 0
-        // res.forEach(item => {
-        //   this.roleMenuTree.push(item.id)
-        // count = count + 1
-        // })
-        // console.log(`count = ${count}`)
-        // console.log(this.roleMenuTree)
-        // console.log(this.roleParam.rights)
         this.roleMenuTree = res
-        // console.log(this.roleMenuTree)
-        // console.log('------------------------')
-        // console.log(this.roleMenuTree instanceof Array)
-        // console.log(this.roleParam.rights instanceof Array)
-        // this.editOrDetail && this.createDialogVisible()
         this.deleteDialogVisible()
       }).catch(err => {
         console.log(err)
@@ -268,7 +249,7 @@ export default {
       this.roleParam = roleCreateStructure
       if (!data) {
         this.createDialogVisible()
-        this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色')
+        this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色', 'info')
         return false
       }
       // 将数据提交给后台，根据返回结果做判断
