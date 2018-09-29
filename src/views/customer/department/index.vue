@@ -1,6 +1,6 @@
 <!-- departmentManagement -->
 <template>
-    <gl-row :gutter="50">
+  <gl-row :gutter="50" :style="{ height: height }" class="mentBox">
     <gl-col :span='8'>
       <left-manager :title='"部门列表"' isDepart v-model="department" :nodeClick='nodeClick'></left-manager>
     </gl-col>
@@ -17,6 +17,7 @@ export default {
   name: 'department',
   data() {
     return {
+      height: 0,
       department: {
         sublings: false,
         children: false,
@@ -44,6 +45,9 @@ export default {
   components: {
     LeftManager,
     RightForm
+  },
+  mounted() {
+    this.height = window.innerHeight + 'px'
   },
   methods: {
     nodeClick(data, node, that, props) {

@@ -44,6 +44,7 @@ export default {
   },
   watch: {
     keyFresh(val) {
+      // console.log(val)
       // console.log(`keyFresh----------------------${this.keyFresh}`)
       // console.log(this.defaultCheckedKeys)
       val && (this.checkStrictly = val) && this.loadingTree()
@@ -58,12 +59,12 @@ export default {
     },
     check(data, treeData) {
       this.$emit('input', { data, treeData })
+      this.checkStrictly = false
     },
     loadingTree() {
       // console.log(this.checkStrictly)
       !this.propsData && this.getData()
       this.propsData && (this.data = fn(this.propsData, '#'))
-      this.checkStrictly = false
       // console.log(this.checkStrictly)
       // console.log(this.propsData)
       // console.log(this.data)

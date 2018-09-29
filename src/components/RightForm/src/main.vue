@@ -102,6 +102,8 @@ export default {
         obj[key] = this.value.form[key]
       }
       if (!this.isDepart) delete obj.name
+      delete obj.createTime
+      delete obj.updateTime
       return obj
     },
     // 接口调用-start
