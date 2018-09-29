@@ -1,5 +1,5 @@
 <template>
-  <div class="tree" :style="treeStyle" :key="key">
+  <div class="tree" :style="treeStyle" >
      <gl-tree
       ref='tree'
       highlight-current
@@ -28,7 +28,7 @@ export default {
     }
   },
   props: {
-    key: Number,
+    keyFresh: Boolean,
     showCheckbox: Boolean,
     value: null,
     defaultExpandAll: Boolean,
@@ -41,6 +41,11 @@ export default {
     propsData: null
   },
   watch: {
+    keyFresh(val) {
+      // console.log(`keyFresh----------------------${this.keyFresh}`)
+      // console.log(this.defaultCheckedKeys)
+      val && this.loadingTree()
+    },
     propsData(val) {
       this.loadingTree()
     }
