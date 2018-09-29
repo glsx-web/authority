@@ -120,7 +120,7 @@ export default {
       placeholder: '',
       defaultExpandAll: true,
       val: '',
-      tel: "/\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/,'.', /\d{1,3}/",
+      tel: [/\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/,'.', /\d{1,3}/],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
