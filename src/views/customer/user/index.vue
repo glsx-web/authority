@@ -42,6 +42,7 @@ export default {
       isEdit: true,
       departList: [],
       dialogFormVisible: false,
+      // msg: '',
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
       userDetailTitle: '用户详情',
@@ -101,7 +102,7 @@ export default {
           }
         },
         console: {
-          // show: true,
+          show: true,
           label: '操作',
           prop: 'operation',
           button: [{
@@ -120,18 +121,26 @@ export default {
           }, {
             label: '禁用',
             type: 'text',
-            formatter(index, column, rows) {
-              console.log(rows[index])
-              // column.label = rows[index].state < 1 ? '启动' : '禁用'
+            formatter(row) {
+              return row.state < 1 ? '启动' : '禁用'
             },
             callback: (index, rows) => {
-              console.log(rows[index].state)
-              if (rows[index].state < 1) {
-                this.$set(rows[index], 'state', '1')
-              } else {
-                this.$set(rows[index], 'state', '0')
-              }
-              console.log(rows[index].state)
+              this.$confirm('确定要修改这条数据？', '', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                if (rows[index].state < 1) {
+                  this.$set(rows[index], 'state', '1')
+                  this.operatUser({ id: rows[index].id, state: 1 })
+                } else {
+                  this.$set(rows[index], 'state', '0')
+                  this.operatUser({ id: rows[index].id, state: 0 })
+                }
+                this.message('修改成功', 'success')
+              }).catch(() => {
+                this.message('修改失败', 'info')
+              })
             }
           }, {
             label: '删除',
@@ -202,9 +211,11 @@ export default {
           console.log(res)
           this.message('操作成功', 'success')
           // this.createOrEditSuccess()
+          this.dialogFormVisible = !this.dialogFormVisible
           this.findUserList()
         }).catch(message => {
           console.log(message)
+          // this.msg = message
           this.message(message, 'error')
         })
       }
@@ -231,11 +242,19 @@ export default {
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
-      this.userManageForm = {}
-      !params && this.message('取消操作', 'warning')
-      console.log(this.userManageForm.roles)
-      params && this.updateUser_Post(params)
-      this.dialogFormVisible = !this.dialogFormVisible
+      console.log(params)
+      // this.userManageForm = {}
+      if (params) {
+        this.updateUser_Post(params)
+      } else {
+        this.dialogFormVisible = !this.dialogFormVisible
+        this.message('取消操作', 'info')
+      }
+      // !params && this.message('取消操作', 'info')
+      // params && this.updateUser_Post(params)
+      // if (!params) {
+      //   this.dialogFormVisible = !this.dialogFormVisible
+      // }
     },
     // 新增按钮
     createUser(userManageForm) {
@@ -245,6 +264,7 @@ export default {
     },
     // 编辑按钮
     editUser(row) {
+      console.log(row)
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
       row.state = row.state + ''
@@ -259,8 +279,8 @@ export default {
         if (row.roles && typeof (row.roles) === 'string') {
           row.roles = (row.roles + '').split(',').map(role => +role)
         } else {
-          console.log(12312)
-          row.roles = []
+          (typeof (row.roles) === 'object') && row.roles
+          !(typeof (row.roles) === 'object') && []
         }
         this.userManageForm = this.$deep_clone(row)
       })
@@ -288,9 +308,10 @@ export default {
         }).catch(() => {
           this.message('取消删除', 'info')
         })
-      } else {
-        this.message('', '操作失败')
       }
+      // else {
+      //   this.message('', '操作失败')
+      // }
     },
     // 提示
     createOrEditSuccess() {

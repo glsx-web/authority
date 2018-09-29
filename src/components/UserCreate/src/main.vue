@@ -4,6 +4,7 @@
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
                 <gl-input v-model="userManageForm.username" clearable></gl-input>
+                <!-- <div v-show="!isEdit" class="err">{{msg}}</div> -->
             </gl-form-item>
           </el-col>
           <gl-col :span="12">
@@ -20,12 +21,14 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="手机号码" prop="mobile">
-                <gl-input v-model="userManageForm.mobile" placeholder='请输入手机号码' :prop="/1[358]\d{9}/" clearable></gl-input>
+              <gl-masked v-model="userManageForm.mobile" :mask="[ 1, /[34578]/, /\d/, /\d/, /\d/,/\d/, /\d/, /\d/,/\d/, /\d/, /\d/]" placeholder='请输入手机号码' clearable></gl-masked>
+                <!-- <gl-input v-model="userManageForm.mobile" placeholder='请输入手机号码' :prop="tel" clearable></gl-input> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="注册IP" prop="joinip">
-                <gl-input v-model="userManageForm.joinip" clearable></gl-input>
+              <gl-masked v-model="userManageForm.joinip" :mask="tel" placeholder='请输入手机号码' clearable></gl-masked>
+                <!-- <gl-input v-model="userManageForm.joinip" clearable></gl-input> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -89,6 +92,7 @@ export default {
     dialogFormVisible: Boolean,
     userManageForm: Object,
     isEdit: Boolean
+    // msg: String
   },
   components: {
     userForm
@@ -116,7 +120,7 @@ export default {
       placeholder: '',
       defaultExpandAll: true,
       val: '',
-      tel: '[ 1, /[34578]/, /d/{9}]',
+      tel: [/\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/,'.', /\d{1,3}/],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -178,6 +182,14 @@ export default {
         return true
       }
     },
+    // isPoneAvailable(pone) {
+    //   this.tel = '/^[1][3,4,5,7,8][0-9]{9}$/'
+    //   if (!this.tel.test(pone)) {
+    //     return false
+    //   } else {
+    //     return true
+    //   }
+    // },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         this.userData = this.$deep_clone(this.userManageForm)
