@@ -21,7 +21,7 @@
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
-        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="createRuleForm.rights" @input="getMenuOption" style="height:160px" :key="key"></tree>
+        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="createRuleForm.rights" @input="getMenuOption" style="height:160px" :keyFresh="keyFresh"></tree>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -32,7 +32,6 @@
 </template>
 
 <script>
-// import { roleCreateStructure } from '@/common/commonConst'
 export default {
   name: 'RoleCreate',
   props: {
@@ -43,7 +42,7 @@ export default {
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
-      val && (this.key = Date.now())
+      this.keyFresh = val
     },
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
@@ -60,7 +59,7 @@ export default {
       departName: [],
       numberErr: false,
       title: '',
-      key1: Date.now(),
+      keyFresh: Boolean,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }

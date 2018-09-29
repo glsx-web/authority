@@ -341,14 +341,14 @@ export default {
       this.consoleParam = []
       this.flagRoleOrUser = false
       this.apiParam = this.$deep_clone(rows[index])
-      console.log(rows[index])
+      // console.log(rows[index])
       this.apiParam.roles = this.findRolesName(this.apiParam.roles)
-      console.log(this.apiParam)
+      // console.log(this.apiParam)
       this.userDetailVisible = !this.userDetailVisible
     },
     handleUserDetailClose() {
       this.userDetailVisible = !this.userDetailVisible
-      this.apiParam = Number
+      this.apiParam = Object
     }
     // 修改启用禁用
     // updateState() {
