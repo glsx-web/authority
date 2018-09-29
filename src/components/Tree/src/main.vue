@@ -9,6 +9,7 @@
       :props='props'
       :default-expand-all='defaultExpandAll'
       :default-checked-keys="defaultCheckedKeys"
+      :check-strictly="checkStrictly"
       @check='check'
       @node-click='nodeClick'
     ></gl-tree>
@@ -22,6 +23,7 @@ export default {
   data() {
     return {
       data: null,
+      checkStrictly: true,
       props: {
         label: 'text'
       }
@@ -44,7 +46,7 @@ export default {
     keyFresh(val) {
       // console.log(`keyFresh----------------------${this.keyFresh}`)
       // console.log(this.defaultCheckedKeys)
-      val && this.loadingTree()
+      val && (this.checkStrictly = val) && this.loadingTree()
     },
     propsData(val) {
       this.loadingTree()
@@ -58,8 +60,11 @@ export default {
       this.$emit('input', { data, treeData })
     },
     loadingTree() {
+      // console.log(this.checkStrictly)
       !this.propsData && this.getData()
       this.propsData && (this.data = fn(this.propsData, '#'))
+      this.checkStrictly = false
+      // console.log(this.checkStrictly)
       // console.log(this.propsData)
       // console.log(this.data)
     },

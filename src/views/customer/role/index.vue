@@ -63,6 +63,7 @@ export default {
         data: [],
         column: roleDataColumn,
         console: {
+          show: true,
           label: '操作',
           prop: 'roleOptions',
           button: [{
@@ -166,30 +167,40 @@ export default {
     // 添加角色
     addRole(params) {
       console.log(params)
-      this.createOrEditSuccess()
+      // this.createOrEditSuccess()
       // editData = { roleName: editData.roleName }
       // const aa = { role: editData }
       // const aa = JSON.stringify(editData)
       // console.log(aa)
       // console.log(editData)
       // const cc = { roleName: 'ggg' }
-      // saveRoleList.req(params).then((data) => {
-      //   console.log(data)
-      //   this.createOrEditSuccess()
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+      // ----------------------
+      // delete params.roleName
+      delete params.description
+      delete params.departId
+      delete params.departName
+      delete params.departPath
+      delete params.rights
+      delete params.state
+      const paramsJS = JSON.stringify(params)
+      console.log(paramsJS)
+      saveRoleList.req(paramsJS).then((data) => {
+        console.log(data)
+        this.createOrEditSuccess()
+      }).catch(err => {
+        console.log(err)
+      })
     },
     // 编辑角色
     updateRoleInfo(params) {
       console.log(params)
       this.createOrEditSuccess()
-      // updateRole.req(params).then((data) => {
-      //   console.log(data)
-      //   this.createOrEditSuccess()
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+      updateRole.req(params).then((data) => {
+        console.log(data)
+        this.createOrEditSuccess()
+      }).catch(err => {
+        console.log(err)
+      })
     },
     // 接口请求-end---------------------------------------
     createDialogVisible() {

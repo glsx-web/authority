@@ -101,6 +101,7 @@ export default {
           }
         },
         console: {
+          // show: true,
           label: '操作',
           prop: 'operation',
           button: [{
@@ -120,7 +121,8 @@ export default {
             label: '禁用',
             type: 'text',
             formatter(index, column, rows) {
-              column.label = rows[index].state < 1 ? '启动' : '禁用'
+              console.log(rows[index])
+              // column.label = rows[index].state < 1 ? '启动' : '禁用'
             },
             callback: (index, rows) => {
               console.log(rows[index].state)
