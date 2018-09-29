@@ -11,6 +11,9 @@
       :default-checked-keys="defaultCheckedKeys"
       @check='check'
       @node-click='nodeClick'
+      v-loading="loading" 
+      gl-loading-text="拼命加载中"
+      gl-loading-icon="el-icon-loading"
     ></gl-tree>
   </div>
 </template>
@@ -22,13 +25,14 @@ export default {
   data() {
     return {
       data: null,
+      loading: true,
       props: {
         label: 'text'
       }
     }
   },
   props: {
-    keyFresh: Boolean,
+    keyFresh: [Boolean, Array, Function],
     showCheckbox: Boolean,
     value: null,
     defaultExpandAll: Boolean,
@@ -69,11 +73,13 @@ export default {
         ? findMenuTree.req().then(res => {
           // console.log(res)
           this.data = fn(res, '#')
+          this.loading = false
         }).catch(err => {
           console.log(err)
         })
         : findDepartTree.req().then(res => {
           this.data = fn(res, '#')
+          this.loading = false
         }).catch(err => {
           console.log(err)
         })

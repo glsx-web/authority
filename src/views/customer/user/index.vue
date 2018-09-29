@@ -42,6 +42,7 @@ export default {
       isEdit: true,
       departList: [],
       dialogFormVisible: false,
+      // msg: '',
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
       userDetailTitle: '用户详情',
@@ -101,6 +102,7 @@ export default {
           }
         },
         console: {
+          show: true,
           label: '操作',
           prop: 'operation',
           button: [{
@@ -119,8 +121,8 @@ export default {
           }, {
             label: '禁用',
             type: 'text',
-            formatter(index, column, rows) {
-              column.label = rows[index].state < 1 ? '启动' : '禁用'
+            formatter(row) {
+              return row.state < 1 ? '启动' : '禁用'
             },
             callback: (index, rows) => {
               this.$confirm('确定要修改这条数据？', '', {
@@ -209,9 +211,11 @@ export default {
           console.log(res)
           this.message('操作成功', 'success')
           // this.createOrEditSuccess()
+          this.dialogFormVisible = !this.dialogFormVisible
           this.findUserList()
         }).catch(message => {
           console.log(message)
+          // this.msg = message
           this.message(message, 'error')
         })
       }
@@ -239,10 +243,18 @@ export default {
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
       console.log(params)
-      this.userManageForm = {}
-      !params && this.message('取消操作', 'info')
-      params && this.updateUser_Post(params)
-      this.dialogFormVisible = !this.dialogFormVisible
+      // this.userManageForm = {}
+      if (params) {
+        this.updateUser_Post(params)
+      } else {
+        this.dialogFormVisible = !this.dialogFormVisible
+        this.message('取消操作', 'info')
+      }
+      // !params && this.message('取消操作', 'info')
+      // params && this.updateUser_Post(params)
+      // if (!params) {
+      //   this.dialogFormVisible = !this.dialogFormVisible
+      // }
     },
     // 新增按钮
     createUser(userManageForm) {

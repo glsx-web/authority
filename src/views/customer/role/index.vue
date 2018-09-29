@@ -63,6 +63,7 @@ export default {
         data: [],
         column: roleDataColumn,
         console: {
+          show: true,
           label: '操作',
           prop: 'roleOptions',
           button: [{
