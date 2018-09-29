@@ -43,6 +43,7 @@ export default {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
       this.keyFresh = val
+      // console.log(this.keyFresh)
     },
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
