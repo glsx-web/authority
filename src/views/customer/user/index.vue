@@ -123,13 +123,22 @@ export default {
               column.label = rows[index].state < 1 ? '启动' : '禁用'
             },
             callback: (index, rows) => {
-              console.log(rows[index].state)
-              if (rows[index].state < 1) {
-                this.$set(rows[index], 'state', '1')
-              } else {
-                this.$set(rows[index], 'state', '0')
-              }
-              console.log(rows[index].state)
+              this.$confirm('确定要修改这条数据？', '', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                if (rows[index].state < 1) {
+                  this.$set(rows[index], 'state', '1')
+                  this.operatUser({ id: rows[index].id, state: 1 })
+                } else {
+                  this.$set(rows[index], 'state', '0')
+                  this.operatUser({ id: rows[index].id, state: 0 })
+                }
+                this.message('修改成功', 'success')
+              }).catch(() => {
+                this.message('修改失败', 'info')
+              })
             }
           }, {
             label: '删除',
@@ -228,9 +237,9 @@ export default {
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
-      console.log(isEdit)
+      console.log(params)
       this.userManageForm = {}
-      !params && this.message('取消操作', 'warning')
+      !params && this.message('取消操作', 'info')
       params && this.updateUser_Post(params)
       this.dialogFormVisible = !this.dialogFormVisible
     },
@@ -242,6 +251,7 @@ export default {
     },
     // 编辑按钮
     editUser(row) {
+      console.log(row)
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
       row.state = row.state + ''
@@ -255,7 +265,8 @@ export default {
         if (row.roles && typeof (row.roles) === 'string') {
           row.roles = (row.roles + '').split(',').map(role => +role)
         } else {
-          row.roles = []
+          (typeof (row.roles) === 'object') && row.roles
+          !(typeof (row.roles) === 'object') && []
         }
         this.userManageForm = this.$deep_clone(row)
       })
@@ -283,9 +294,10 @@ export default {
         }).catch(() => {
           this.message('取消删除', 'info')
         })
-      } else {
-        this.message('', '操作失败')
       }
+      // else {
+      //   this.message('', '操作失败')
+      // }
     },
     // 提示
     createOrEditSuccess() {
