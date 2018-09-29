@@ -32,24 +32,21 @@
 </template>
 
 <script>
+// import { roleCreateStructure } from '@/common/commonConst'
 export default {
   name: 'RoleCreate',
   props: {
     createVisible: Boolean,
     createRuleForm: Object,
     flagCOrE: [Boolean, Array, Function]
-    // roleMenuTree: Array
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
       val && (this.key = Date.now())
-      // 考虑一下放这里还是放下面
-      // this.createRuleForm.rights = this.roleMenuTree
     },
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
-      // this.createRuleForm.rights = this.roleMenuTree
     },
     'createRuleForm.description.length'(val) {
       this.numberErr = val > 200 ? 1 : 0

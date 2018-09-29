@@ -43,7 +43,7 @@ export default {
       createVisible: false,
       detailVisible: false,
       userDetailVisible: false,
-      roleParam: roleCreateStructure,
+      roleParam: this.$deep_clone(roleCreateStructure),
       columnParam: [],
       consoleParam: [],
       apiParam: Number,
@@ -223,7 +223,7 @@ export default {
     },
     handleDetailClose() {
       this.deleteDialogVisible()
-      this.roleParam = roleCreateStructure
+      this.roleParam = this.$deep_clone(roleCreateStructure)
       this.roleMenuTree = []
     },
     handleGetUserDetail(index, rows) {
@@ -239,14 +239,14 @@ export default {
       this.apiParam = Number
     },
     handleCreateOrEdit() {
-      this.roleParam = this.flagCOrE ? roleCreateStructure : this.roleParam
+      this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
       this.createDialogVisible()
       // this.flagCOrE && this.createDialogVisible()
       // !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
-      this.roleParam = roleCreateStructure
+      this.roleParam = this.$deep_clone(roleCreateStructure)
       if (!data) {
         this.createDialogVisible()
         this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色', 'info')

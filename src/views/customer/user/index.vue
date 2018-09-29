@@ -52,7 +52,7 @@ export default {
       // 分页所需参数-end
       columnParam: [],
       consoleParam: [],
-      apiParam: Number,
+      apiParam: Object,
       flagRoleOrUser: Boolean,
       userData: {
         select: this.handleSelectionChange,
@@ -199,6 +199,7 @@ export default {
     getRoleOptions() {
       getRoleList.req().then(res => {
         userForm.roleList = res.list
+        // return res.list
       })
     },
     // 新增更新用户接口请求
@@ -262,6 +263,7 @@ export default {
         }
       })
       Promise.all([findAll, getRoleList]).then((result) => {
+        console.log(row.roles)
         if (row.roles && typeof (row.roles) === 'string') {
           row.roles = (row.roles + '').split(',').map(role => +role)
         } else {
@@ -331,12 +333,27 @@ export default {
         this.message('取消删除', 'info')
       })
     },
+    findRolesName(params) {
+      // console.log(userForm.roleList)
+      var nameArray = []
+      const userRoles = params.split(',')
+      userRoles.forEach(userItem => {
+        userForm.roleList.forEach(item => {
+          if (+userItem === item.id) {
+            nameArray.push(item.roleName)
+          }
+        })
+      })
+      return nameArray.join(',')
+    },
     // 详细操作
     handleGetUserDetail(index, rows) {
       this.columnParam = userDetailColumn
       this.consoleParam = []
       this.flagRoleOrUser = false
-      this.apiParam = rows[index]
+      this.apiParam = this.$deep_clone(rows[index])
+      console.log(rows[index])
+      this.apiParam.roles = this.findRolesName(this.apiParam.roles)
       console.log(this.apiParam)
       this.userDetailVisible = !this.userDetailVisible
     },
@@ -359,9 +376,9 @@ export default {
 </script>
 <style scoped>
 .search-w250 {
-  width: 250px;
+    width: 250px;
 }
 .m-b8 {
-  margin-bottom: 8px;
+    margin-bottom: 8px;
 }
 </style>
