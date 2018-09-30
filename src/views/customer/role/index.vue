@@ -5,7 +5,6 @@
       <gl-input class="search-w250" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
       <gl-button type="primary" @click="handleSearchRoleName">搜索</gl-button>
     </div>
-    <hr>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
       <role-create :createVisible="createVisible" :createRuleForm="roleParam" :defaultCheckedKeys="roleMenu" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
@@ -61,7 +60,7 @@ export default {
       // 分页所需参数-end
       roleData: {
         border: true,
-        height: 400,
+        height: parseInt(this.$client_height() - 140),
         data: [],
         column: roleDataColumn,
         console: {
@@ -123,7 +122,7 @@ export default {
         // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
         this.deleteRole(rows[index].id)
       }).catch(() => {
-        this.message('取消删除', 'info')
+        // this.message('取消删除', 'info')
       })
     },
     // 获取页面参数

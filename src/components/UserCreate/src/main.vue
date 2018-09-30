@@ -4,6 +4,7 @@
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
                 <gl-input v-model="userManageForm.username" clearable></gl-input>
+                <!-- <input v-color="red" /> -->
                 <!-- <div v-show="!isEdit" class="err">{{msg}}</div> -->
             </gl-form-item>
           </el-col>
@@ -27,7 +28,7 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="注册IP" prop="joinip">
-              <gl-masked v-model="userManageForm.joinip" :mask="tel" placeholder='请输入手机号码' clearable></gl-masked>
+              <gl-masked v-model="userManageForm.joinip" :mask="tel" placeholder='请输入注册IP' clearable></gl-masked>
                 <!-- <gl-input v-model="userManageForm.joinip" clearable></gl-input> -->
             </gl-form-item>
           </gl-col>
@@ -59,6 +60,7 @@
                   <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
                 </gl-option>
               </gl-select>
+              <gl-input-tree :data='data' :props='props' :treeStyle='{ maxHeight: "160px" }' v-model="userManageForm.departName" />
             <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
               <gl-option
                   v-for="item in userManageForm.options"
@@ -104,23 +106,19 @@ export default {
       !val && this.$refs['userManageForm'].resetFields()
     },
     'userManageForm.id'(val) {
-      console.log(val)
       val && (this.placeholder = '不填为不修改')
       !val && (this.placeholder = '')
     }
-  },
-  mounted() {
-    // this.list = this.userManageForm.roleList.map(item => item.roleName)
   },
   data() {
     return {
       key: Date.now(),
       isDepart: true,
-      // userData: {},
+      data: '',
       placeholder: '',
       defaultExpandAll: true,
       val: '',
-      tel: [/\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/,'.', /\d{1,3}/],
+      tel: [/\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -166,11 +164,11 @@ export default {
         })
     },
     clickDepart(data, treeData, vue, props) {
+      console.log(treeData)
       if (data.parent !== '#' || !data.children) {
         this.userManageForm.departId = data.id
         this.userManageForm.departName = data.text
         this.getDepartName(treeData)
-        // this.userManageForm.departName = this.departName.join(' - ')
         this.departName = []
       }
     },
@@ -182,14 +180,6 @@ export default {
         return true
       }
     },
-    // isPoneAvailable(pone) {
-    //   this.tel = '/^[1][3,4,5,7,8][0-9]{9}$/'
-    //   if (!this.tel.test(pone)) {
-    //     return false
-    //   } else {
-    //     return true
-    //   }
-    // },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         this.userData = this.$deep_clone(this.userManageForm)
@@ -208,6 +198,7 @@ export default {
       this.$emit('userFormData')
     },
     handleCheckedChange(value) {
+      console.log(value)
       if (!value) return
       this.val = value.join(',')
     }
