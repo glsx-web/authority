@@ -102,6 +102,8 @@ export default {
         obj[key] = this.value.form[key]
       }
       if (!this.isDepart) delete obj.name
+      delete obj.createTime
+      delete obj.updateTime
       return obj
     },
     // 接口调用-start
@@ -128,7 +130,7 @@ export default {
           console.log(err)
           this.delErrTip()
         })
-        : delMenu.req(obj).then(res => {
+        : delMenu.req({ menuId: obj.id }).then(res => {
           this.delTip(true)
         }).catch(err => {
           console.log(err)

@@ -1,5 +1,5 @@
 <template>
-  <gl-row :gutter="100">
+  <gl-row :gutter="100" :style="{ height: height }" class="mentBox">
     <gl-col :span='8'>
       <left-manager :title='"菜单列表"' v-model="menuMG" :node-click='nodeClick'></left-manager>
     </gl-col>
@@ -8,7 +8,6 @@
     </gl-col>
   </gl-row>
 </template>
-
 <script>
 import { LeftManager, RightForm } from '@/components/index'
 import { findMenuById } from '@/api/api'
@@ -16,6 +15,7 @@ export default {
   name: 'menuMG',
   data() {
     return {
+      height: 0,
       menuMG: {
         sublings: false,
         children: false,
@@ -29,9 +29,9 @@ export default {
         data: [],
         form: {
           id: 0,
-          urlName: 'ttt',
+          urlName: '',
           hostName: '',
-          openStyle: '新系统',
+          openStyle: '',
           menuType: '',
           name: '',
           path: '',
@@ -39,8 +39,8 @@ export default {
           baseUrl: '',
           iorder: null,
           isHidden: 0,
-          // createTime: null,
-          // updateTime: null,
+          createTime: null,
+          updateTime: null,
           grade: 0,
           iconUrl: '',
           lastOperatorId: 0,
@@ -102,6 +102,9 @@ export default {
     LeftManager,
     RightForm
   },
+  mounted() {
+    this.height = window.innerHeight + 'px'
+  },
   methods: {
     nodeClick(data, node, that, props) {
       this.menuMG.showDetails = true
@@ -115,18 +118,12 @@ export default {
       this.menuMG.del = true
       this.menuMG.push = false
       findMenuById.req({ id: data.id }).then(res => {
-        // for (const key in res) {
-        //   console.log(res[key], typeof res[key], key)
-        // }
-        // console.log(this.menuMG.allNode, this.menuMG.node)
         console.log(res)
         for (const key in this.menuMG.form) {
           if (key === 'isHidden') {
             this.menuMG.form[key] = res[key] === 0
           } else if (key === 'createTime' || key === 'updateTime') {
-            console.log(res[key])
-            this.menuMG.form[key] = res[key]
-            // this.menuMG.form[key] = new Date(res[key]).format('yyyy-MM-dd HH:mm:ss')
+            this.menuMG.form[key] = new Date(res[key]).format('yyyy-MM-dd HH:mm:ss')
           } else if (key === 'name') {
             this.menuMG.form[key] = node.level === 1 ? '顶级菜单' : node.parent.data[props.label]
           } else {

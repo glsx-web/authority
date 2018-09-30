@@ -175,15 +175,15 @@ export default {
       // const cc = { roleName: 'ggg' }
       // ----------------------
       // delete params.roleName
-      delete params.description
-      delete params.departId
-      delete params.departName
-      delete params.departPath
-      delete params.rights
-      delete params.state
-      const paramsJS = JSON.stringify(params)
-      console.log(paramsJS)
-      saveRoleList.req(paramsJS).then((data) => {
+      // delete params.description
+      // delete params.departId
+      // delete params.departName
+      // delete params.departPath
+      // delete params.rights
+      // delete params.state
+      // const paramsJS = JSON.stringify(params)
+      // console.log(paramsJS)
+      saveRoleList.req(params).then((data) => {
         console.log(data)
         this.createOrEditSuccess()
       }).catch(err => {
@@ -193,7 +193,9 @@ export default {
     // 编辑角色
     updateRoleInfo(params) {
       console.log(params)
-      this.createOrEditSuccess()
+      delete params.createTime
+      delete params.updateTime
+      // this.createOrEditSuccess()
       updateRole.req(params).then((data) => {
         console.log(data)
         this.createOrEditSuccess()
@@ -256,7 +258,7 @@ export default {
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
-      this.roleParam = this.$deep_clone(roleCreateStructure)
+      // this.roleParam = this.$deep_clone(roleCreateStructure)
       if (!data) {
         this.createDialogVisible()
         this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色', 'info')
