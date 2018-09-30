@@ -39,10 +39,7 @@ const getRoleList = {
 
 const saveRoleList = {
   p: [__sSaveRoleList],
-  // req: params => GlAxios.get(__sSaveRoleList, params)
-  req: params => GlAxios.post(__sSaveRoleList, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' }})
-  // req: params => GlAxios.post(__sSaveRoleList, params, { headers: { 'Content-Type': 'application/json; charset=utf-8' }})
-  // req: params => GlAxios.post(__sSaveRoleList, params)
+  req: params => GlAxios.post(__sSaveRoleList, params, { headers: { 'Content-Type': 'application/json; charset=utf-8' }})
 }
 
 const selectMenuTreeRoleId = {
@@ -57,7 +54,7 @@ const selectUserRoleByRoleId = {
 
 const updateRole = {
   p: [__sUpdateRole],
-  req: params => GlAxios.post(__sUpdateRole, params)
+  req: params => GlAxios.post(__sUpdateRole, params, { headers: { 'Content-Type': 'application/json; charset=utf-8' }})
 }
 
 export {
