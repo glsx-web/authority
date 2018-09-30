@@ -5,7 +5,6 @@
       <gl-input class="search-w250" placeholder="请输入用户名或姓名" v-model="userName" clearable></gl-input>
       <gl-button type="primary" @click="finduserName">搜索</gl-button>
     </div>
-    <hr>
     <div class="default p-t15">
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser()">新增用户</gl-button>
@@ -59,7 +58,7 @@ export default {
         select: this.handleSelectionChange,
         border: true,
         align: 'center',
-        height: 500,
+        height: parseInt(this.$client_height() - 140),
         data: [],
         column: [{
           label: '用户序号',
@@ -156,6 +155,7 @@ export default {
     }
   },
   mounted() {
+    console.log(parseInt(this.$client_height()))
     this.findUserList()
     this.getRoleOptions()
     findDepartTree.req().then(res => {
@@ -248,7 +248,7 @@ export default {
         this.updateUser_Post(params)
       } else {
         this.dialogFormVisible = !this.dialogFormVisible
-        this.message('取消操作', 'info')
+        // this.message('取消操作', 'info')
       }
       // !params && this.message('取消操作', 'info')
       // params && this.updateUser_Post(params)
@@ -275,12 +275,11 @@ export default {
         }
       })
       Promise.all([findAll, getRoleList]).then((result) => {
-        console.log(row.roles)
         if (row.roles && typeof (row.roles) === 'string') {
           row.roles = (row.roles + '').split(',').map(role => +role)
         } else {
           (typeof (row.roles) === 'object') && row.roles
-          !(typeof (row.roles) === 'object') && []
+          row.roles = []
         }
         this.userManageForm = this.$deep_clone(row)
       })
@@ -306,18 +305,10 @@ export default {
           this.batcheDel(ids.join(','))
           this.message('删除成功', 'success')
         }).catch(() => {
-          this.message('取消删除', 'info')
+          console.log('error')
+          // this.message('取消删除', 'info')
         })
       }
-      // else {
-      //   this.message('', '操作失败')
-      // }
-    },
-    // 提示
-    createOrEditSuccess() {
-      this.dialogFormVisible = !this.dialogFormVisible
-      this.message(!this.isEdit ? '创建角色成功' : '已经成功修改数据', 'success')
-      this.findUserList()
     },
     // 搜索
     finduserName() {
@@ -342,7 +333,7 @@ export default {
         this.operatUser({ id: rows[index].id, state: 2 })
         this.message('成功删除该用户', 'success')
       }).catch(() => {
-        this.message('取消删除', 'info')
+        // this.message('取消删除', 'info')
       })
     },
     findRolesName(params) {
