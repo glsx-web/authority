@@ -130,7 +130,7 @@ export default {
           console.log(err)
           this.delErrTip()
         })
-        : delMenu.req(obj).then(res => {
+        : delMenu.req({ menuId: obj.id }).then(res => {
           this.delTip(true)
         }).catch(err => {
           console.log(err)
