@@ -21,7 +21,7 @@
         </gl-select>
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
-        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="createRuleForm.rights" @input="getMenuOption" style="height:160px" :keyFresh="keyFresh"></tree>
+        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="defaultCheckedKeys" @input="getMenuOption" style="height:160px" :keyFresh="keyFresh"></tree>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -37,12 +37,26 @@ export default {
   props: {
     createVisible: Boolean,
     createRuleForm: Object,
-    flagCOrE: [Boolean, Array, Function]
+    flagCOrE: [Boolean, Array, Function],
+    defaultCheckedKeys: Array
   },
   watch: {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
       this.keyFresh = val
+      // this.checkStrictlyOrNot = true
+      // val && (this.defaultCheckedKeys = this.$deep_clone(this.createRuleForm.rights))
+      // clearTimeout(timer)
+      // if (val) {
+      //   this.defaultCheckedKeys = this.$deep_clone(this.createRuleForm.rights)
+      // this.checkStrictlyOrNot = true
+      // var timer = setTimeout(() => {
+      //   this.checkStrictlyOrNot = false
+      //   console.log('-----------------')
+      // }, 1000)
+      // }
+      // console.log(this.createRuleForm)
+      // console.log(this.defaultCheckedKeys)
       // console.log(this.keyFresh)
     },
     flagCOrE(val) {
@@ -56,11 +70,12 @@ export default {
     return {
       isDepart: true,
       show_checkbox: true,
-      defaultExpandAll: true,
+      defaultExpandAll: false,
       departName: [],
       numberErr: false,
       title: '',
       keyFresh: Boolean,
+      // checkStrictlyOrNot: true,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -81,8 +96,9 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      this.createRuleForm.rights = params.treeData.checkedKeys
-      // this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
+      // this.checkStrictlyOrNot = false
+      // this.createRuleForm.rights = params.treeData.checkedKeys
+      this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
     },
     clickDepart(data, treeData, vue, props) {
       if (data.parent !== '#' || !data.children) {
