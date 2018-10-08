@@ -108,7 +108,6 @@ export default {
             label: '编辑',
             type: 'text',
             callback: (index, rows) => {
-              console.log(rows[index])
               this.editUser(rows[index])
             }
           }, {
@@ -204,16 +203,13 @@ export default {
     getRoleOptions() {
       getRoleList.req().then(res => {
         userForm.roleList = res.list
-        // return res.list
       })
     },
     // 获取部门树
     getdepartData() {
       findDepartTree.req().then(res => {
-        console.log(res)
         this.departList = res
         userForm.departList = fn(res, '#')
-        console.log(userForm.departList)
       })
     },
     // 新增更新用户接口请求
@@ -222,12 +218,10 @@ export default {
         updateUser.req(params).then(res => {
           console.log(res)
           this.message('操作成功', 'success')
-          // this.createOrEditSuccess()
           this.dialogFormVisible = !this.dialogFormVisible
           this.findUserList()
         }).catch(message => {
           console.log(message)
-          // this.msg = message
           this.message(message, 'error')
         })
       }
@@ -256,19 +250,11 @@ export default {
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
-      console.log(params)
-      // this.userManageForm = {}
       if (params) {
         this.updateUser_Post(params)
       } else {
         this.dialogFormVisible = !this.dialogFormVisible
-        // this.message('取消操作', 'info')
       }
-      // !params && this.message('取消操作', 'info')
-      // params && this.updateUser_Post(params)
-      // if (!params) {
-      //   this.dialogFormVisible = !this.dialogFormVisible
-      // }
     },
     // 新增按钮
     createUser() {
@@ -278,7 +264,6 @@ export default {
     },
     // 编辑按钮
     editUser(row) {
-      console.log(row)
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
       row.departList = this.$deep_clone(userForm.departList)
@@ -290,7 +275,6 @@ export default {
         }
       })
       Promise.all([findAll, getRoleList]).then((result) => {
-        console.log(row.roles)
         if (row.roles && typeof (row.roles) === 'string') {
           row.roles = (row.roles + '').split(',').map(role => +role)
         } else if (row.roles && typeof (row.roles) === 'object') {
@@ -299,7 +283,6 @@ export default {
           row.roles = []
         }
         this.userManageForm = this.$deep_clone(row)
-        console.log(this.userManageForm)
       })
       this.dialogFormVisible = !this.dialogFormVisible
       this.isEdit = this.isEdit
@@ -373,25 +356,13 @@ export default {
       this.consoleParam = []
       this.flagRoleOrUser = false
       this.apiParam = this.$deep_clone(rows[index])
-      // console.log(rows[index])
       this.apiParam.roles = this.findRolesName(this.apiParam.roles)
-      // console.log(this.apiParam)
       this.userDetailVisible = !this.userDetailVisible
     },
     handleUserDetailClose() {
       this.userDetailVisible = !this.userDetailVisible
       this.apiParam = Object
     }
-    // 修改启用禁用
-    // updateState() {
-    //   if (this.state === '0') {
-    //     consoleState = '禁用'
-    //     return consoleState
-    //   } else {
-    //     consoleState = '启用'
-    //     return consoleState
-    //   }
-    // }
   }
 }
 </script>

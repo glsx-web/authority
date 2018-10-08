@@ -1,5 +1,5 @@
 <template>
-    <gl-dialog title="收货地址" :visible.sync="dialogFormVisible" :before-close="cancelForm" >
+    <gl-dialog :title="title" :visible.sync="dialogFormVisible" :before-close="cancelForm" >
         <gl-form :model="userManageForm" :rules="rules" ref="userManageForm" label-width="100px">
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
@@ -28,7 +28,7 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="注册IP" prop="joinip">
-              <gl-masked v-model="userManageForm.joinip" :mask="tel" placeholder='请输入注册IP' clearable></gl-masked>
+              <gl-masked v-model="userManageForm.joinip" ip placeholder='请输入注册IP' clearable></gl-masked>
                 <!-- <gl-input v-model="userManageForm.joinip" clearable></gl-input> -->
             </gl-form-item>
           </gl-col>
@@ -55,12 +55,12 @@
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-              <gl-select v-model="userManageForm.departName" placeholder="请选择">
+              <!-- <gl-select v-model="userManageForm.departName" placeholder="请选择">
                 <gl-option style="height:160px">
                   <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
                 </gl-option>
-              </gl-select>
-              <!-- <gl-input-tree :data='userManageForm.departList' :props="props" :treeStyle='{ maxHeight: "160px" }' v-model="userManageForm.departName" /> -->
+              </gl-select> -->
+              <gl-input-tree :data='userManageForm.departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="userManageForm.departName" />
             <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
               <gl-option
                   v-for="item in userManageForm.options"
@@ -108,6 +108,7 @@ export default {
     'userManageForm.id'(val) {
       val && (this.placeholder = '不填为不修改')
       !val && (this.placeholder = '')
+      this.title = val ? '编辑用户' : '新建用户'
     }
   },
   data() {
@@ -118,6 +119,7 @@ export default {
         children: 'children',
         label: 'text'
       },
+      title: '新建用户',
       placeholder: '',
       defaultExpandAll: true,
       val: '',
