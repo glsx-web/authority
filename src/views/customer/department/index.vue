@@ -47,7 +47,7 @@ export default {
     RightForm
   },
   mounted() {
-    this.height = window.innerHeight + 'px'
+    this.height = this.$client_height() + 'px'
   },
   methods: {
     nodeClick(data, node, that, props) {
