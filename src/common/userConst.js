@@ -10,7 +10,8 @@ const userForm = {
   departName: '',
   roles: [],
   departId: '',
-  roleList: []
+  roleList: [],
+  departList: []
 }
 const userDetailColumn = [{
   label: '用户名',

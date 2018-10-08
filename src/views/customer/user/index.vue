@@ -25,7 +25,7 @@
 import { UserCreate, UserDetail } from '@/components/index'
 // 接口
 import { findAll, updateUser, getRoleList, batcheDelUser, operatUser, findDepartTree } from '@/api/api'
-import { userForm, userDetailColumn } from '@/common/userConst'
+import { userForm, userDetailColumn, fn } from '@/common/commonConst'
 export default {
   name: 'user',
   components: {
@@ -155,12 +155,15 @@ export default {
     }
   },
   mounted() {
-    console.log(parseInt(this.$client_height()))
+    // console.log(parseInt(this.$client_height()))
     this.findUserList()
     this.getRoleOptions()
-    findDepartTree.req().then(res => {
-      this.departList = res
-    })
+    // findDepartTree.req().then(res => {
+    //   console.log(res)
+    //   this.departList = res
+    //   console.log(this.userForm)
+    // })
+    this.getdepartData()
   },
   watch: {
     userName(val) {
@@ -204,6 +207,15 @@ export default {
         // return res.list
       })
     },
+    // 获取部门树
+    getdepartData() {
+      findDepartTree.req().then(res => {
+        console.log(res)
+        this.departList = res
+        userForm.departList = fn(res, '#')
+        console.log(userForm.departList)
+      })
+    },
     // 新增更新用户接口请求
     updateUser_Post(params) {
       if (params) {
@@ -234,7 +246,9 @@ export default {
     operatUser(params) {
       if (params) {
         operatUser.req(params).then(res => {
-          this.findUserList()
+          if (params.state === 2) {
+            this.findUserList()
+          }
         })
       } else {
         console.log('无数据！')
@@ -257,7 +271,7 @@ export default {
       // }
     },
     // 新增按钮
-    createUser(userManageForm) {
+    createUser() {
       this.userManageForm = this.$deep_clone(userForm)
       this.dialogFormVisible = !this.dialogFormVisible
       this.isEdit = false
@@ -267,6 +281,7 @@ export default {
       console.log(row)
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
+      row.departList = this.$deep_clone(userForm.departList)
       row.state = row.state + ''
       row.isadmin = row.isadmin + ''
       this.departList.forEach(item => {
@@ -275,13 +290,16 @@ export default {
         }
       })
       Promise.all([findAll, getRoleList]).then((result) => {
+        console.log(row.roles)
         if (row.roles && typeof (row.roles) === 'string') {
           row.roles = (row.roles + '').split(',').map(role => +role)
+        } else if (row.roles && typeof (row.roles) === 'object') {
+          row.roles
         } else {
-          (typeof (row.roles) === 'object') && row.roles
           row.roles = []
         }
         this.userManageForm = this.$deep_clone(row)
+        console.log(this.userManageForm)
       })
       this.dialogFormVisible = !this.dialogFormVisible
       this.isEdit = this.isEdit

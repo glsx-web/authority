@@ -60,7 +60,7 @@
                   <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
                 </gl-option>
               </gl-select>
-              <gl-input-tree :data='data' :props='props' :treeStyle='{ maxHeight: "160px" }' v-model="userManageForm.departName" />
+              <!-- <gl-input-tree :data='userManageForm.departList' :props="props" :treeStyle='{ maxHeight: "160px" }' v-model="userManageForm.departName" /> -->
             <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
               <gl-option
                   v-for="item in userManageForm.options"
@@ -114,7 +114,10 @@ export default {
     return {
       key: Date.now(),
       isDepart: true,
-      data: '',
+      props: {
+        children: 'children',
+        label: 'text'
+      },
       placeholder: '',
       defaultExpandAll: true,
       val: '',
@@ -164,7 +167,6 @@ export default {
         })
     },
     clickDepart(data, treeData, vue, props) {
-      console.log(treeData)
       if (data.parent !== '#' || !data.children) {
         this.userManageForm.departId = data.id
         this.userManageForm.departName = data.text
@@ -184,9 +186,16 @@ export default {
       this.$refs[formName].validate(valid => {
         this.userData = this.$deep_clone(this.userManageForm)
         !this.userData.password && delete userForm.password
-        this.userData.roles = this.val
         delete this.userData.createTime
         delete this.userData.updateTime
+        console.log(this.userManageForm.roles)
+        console.log(this.val)
+        if (!this.userManageForm.roles) {
+          this.userData.roles = this.val
+        } else {
+          console.log(this.userData.roles)
+          this.userData.roles = this.userManageForm.roles.join(',')
+        }
         if (valid) {
           this.$emit('userFormData', this.isEdit, this.userData)
         } else {
