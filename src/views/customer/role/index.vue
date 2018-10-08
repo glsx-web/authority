@@ -7,7 +7,7 @@
     </div>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
-      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :defaultCheckedKeys="roleMenu" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
+      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :defaultCheckedKeys="roleMenu" :departList="departList" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <transition>
           <gl-table :table="roleData"></gl-table>
@@ -24,8 +24,8 @@
 <script>
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
-import { getRoleList, deleteRoleById, selectMenuTreeRoleId, saveRoleList, updateRole } from '@/api/api'
-import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole } from '@/common/commonConst'
+import { getRoleList, deleteRoleById, selectMenuTreeRoleId, saveRoleList, updateRole, findDepartTree } from '@/api/api'
+import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole, fn } from '@/common/commonConst'
 export default {
   name: 'role',
   components: {
@@ -54,6 +54,7 @@ export default {
       roleMenuTree: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
+      departList: [],
       // 分页所需参数-start
       total: 10,
       pageNum: 1,
@@ -102,6 +103,7 @@ export default {
   },
   mounted() {
     this.getList()
+    this.getdepartData()
   },
   watch: {
     roleName(val) {
@@ -205,6 +207,13 @@ export default {
       }).catch(err => {
         this.message(err, 'error')
         console.log(err)
+      })
+    },
+    // 获取部门树
+    getdepartData() {
+      findDepartTree.req().then(res => {
+        // this.departList = res
+        this.departList = fn(res, '#')
       })
     },
     // 接口请求-end---------------------------------------
