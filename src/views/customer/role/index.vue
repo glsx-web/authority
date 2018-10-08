@@ -7,7 +7,7 @@
     </div>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
-      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
+      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :defaultCheckedKeys="roleMenu" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
       <div class="m-b8">
         <transition>
           <gl-table :table="roleData"></gl-table>
@@ -43,11 +43,13 @@ export default {
       detailVisible: false,
       userDetailVisible: false,
       roleParam: this.$deep_clone(roleCreateStructure),
+      roleMenu: [],
       columnParam: [],
       consoleParam: [],
       apiParam: Number,
       flagRoleOrUser: true,
       flagCOrE: Boolean,
+      editOrDetail: Boolean,
       roleMenuTree: [],
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
@@ -154,35 +156,32 @@ export default {
         this.message(message, 'error')
       })
     },
+    roleMenuOption(data, pid) {
+      data.forEach(item => {
+        if (item.parent == pid) {
+          this.roleMenu.push(item.id)
+          this.roleMenuOption(data, item.id)
+        }
+      })
+    },
     // 获得角色的相关权限详细信息，并返回树形数据
     getMenuTree(params) {
       selectMenuTreeRoleId.req({ id: params }).then(res => {
-        this.roleMenuTree = res
-        this.deleteDialogVisible()
+        // console.log(res)
+        if (this.editOrDetail) {
+          this.roleMenuOption(res, '#')
+          this.createDialogVisible()
+          // console.log(this.roleMenu)
+        } else {
+          this.roleMenuTree = res
+          this.deleteDialogVisible()
+        }
       }).catch(err => {
         console.log(err)
       })
     },
     // 添加角色
     addRole(params) {
-      console.log(params)
-      // this.createOrEditSuccess()
-      // editData = { roleName: editData.roleName }
-      // const aa = { role: editData }
-      // const aa = JSON.stringify(editData)
-      // console.log(aa)
-      // console.log(editData)
-      // const cc = { roleName: 'ggg' }
-      // ----------------------
-      // delete params.roleName
-      // delete params.description
-      // delete params.departId
-      // delete params.departName
-      // delete params.departPath
-      // delete params.rights
-      // delete params.state
-      // const paramsJS = JSON.stringify(params)
-      // console.log(paramsJS)
       saveRoleList.req(params).then((data) => {
         console.log(data)
         this.createOrEditSuccess()
@@ -195,7 +194,6 @@ export default {
       console.log(params)
       delete params.createTime
       delete params.updateTime
-      // this.createOrEditSuccess()
       updateRole.req(params).then((data) => {
         console.log(data)
         this.createOrEditSuccess()
@@ -216,6 +214,7 @@ export default {
     createOrEditSuccess() {
       this.createDialogVisible()
       this.message(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！', 'success')
+      this.roleMenu = []
       this.getList()
     },
     // 调取接口相关函数
@@ -231,7 +230,7 @@ export default {
       this.getList()
     },
     handleGetRoleDetail() {
-      this.getMenuTree(this.roleParam.id)
+      this.getMenuTree(this.roleParam.id, this.editOrDetail = false)
     },
     handleDetailClose() {
       this.deleteDialogVisible()
@@ -252,8 +251,9 @@ export default {
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
-      this.createDialogVisible()
-      // this.flagCOrE && this.createDialogVisible()
+      // this.createDialogVisible()
+      this.flagCOrE && this.createDialogVisible()
+      !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
       // !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
@@ -261,6 +261,7 @@ export default {
       // this.roleParam = this.$deep_clone(roleCreateStructure)
       if (!data) {
         this.createDialogVisible()
+        this.roleMenu = []
         this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色', 'info')
         return false
       }

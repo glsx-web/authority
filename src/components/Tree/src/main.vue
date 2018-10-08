@@ -9,10 +9,10 @@
       :props='props'
       :default-expand-all='defaultExpandAll'
       :default-checked-keys="defaultCheckedKeys"
-      :check-strictly="checkStrictly"
+      :check-strictly="checkStrictlyOrNot"
       @check='check'
       @node-click='nodeClick'
-      v-loading="loading" 
+      v-loading="loading"
       gl-loading-text="拼命加载中"
       gl-loading-icon="el-icon-loading"
     ></gl-tree>
@@ -27,7 +27,7 @@ export default {
     return {
       data: null,
       loading: true,
-      checkStrictly: true,
+      checkStrictlyOrNot: true,
       props: {
         label: 'text'
       }
@@ -44,14 +44,16 @@ export default {
       default: () => []
     },
     isDepart: Boolean,
+    // checkStrictlyOrNot: true,
     propsData: null
   },
   watch: {
     keyFresh(val) {
-      // console.log(val)
       // console.log(`keyFresh----------------------${this.keyFresh}`)
       // console.log(this.defaultCheckedKeys)
-      val && (this.checkStrictly = val) && this.loadingTree()
+      this.loading = true
+      this.checkStrictlyOrNot = true
+      val && this.loadingTree()
     },
     propsData(val) {
       this.loadingTree()
@@ -63,12 +65,22 @@ export default {
     },
     check(data, treeData) {
       this.$emit('input', { data, treeData })
-      this.checkStrictly = false
     },
     loadingTree() {
       // console.log(this.checkStrictly)
-      !this.propsData && this.getData()
-      this.propsData && (this.data = fn(this.propsData, '#'))
+      // !this.propsData && this.getData()
+      // this.propsData && (this.data = fn(this.propsData, '#'))
+      if (this.propsData) {
+        this.data = fn(this.propsData, '#')
+        this.loading = false
+      } else {
+        clearTimeout(timer)
+        this.getData()
+        var timer = setTimeout(() => {
+          this.checkStrictlyOrNot = false
+          this.loading = false
+        }, 400)
+      }
       // console.log(this.checkStrictly)
       // console.log(this.propsData)
       // console.log(this.data)
@@ -79,13 +91,13 @@ export default {
         ? findMenuTree.req().then(res => {
           // console.log(res)
           this.data = fn(res, '#')
-          this.loading = false
+          // this.loading = false
         }).catch(err => {
           console.log(err)
         })
         : findDepartTree.req().then(res => {
           this.data = fn(res, '#')
-          this.loading = false
+          // this.loading = false
         }).catch(err => {
           console.log(err)
         })
@@ -102,10 +114,6 @@ function fn(data, pid) {
     if (data[i].parent == pid) {
       result.push(data[i])
       temp = fn(data, data[i].id)
-      // if (data[i].id === 1013 || data[i].id === 1014) {
-      //   console.log(`i = ${i}`)
-      //   console.log(`pid = ${pid}`)
-      // }
       if (temp.length > 0) {
         data[i].children = temp
       }
