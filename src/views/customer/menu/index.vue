@@ -17,6 +17,7 @@ export default {
     return {
       height: 0,
       menuMG: {
+        updateTree: false,
         sublings: false,
         children: false,
         del: false,

@@ -55,7 +55,7 @@ const userRoleDetailColumn = [{
 }]
 
 const userRoleDetailConsole = {
-  // show: true,
+  show: true,
   label: '操作',
   prop: 'option',
   button: [{

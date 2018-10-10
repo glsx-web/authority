@@ -37,6 +37,7 @@ export default {
     keyFresh: [Boolean, Array, Function],
     showCheckbox: Boolean,
     value: null,
+    updateTree: Boolean,
     defaultExpandAll: Boolean,
     treeStyle: null,
     defaultCheckedKeys: {
@@ -57,6 +58,9 @@ export default {
     },
     propsData(val) {
       this.loadingTree()
+    },
+    updateTree(val) {
+      this.getData()
     }
   },
   methods: {

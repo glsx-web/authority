@@ -41,7 +41,6 @@ export default {
       isEdit: true,
       departList: [],
       dialogFormVisible: false,
-      // msg: '',
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
       userDetailTitle: '用户详情',
@@ -154,14 +153,8 @@ export default {
     }
   },
   mounted() {
-    // console.log(parseInt(this.$client_height()))
     this.findUserList()
     this.getRoleOptions()
-    // findDepartTree.req().then(res => {
-    //   console.log(res)
-    //   this.departList = res
-    //   console.log(this.userForm)
-    // })
     this.getdepartData()
   },
   watch: {
@@ -214,47 +207,30 @@ export default {
     },
     // 新增更新用户接口请求
     updateUser_Post(params) {
-      if (params) {
-        updateUser.req(params).then(res => {
-          console.log(res)
-          this.message('操作成功', 'success')
-          this.dialogFormVisible = !this.dialogFormVisible
-          this.findUserList()
-        }).catch(message => {
-          console.log(message)
-          this.message(message, 'error')
-        })
-      }
+      updateUser.req(params).then(res => {
+        this.message('操作成功', 'success')
+        this.dialogFormVisible = !this.dialogFormVisible
+        this.findUserList()
+      }).catch(message => {
+        this.message(message, 'error')
+      })
     },
     // 删除用户接口
     batcheDel(params) {
-      if (params) {
-        batcheDelUser.req({ ids: params }).then(res => {
-          this.findUserList()
-        })
-      } else {
-        console.log('无数据！')
-      }
+      batcheDelUser.req({ ids: params }).then(res => {
+        this.findUserList()
+      })
     },
     // 删除、禁用、启用接口f
     operatUser(params) {
-      if (params) {
-        operatUser.req(params).then(res => {
-          if (params.state === 2) {
-            this.findUserList()
-          }
-        })
-      } else {
-        console.log('无数据！')
-      }
+      operatUser.req(params).then(res => {
+        (params.state === 2) && this.findUserList()
+      })
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
-      if (params) {
-        this.updateUser_Post(params)
-      } else {
-        this.dialogFormVisible = !this.dialogFormVisible
-      }
+      params && this.updateUser_Post(params)
+      !params && (this.dialogFormVisible = !this.dialogFormVisible)
     },
     // 新增按钮
     createUser() {
@@ -285,7 +261,7 @@ export default {
         this.userManageForm = this.$deep_clone(row)
       })
       this.dialogFormVisible = !this.dialogFormVisible
-      this.isEdit = this.isEdit
+      this.isEdit = true
     },
     // 获取选中的行
     handleSelectionChange(val, row) {
@@ -307,7 +283,6 @@ export default {
           this.message('删除成功', 'success')
         }).catch(() => {
           console.log('error')
-          // this.message('取消删除', 'info')
         })
       }
     },
@@ -334,11 +309,10 @@ export default {
         this.operatUser({ id: rows[index].id, state: 2 })
         this.message('成功删除该用户', 'success')
       }).catch(() => {
-        // this.message('取消删除', 'info')
+        console.log('error')
       })
     },
     findRolesName(params) {
-      // console.log(userForm.roleList)
       var nameArray = []
       const userRoles = params.split(',')
       userRoles.forEach(userItem => {

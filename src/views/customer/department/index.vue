@@ -19,6 +19,7 @@ export default {
     return {
       height: 0,
       department: {
+        updateTree: false,
         sublings: false,
         children: false,
         node: null,

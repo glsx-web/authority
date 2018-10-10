@@ -21,14 +21,17 @@
           v-model="value.form[i.value]" 
           :disabled="i.disabled">
         </gl-switch>
+        <div class="el-input el-input--mini" v-else-if="i.value === 'iorder'">
+          <input type="text" @input="input(i.value)" v-model="value.form[i.value]" class="el-input__inner" placeholder="请输入数字" />
+        </div>
         <gl-input
           v-else 
           v-model="value.form[i.value]" 
           :disabled="i.disabled">
         </gl-input>
         <div v-show="err && index === 0" class="err">{{textName}}</div>
-        <div v-show="errExist && index === 0" class="err">{{textExist}}</div>
-        <div v-show="errIorder && index === 8" class="err">{{textType}}</div>
+        <!-- <div v-show="errExist && index === 0" class="err">{{textExist}}</div>
+        <div v-show="errIorder && index === 8" class="err">{{textType}}</div> -->
       </gl-form-item>
       <gl-form-item>
         <gl-button type="primary" @click="submit">{{value.btnTxt}}</gl-button>
@@ -51,6 +54,7 @@
 </template>
 <script type='text/ecmascript-6'>
 import { delDepartment, delMenu, editMenu, addMenu, updateDepartment } from '@/api/api'
+const reg = new RegExp(/^[0-9]*$/)
 export default {
   name: 'rightForm',
   data() {
@@ -78,16 +82,21 @@ export default {
     },
     'value.form.name'(val) {
       if (val !== '') this.nameTip()
-    },
-    'value.form.iorder'(val) {
-      if (val && !parseInt(val)) {
-        this.errIorder = true
-      } else {
-        this.errIorder = false
-      }
     }
+    // 'value.form.iorder'(val) {
+    //   if (val && !parseInt(val)) {
+    //     this.errIorder = true
+    //   } else {
+    //     this.errIorder = false
+    //   }
+    // }
   },
   methods: {
+    input(val) {
+      if (!reg.test(this.value.form[val])) {
+        this.value.form[val] = ''
+      }
+    },
     nameTip() {
       this.err = false
       this.errExist = false
@@ -148,6 +157,7 @@ export default {
           type: 'success'
         })
         this.value.showDetails = false
+        this.value.updateTree = !this.value.updateTree
       } else {
         this.$notify({
           title: '已取消',
@@ -224,6 +234,7 @@ export default {
           type: 'success'
         })
         this.value.showDetails = false
+        this.value.updateTree = !this.value.updateTree
       } else {
         this.$notify({
           title: '操作失败',

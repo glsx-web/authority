@@ -4,8 +4,7 @@
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
                 <gl-input v-model="userManageForm.username" clearable></gl-input>
-                <!-- <input v-color="red" /> -->
-                <!-- <div v-show="!isEdit" class="err">{{msg}}</div> -->
+                <!-- <input type="text" name="" v-blur="color" @blur="add" v-model="inputValue"> -->
             </gl-form-item>
           </el-col>
           <gl-col :span="12">
@@ -55,20 +54,7 @@
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-              <!-- <gl-select v-model="userManageForm.departName" placeholder="请选择">
-                <gl-option style="height:160px">
-                  <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
-                </gl-option>
-              </gl-select> -->
               <gl-input-tree :data='userManageForm.departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="userManageForm.departName" />
-            <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
-              <gl-option
-                  v-for="item in userManageForm.options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                  </gl-option>
-            </gl-select> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
@@ -88,13 +74,13 @@
 
 <script>
 import { userForm } from '@/common/userConst'
+// import { updateUser } from '@/api/api'
 export default {
   name: 'UserCreate',
   props: {
     dialogFormVisible: Boolean,
     userManageForm: Object,
     isEdit: Boolean
-    // msg: String
   },
   components: {
     userForm
@@ -106,13 +92,24 @@ export default {
       !val && this.$refs['userManageForm'].resetFields()
     },
     'userManageForm.id'(val) {
-      val && (this.placeholder = '不填为不修改')
-      !val && (this.placeholder = '')
+      this.placeholder = val ? '不填为不修改' : ''
       this.title = val ? '编辑用户' : '新建用户'
     }
   },
+  // directives: {
+  //   blur: {
+  //     update: function(el, binding) {
+  //       console.log(el)
+  //       console.log(binding)
+  //       el.style = 'color:' + binding.value
+  //     }
+  //   }
+  // },
   data() {
     return {
+      // msg: '',
+      // color: 'red',
+      // inputValue: 'dfadf',
       key: Date.now(),
       isDepart: true,
       props: {
@@ -127,14 +124,10 @@ export default {
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
-          // { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ],
         realname: [
           { required: true, message: '请输入用户真实名字', trigger: 'blur' }
         ],
-        // password: [
-        //   { required: false, message: '请输入用户密码', trigger: 'blur' }
-        // ],
         mobile: [
           { required: true, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
@@ -155,19 +148,27 @@ export default {
     }
   },
   methods: {
-    message(message, type) {
-      type &&
-        this.$message({
-          showClose: true,
-          type: type,
-          message: message
-        })
-      !type &&
-        this.$message({
-          showClose: true,
-          message: message
-        })
-    },
+    // add() {
+    //   this.color = '#' + Math.floor(Math.random() * 1000000)
+    //   console.log(Math.floor(Math.random() * 1000000))
+    //   // const params = {}
+    //   // params.departId = 1000
+    //   // params.departName = '总经办'
+    //   // params.email = 'kjkl@qq.com'
+    //   // params.isadmin = false
+    //   // params.joinip = '192.168.2.22'
+    //   // params.mobile = '546513216'
+    //   // params.realname = 'huyue'
+    //   // params.roles = '1087.1088'
+    //   // params.state = 1
+    //   // params.username = this.inputValue
+    //   // updateUser.req(params).then(res => {
+    //   //   console.log(res)
+    //   // }).catch(message => {
+    //   //   console.log(message)
+    //   //   this.msg = message
+    //   // })
+    // },
     clickDepart(data, treeData, vue, props) {
       if (data.parent !== '#' || !data.children) {
         this.userManageForm.departId = data.id
@@ -200,6 +201,7 @@ export default {
         }
         if (valid) {
           this.$emit('userFormData', this.isEdit, this.userData)
+          console.log(this.isEdit)
         } else {
           return false
         }
