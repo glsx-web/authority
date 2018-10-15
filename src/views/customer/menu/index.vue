@@ -119,7 +119,6 @@ export default {
       this.menuMG.del = true
       this.menuMG.push = false
       findMenuById.req({ id: data.id }).then(res => {
-        console.log(res)
         for (const key in this.menuMG.form) {
           if (key === 'isHidden') {
             this.menuMG.form[key] = res[key] === 0

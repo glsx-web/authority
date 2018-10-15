@@ -9,13 +9,33 @@
       <div class="control-tabledata-button">
         <gl-button size="small" @click="createUser()">新增用户</gl-button>
         <gl-button size="small" @click="toggleRowSelection">删除选中</gl-button>
-        <user-create :dialogFormVisible="dialogFormVisible" :userManageForm="userManageForm" :isEdit="isEdit" @userFormData="handleUserFormData"></user-create>
+        <user-create 
+          :dialogFormVisible="dialogFormVisible" 
+          :userManageForm="userManageForm" 
+          :isEdit="isEdit" 
+          @userFormData="handleUserFormData">
+        </user-create>
       </div>
       <div class="m-b8">
         <gl-table :table="userData" ref="multipleTable"></gl-table>
-        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <gl-pagination background
+          @size-change="handleSizeChange" 
+          @current-change="handleCurrentChange" 
+          :current-page="pageNum" 
+          :page-sizes="[10,20,30,40]" 
+          :page-size="pageSize" 
+          layout="total, sizes, prev, pager, next, jumper" 
+          :total="total">
         </gl-pagination>
-        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParam="apiParam" :columnParam="columnParam" :consoleParam="consoleParam" :flagRoleOrUser="flagRoleOrUser"></user-detail>
+        <user-detail 
+          :userDetailVisible="userDetailVisible" 
+          :userDetailTitle="userDetailTitle" 
+          @userDetailClose="handleUserDetailClose" 
+          :apiParam="apiParam" 
+          :columnParam="columnParam" 
+          :consoleParam="consoleParam" 
+          :flagRoleOrUser="flagRoleOrUser">
+        </user-detail>
       </div>
     </div>
   </div>
@@ -94,6 +114,7 @@ export default {
         }],
         number: {
           label: '序号',
+          width: '50px',
           index: (index) => {
             ++index
             return index < 10 && index > 0 ? '0' + index : index
@@ -309,7 +330,6 @@ export default {
         this.operatUser({ id: rows[index].id, state: 2 })
         this.message('成功删除该用户', 'success')
       }).catch(() => {
-        console.log('error')
       })
     },
     findRolesName(params) {

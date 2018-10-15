@@ -13,16 +13,24 @@
         <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
       <gl-form-item label="所属部门：" prop="departName">
-        <gl-input-tree :data='departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="createRuleForm.departName" />
-        <!-- <gl-select placeholder="请选择" v-model="createRuleForm.departName"> -->
-          <!-- <gl-option style="height:160px"> -->
-            <!-- <gl-input-tree :data=''></gl-input-tree> -->
-            <!-- <tree ref='tree' :isDepart="isDepart" v-model="createRuleForm.departName" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree> -->
-          <!-- </gl-option> -->
-        <!-- </gl-select> -->
+        <gl-input-tree 
+          :data='departList' 
+          :props="props" 
+          :treeStyle='{ maxHeight: "160px" }' 
+          @node-click='clickDepart' 
+          v-model="createRuleForm.departName" />
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
-        <tree ref='tree' v-model="createRuleForm.rights" :show-checkbox="show_checkbox" :defaultExpandAll="defaultExpandAll" :defaultCheckedKeys="defaultCheckedKeys" @input="getMenuOption" style="height:160px" :keyFresh="keyFresh"></tree>
+        <tree  
+          ref='tree' 
+          v-model="createRuleForm.rights" 
+          :show-checkbox="show_checkbox" 
+          :defaultExpandAll="defaultExpandAll" 
+          :defaultCheckedKeys="defaultCheckedKeys" 
+          @input="getMenuOption" 
+          style="height:160px" 
+          :keyFresh="keyFresh">
+        </tree>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
@@ -46,20 +54,6 @@ export default {
     createVisible(val) {
       !val && this.$refs['createRuleForm'].resetFields()
       this.keyFresh = val
-      // this.checkStrictlyOrNot = true
-      // val && (this.defaultCheckedKeys = this.$deep_clone(this.createRuleForm.rights))
-      // clearTimeout(timer)
-      // if (val) {
-      //   this.defaultCheckedKeys = this.$deep_clone(this.createRuleForm.rights)
-      // this.checkStrictlyOrNot = true
-      // var timer = setTimeout(() => {
-      //   this.checkStrictlyOrNot = false
-      //   console.log('-----------------')
-      // }, 1000)
-      // }
-      // console.log(this.createRuleForm)
-      // console.log(this.defaultCheckedKeys)
-      // console.log(this.keyFresh)
     },
     flagCOrE(val) {
       this.title = val ? '新建角色' : '角色列表'
@@ -81,7 +75,6 @@ export default {
         children: 'children',
         label: 'text'
       },
-      // checkStrictlyOrNot: true,
       createRules: {
         roleName: [
           { required: true, message: '请输入角色名称！', trigger: 'blur' }
@@ -102,8 +95,6 @@ export default {
   methods: {
     // tree-strat
     getMenuOption(params) {
-      // this.checkStrictlyOrNot = false
-      // this.createRuleForm.rights = params.treeData.checkedKeys
       this.createRuleForm.rights = params.treeData.checkedKeys.concat(params.treeData.halfCheckedKeys)
     },
     clickDepart(data, treeData, vue, props) {
@@ -129,14 +120,8 @@ export default {
     },
     handleCreateSubmit(formName) {
       const editData = this.getParams()
-      // console.log(editData)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // console.log('------------------------------')
-          // for (const key in editData) {
-          //   console.log(editData[key], typeof editData[key], key)
-          // }
-          // console.log('------------------------------')
           this.$emit('createClose', editData)
         } else {
           return false

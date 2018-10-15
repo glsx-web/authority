@@ -30,8 +30,6 @@
           :disabled="i.disabled">
         </gl-input>
         <div v-show="err && index === 0" class="err">{{textName}}</div>
-        <!-- <div v-show="errExist && index === 0" class="err">{{textExist}}</div>
-        <div v-show="errIorder && index === 8" class="err">{{textType}}</div> -->
       </gl-form-item>
       <gl-form-item>
         <gl-button type="primary" @click="submit">{{value.btnTxt}}</gl-button>
@@ -83,13 +81,6 @@ export default {
     'value.form.name'(val) {
       if (val !== '') this.nameTip()
     }
-    // 'value.form.iorder'(val) {
-    //   if (val && !parseInt(val)) {
-    //     this.errIorder = true
-    //   } else {
-    //     this.errIorder = false
-    //   }
-    // }
   },
   methods: {
     input(val) {
@@ -117,12 +108,8 @@ export default {
     },
     // 接口调用-start
     addOrEditDepart(params) {
-      // console.log(obj)
-      // const params = this.getDepartParams()
-      console.log(params)
       updateDepartment.req(params).then(res => {
         this.Tip(true)
-        console.log(res)
       }).catch(err => {
         console.log(err)
       })
@@ -179,7 +166,6 @@ export default {
       if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
         const obj = this.getMenuObj()
         obj.isHidden = this.value.form.isHidden === true ? 0 : 1
-        // console.log(obj)
         // 添加同级
         if (this.value.sublings) {
           if (treeData.parent === '#') {
@@ -196,7 +182,6 @@ export default {
         } else {
           if (!this.isDepart) {
             editMenu.req(obj).then(res => {
-              console.log(res)
               this.Tip(true)
             }).catch(err => {
               console.log(err)
@@ -221,7 +206,6 @@ export default {
           this.Tip(true)
         }).catch(err => {
           this.nameExitTip(err)
-          // this.Tip(false)
         })
       } else {
         this.addOrEditDepart(obj)

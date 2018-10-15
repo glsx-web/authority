@@ -7,15 +7,41 @@
     </div>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
-      <role-create :createVisible="createVisible" :createRuleForm="roleParam" :defaultCheckedKeys="roleMenu" :departList="departList" :flagCOrE="flagCOrE" @createClose="handleCreateClose"></role-create>
+      <role-create 
+          :createVisible="createVisible" 
+          :createRuleForm="roleParam" 
+          :defaultCheckedKeys="roleMenu" 
+          :departList="departList" 
+          :flagCOrE="flagCOrE" 
+          @createClose="handleCreateClose">
+      </role-create>
       <div class="m-b8">
         <transition>
           <gl-table :table="roleData"></gl-table>
         </transition>
-        <gl-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-sizes="[10,20,30,40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <gl-pagination background 
+          @size-change="handleSizeChange" 
+          @current-change="handleCurrentChange" 
+          :current-page="pageNum" 
+          :page-sizes="[10,20,30,40]" 
+          :page-size="pageSize" 
+          layout="total, sizes, prev, pager, next, jumper" 
+          :total="total">
         </gl-pagination>
-        <role-detail :detailVisible="detailVisible" :roleMenuTree="roleMenuTree" :roleParam="roleParam" @detailClose="handleDetailClose"></role-detail>
-        <user-detail :userDetailVisible="userDetailVisible" :userDetailTitle="userDetailTitle" @userDetailClose="handleUserDetailClose" :apiParam="apiParam" :columnParam="columnParam" :consoleParam="consoleParam" :flagRoleOrUser="flagRoleOrUser"></user-detail>
+        <role-detail 
+          :detailVisible="detailVisible" 
+          :roleMenuTree="roleMenuTree" 
+          :roleParam="roleParam" 
+          @detailClose="handleDetailClose">
+        </role-detail>
+        <user-detail 
+            :userDetailVisible="userDetailVisible" 
+            :userDetailTitle="userDetailTitle" 
+            @userDetailClose="handleUserDetailClose" 
+            :apiParam="apiParam" 
+            :columnParam="columnParam" 
+            :consoleParam="consoleParam" 
+            :flagRoleOrUser="flagRoleOrUser"></user-detail>
       </div>
     </div>
   </div>
@@ -38,7 +64,6 @@ export default {
   data() {
     return {
       roleName: '',
-      // roleId: Number,
       createVisible: false,
       detailVisible: false,
       userDetailVisible: false,
@@ -126,7 +151,6 @@ export default {
         // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
         this.deleteRole(rows[index].id)
       }).catch(() => {
-        // this.message('取消删除', 'info')
       })
     },
     // 获取页面参数
@@ -142,11 +166,8 @@ export default {
     getList() {
       const params = this.getParams()
       getRoleList.req(params).then(res => {
-        // console.log(res)
         this.total = res.total
         this.roleData.data = res.list
-        // this.$set(this.roleData, 'data', res.list)
-        // console.log(this.roleData.data)
       }).catch(err => {
         console.log(err)
       })
@@ -171,11 +192,9 @@ export default {
     // 获得角色的相关权限详细信息，并返回树形数据
     getMenuTree(params) {
       selectMenuTreeRoleId.req({ id: params }).then(res => {
-        // console.log(res)
         if (this.editOrDetail) {
           this.roleMenuOption(res, '#')
           this.createDialogVisible()
-          // console.log(this.roleMenu)
         } else {
           this.roleMenuTree = res
           this.deleteDialogVisible()
@@ -187,7 +206,6 @@ export default {
     // 添加角色
     addRole(params) {
       saveRoleList.req(params).then((data) => {
-        console.log(data)
         this.createOrEditSuccess()
       }).catch(err => {
         this.message(err, 'error')
@@ -196,13 +214,9 @@ export default {
     },
     // 编辑角色
     updateRoleInfo(params) {
-      // console.log(this.roleParamName)
-      // console.log(params.roleName)
-      // if (this.roleParamName === params.roleName) delete params.roleName
       delete params.createTime
       delete params.updateTime
       updateRole.req(params).then((data) => {
-        // console.log(data)
         this.createOrEditSuccess()
       }).catch(err => {
         this.message(err, 'error')
@@ -212,7 +226,6 @@ export default {
     // 获取部门树
     getdepartData() {
       findDepartTree.req().then(res => {
-        // this.departList = res
         this.departList = fn(res, '#')
       })
     },
@@ -267,14 +280,11 @@ export default {
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
-      // this.createDialogVisible()
       this.flagCOrE && this.createDialogVisible()
       !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
-      // !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
-      // this.roleParam = this.$deep_clone(roleCreateStructure)
       if (!data) {
         this.createDialogVisible()
         this.roleMenu = []

@@ -45,13 +45,10 @@ export default {
       default: () => []
     },
     isDepart: Boolean,
-    // checkStrictlyOrNot: true,
     propsData: null
   },
   watch: {
     keyFresh(val) {
-      // console.log(`keyFresh----------------------${this.keyFresh}`)
-      // console.log(this.defaultCheckedKeys)
       this.loading = true
       this.checkStrictlyOrNot = true
       val && this.loadingTree()
@@ -71,9 +68,6 @@ export default {
       this.$emit('input', { data, treeData })
     },
     loadingTree() {
-      // console.log(this.checkStrictly)
-      // !this.propsData && this.getData()
-      // this.propsData && (this.data = fn(this.propsData, '#'))
       if (this.propsData) {
         this.data = fn(this.propsData, '#')
         this.loading = false
@@ -85,23 +79,16 @@ export default {
           this.loading = false
         }, 400)
       }
-      // console.log(this.checkStrictly)
-      // console.log(this.propsData)
-      // console.log(this.data)
     },
     getData() {
-      // console.log(this.defaultCheckedKeys)
       !this.isDepart
         ? findMenuTree.req().then(res => {
-          // console.log(res)
           this.data = fn(res, '#')
-          // this.loading = false
         }).catch(err => {
           console.log(err)
         })
         : findDepartTree.req().then(res => {
           this.data = fn(res, '#')
-          // this.loading = false
         }).catch(err => {
           console.log(err)
         })
