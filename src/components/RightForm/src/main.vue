@@ -21,14 +21,15 @@
           v-model="value.form[i.value]" 
           :disabled="i.disabled">
         </gl-switch>
+        <div class="el-input el-input--mini" v-else-if="i.value === 'iorder'">
+          <input type="text" @input="input(i.value)" v-model="value.form[i.value]" class="el-input__inner" placeholder="请输入数字" />
+        </div>
         <gl-input
           v-else 
           v-model="value.form[i.value]" 
           :disabled="i.disabled">
         </gl-input>
         <div v-show="err && index === 0" class="err">{{textName}}</div>
-        <div v-show="errExist && index === 0" class="err">{{textExist}}</div>
-        <div v-show="errIorder && index === 8" class="err">{{textType}}</div>
       </gl-form-item>
       <gl-form-item>
         <gl-button type="primary" @click="submit">{{value.btnTxt}}</gl-button>
@@ -51,6 +52,7 @@
 </template>
 <script type='text/ecmascript-6'>
 import { delDepartment, delMenu, editMenu, addMenu, updateDepartment } from '@/api/api'
+const reg = new RegExp(/^[0-9]*$/)
 export default {
   name: 'rightForm',
   data() {
@@ -78,6 +80,7 @@ export default {
     },
     'value.form.name'(val) {
       if (val !== '') this.nameTip()
+<<<<<<< HEAD
     },
     'value.form.iorder'(val) {
       if (val && !parseInt(val)) {
@@ -86,9 +89,16 @@ export default {
       } else {
         this.errIorder = false
       }
+=======
+>>>>>>> 9a8385cde1d87e20d208eb611f7a68e9cdd6cfaf
     }
   },
   methods: {
+    input(val) {
+      if (!reg.test(this.value.form[val])) {
+        this.value.form[val] = ''
+      }
+    },
     nameTip() {
       this.err = false
       this.errExist = false
@@ -109,12 +119,8 @@ export default {
     },
     // 接口调用-start
     addOrEditDepart(params) {
-      // console.log(obj)
-      // const params = this.getDepartParams()
-      console.log(params)
       updateDepartment.req(params).then(res => {
         this.Tip(true)
-        console.log(res)
       }).catch(err => {
         console.log(err)
       })
@@ -149,6 +155,7 @@ export default {
           type: 'success'
         })
         this.value.showDetails = false
+        this.value.updateTree = !this.value.updateTree
       } else {
         this.$notify({
           title: '已取消',
@@ -170,7 +177,6 @@ export default {
       if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
         const obj = this.getMenuObj()
         obj.isHidden = this.value.form.isHidden === true ? 0 : 1
-        // console.log(obj)
         // 添加同级
         if (this.value.sublings) {
           if (treeData.parent === '#') {
@@ -187,7 +193,6 @@ export default {
         } else {
           if (!this.isDepart) {
             editMenu.req(obj).then(res => {
-              console.log(res)
               this.Tip(true)
             }).catch(err => {
               console.log(err)
@@ -212,7 +217,6 @@ export default {
           this.Tip(true)
         }).catch(err => {
           this.nameExitTip(err)
-          // this.Tip(false)
         })
       } else {
         this.addOrEditDepart(obj)
@@ -225,6 +229,7 @@ export default {
           type: 'success'
         })
         this.value.showDetails = false
+        this.value.updateTree = !this.value.updateTree
       } else {
         this.$notify({
           title: '操作失败',

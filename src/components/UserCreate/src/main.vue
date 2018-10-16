@@ -4,8 +4,6 @@
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
                 <gl-input v-model="userManageForm.username" clearable></gl-input>
-                <!-- <input v-color="red" /> -->
-                <!-- <div v-show="!isEdit" class="err">{{msg}}</div> -->
             </gl-form-item>
           </el-col>
           <gl-col :span="12">
@@ -23,13 +21,11 @@
           <gl-col :span="12">
             <gl-form-item label="手机号码" prop="mobile">
               <gl-masked v-model="userManageForm.mobile" :mask="[ 1, /[34578]/, /\d/, /\d/, /\d/,/\d/, /\d/, /\d/,/\d/, /\d/, /\d/]" placeholder='请输入手机号码' clearable></gl-masked>
-                <!-- <gl-input v-model="userManageForm.mobile" placeholder='请输入手机号码' :prop="tel" clearable></gl-input> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="注册IP" prop="joinip">
               <gl-masked v-model="userManageForm.joinip" ip placeholder='请输入注册IP' clearable></gl-masked>
-                <!-- <gl-input v-model="userManageForm.joinip" clearable></gl-input> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
@@ -55,20 +51,7 @@
           </gl-col>
           <gl-col :span="24">
             <gl-form-item label="所属部门" prop="departName">
-              <!-- <gl-select v-model="userManageForm.departName" placeholder="请选择">
-                <gl-option style="height:160px">
-                  <tree ref='tree' :isDepart="isDepart" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree>
-                </gl-option>
-              </gl-select> -->
               <gl-input-tree :data='userManageForm.departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="userManageForm.departName" />
-            <!-- <gl-select v-model="userManageForm.departId" placeholder="请选择">
-              <gl-option
-                  v-for="item in userManageForm.options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                  </gl-option>
-            </gl-select> -->
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
@@ -94,7 +77,6 @@ export default {
     dialogFormVisible: Boolean,
     userManageForm: Object,
     isEdit: Boolean
-    // msg: String
   },
   components: {
     userForm
@@ -106,8 +88,7 @@ export default {
       !val && this.$refs['userManageForm'].resetFields()
     },
     'userManageForm.id'(val) {
-      val && (this.placeholder = '不填为不修改')
-      !val && (this.placeholder = '')
+      this.placeholder = val ? '不填为不修改' : ''
       this.title = val ? '编辑用户' : '新建用户'
     }
   },
@@ -123,18 +104,13 @@ export default {
       placeholder: '',
       defaultExpandAll: true,
       val: '',
-      tel: [/\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/, '.', /\d{1,3}/],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
-          // { min: 3, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ],
         realname: [
           { required: true, message: '请输入用户真实名字', trigger: 'blur' }
         ],
-        // password: [
-        //   { required: false, message: '请输入用户密码', trigger: 'blur' }
-        // ],
         mobile: [
           { required: true, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
@@ -155,19 +131,7 @@ export default {
     }
   },
   methods: {
-    message(message, type) {
-      type &&
-        this.$message({
-          showClose: true,
-          type: type,
-          message: message
-        })
-      !type &&
-        this.$message({
-          showClose: true,
-          message: message
-        })
-    },
+    // 部门树
     clickDepart(data, treeData, vue, props) {
       if (data.parent !== '#' || !data.children) {
         this.userManageForm.departId = data.id
@@ -184,18 +148,17 @@ export default {
         return true
       }
     },
+    // 提交
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         this.userData = this.$deep_clone(this.userManageForm)
+        // 如果密码为null 就不传密码的值
         !this.userData.password && delete userForm.password
         delete this.userData.createTime
         delete this.userData.updateTime
-        console.log(this.userManageForm.roles)
-        console.log(this.val)
         if (!this.userManageForm.roles) {
           this.userData.roles = this.val
         } else {
-          console.log(this.userData.roles)
           this.userData.roles = this.userManageForm.roles.join(',')
         }
         if (valid) {
@@ -209,7 +172,6 @@ export default {
       this.$emit('userFormData')
     },
     handleCheckedChange(value) {
-      console.log(value)
       if (!value) return
       this.val = value.join(',')
     }

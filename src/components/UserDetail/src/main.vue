@@ -3,7 +3,14 @@
   <div>
     <gl-dialog :title="userDetailTitle" :visible.sync="userDetailVisible" :before-close="handleClose">
       <gl-table :table="tableParam"></gl-table>
-      <gl-pagination background v-show="flagRoleOrUser" @current-change="handleCurrentChange" :current-page="pageNum" :page-size="pageSize" layout="total, prev, pager, next" :total="total">
+      <gl-pagination 
+          background 
+          v-show="flagRoleOrUser" 
+          @current-change="handleCurrentChange" 
+          :current-page="pageNum" 
+          :page-size="pageSize" 
+          layout="total, prev, pager, next" 
+          :total="total">
       </gl-pagination>
     </gl-dialog>
   </div>

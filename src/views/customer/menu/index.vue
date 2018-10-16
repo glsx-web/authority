@@ -17,6 +17,7 @@ export default {
     return {
       height: 0,
       menuMG: {
+        updateTree: false,
         sublings: false,
         children: false,
         del: false,
@@ -118,7 +119,6 @@ export default {
       this.menuMG.del = true
       this.menuMG.push = false
       findMenuById.req({ id: data.id }).then(res => {
-        console.log(res)
         for (const key in this.menuMG.form) {
           if (key === 'isHidden') {
             this.menuMG.form[key] = res[key] === 0

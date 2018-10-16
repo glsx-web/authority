@@ -10,6 +10,7 @@
       ref='tree'
       @node-click='nodeClick'
       :isDepart='isDepart'
+      :updateTree="value.updateTree"
     ></tree>
   </div>
 </template>
