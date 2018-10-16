@@ -13,21 +13,12 @@
         <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
       <gl-form-item label="所属部门：" prop="departName">
-<<<<<<< HEAD
-        <gl-input-tree :data='departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="createRuleForm.departName" />
-        <!-- <gl-select placeholder="请选择" v-model="createRuleForm.departName"> -->
-          <!-- <gl-option style="height:160px"> -->
-            <!-- <tree ref='tree' :isDepart="isDepart" v-model="createRuleForm.departName" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree> -->
-          <!-- </gl-option> -->
-        <!-- </gl-select> -->
-=======
         <gl-input-tree 
           :data='departList' 
           :props="props" 
           :treeStyle='{ maxHeight: "160px" }' 
           @node-click='clickDepart' 
           v-model="createRuleForm.departName" />
->>>>>>> 9a8385cde1d87e20d208eb611f7a68e9cdd6cfaf
       </gl-form-item>
       <gl-form-item label="菜单选项：" prop="rights">
         <tree  
