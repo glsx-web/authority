@@ -16,7 +16,6 @@
         <gl-input-tree :data='departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="createRuleForm.departName" />
         <!-- <gl-select placeholder="请选择" v-model="createRuleForm.departName"> -->
           <!-- <gl-option style="height:160px"> -->
-            <!-- <gl-input-tree :data=''></gl-input-tree> -->
             <!-- <tree ref='tree' :isDepart="isDepart" v-model="createRuleForm.departName" :defaultExpandAll="defaultExpandAll" @node-click='clickDepart' style="height:160px"></tree> -->
           <!-- </gl-option> -->
         <!-- </gl-select> -->

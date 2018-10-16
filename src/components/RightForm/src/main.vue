@@ -81,6 +81,7 @@ export default {
     },
     'value.form.iorder'(val) {
       if (val && !parseInt(val)) {
+        console.log('????')
         this.errIorder = true
       } else {
         this.errIorder = false
