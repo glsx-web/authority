@@ -12,7 +12,8 @@
           :createRuleForm="roleParam" 
           :defaultCheckedKeys="roleMenu" 
           :departList="departList" 
-          :flagCOrE="flagCOrE" 
+          :flagCOrE="flagCOrE"
+          :loading="loading"
           @createClose="handleCreateClose">
       </role-create>
       <div class="m-b8">
@@ -63,6 +64,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       roleName: '',
       createVisible: false,
       detailVisible: false,
@@ -207,9 +209,11 @@ export default {
     addRole(params) {
       saveRoleList.req(params).then((data) => {
         this.createOrEditSuccess()
+        this.loading = false
       }).catch(err => {
         this.message(err, 'error')
         console.log(err)
+        this.loading = false
       })
     },
     // 编辑角色
@@ -218,9 +222,11 @@ export default {
       delete params.updateTime
       updateRole.req(params).then((data) => {
         this.createOrEditSuccess()
+        this.loading = false
       }).catch(err => {
         this.message(err, 'error')
         console.log(err)
+        this.loading = false
       })
     },
     // 获取部门树
@@ -285,11 +291,11 @@ export default {
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
+      this.loading = true
       if (!data) {
         this.createDialogVisible()
         this.roleMenu = []
         this.roleParamName = ''
-        this.message(this.flagCOrE ? '取消创建角色' : '取消编辑角色', 'info')
         return false
       }
       // 将数据提交给后台，根据返回结果做判断

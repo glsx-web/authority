@@ -13,6 +13,7 @@
           :dialogFormVisible="dialogFormVisible" 
           :userManageForm="userManageForm" 
           :isEdit="isEdit" 
+          :loading="loading"
           @userFormData="handleUserFormData">
         </user-create>
       </div>
@@ -63,6 +64,7 @@ export default {
       dialogFormVisible: false,
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
+      loading: false,
       userDetailTitle: '用户详情',
       // 分页所需参数-start
       total: 10,
@@ -231,9 +233,11 @@ export default {
       updateUser.req(params).then(res => {
         this.message('操作成功', 'success')
         this.dialogFormVisible = !this.dialogFormVisible
+        this.loading = false
         this.findUserList()
       }).catch(message => {
         this.message(message, 'error')
+        this.loading = false
       })
     },
     // 删除用户接口
@@ -250,17 +254,20 @@ export default {
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
+      this.loading = true
       params && this.updateUser_Post(params)
       !params && (this.dialogFormVisible = !this.dialogFormVisible)
     },
     // 新增按钮
     createUser() {
+      this.loading = false
       this.userManageForm = this.$deep_clone(userForm)
       this.dialogFormVisible = !this.dialogFormVisible
       this.isEdit = false
     },
     // 编辑按钮
     editUser(row) {
+      this.loading = false
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
       row.departList = this.$deep_clone(userForm.departList)

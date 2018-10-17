@@ -3,26 +3,35 @@
   <gl-dialog :title="title" :visible.sync="createVisible" :before-close="handleCreateCancel">
     <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
       <gl-form-item label="角色名称：" prop="roleName">
-        <gl-input v-model="createRuleForm.roleName" clearable></gl-input>
+        <gl-input name="roleName" v-validate="'required'" v-model="createRuleForm.roleName" clearable></gl-input>
+        <span v-show="errorBags.has('roleName')" class="error">{{ errorBags.first('roleName') }}</span>
       </gl-form-item>
       <gl-form-item label="角色描述：" prop="description">
-        <gl-input v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
+        <gl-input name="description" v-validate="'required|max:200'" v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
+        <span v-show="errorBags.has('description')" class="error">{{ errorBags.first('description') }}</span>
       </gl-form-item>
       <gl-form-item>
         <span :class="numberErr? 'err': false" style="position:absolute; right:35px; top:-20px;">{{createRuleForm.description.length}}</span>
         <span style="position:absolute; right:5px; top:-20px;">/200</span>
       </gl-form-item>
-      <gl-form-item label="所属部门：" prop="departName">
+      <gl-form-item label="所属部门：" 
+      prop="departName">
         <gl-input-tree 
           :data='departList' 
           :props="props" 
           :treeStyle='{ maxHeight: "160px" }' 
           @node-click='clickDepart' 
+          name="departName"
+          v-validate="'required'"
           v-model="createRuleForm.departName" />
+        <span v-show="errorBags.has('departName')" class="error">{{ errorBags.first('departName') }}</span>
       </gl-form-item>
-      <gl-form-item label="菜单选项：" prop="rights">
+      <gl-form-item label="菜单选项：" 
+      prop="rights">
         <tree  
           ref='tree' 
+          name="rights"
+          v-validate="'required'"
           v-model="createRuleForm.rights" 
           :show-checkbox="show_checkbox" 
           :defaultExpandAll="defaultExpandAll" 
@@ -31,10 +40,11 @@
           style="height:160px" 
           :keyFresh="keyFresh">
         </tree>
+        <span v-show="errorBags.has('rights')" class="error">{{ errorBags.first('rights') }}</span>
       </gl-form-item>
     </gl-form>
     <div slot="footer" class="dialog-footer">
-      <gl-button type="primary" @click="handleCreateSubmit('createRuleForm')">提交</gl-button>
+      <gl-button type="primary" :loading="loading" @click="handleCreateSubmit('createRuleForm')">提交</gl-button>
       <gl-button @click="handleCreateCancel">取消</gl-button>
     </div>
   </gl-dialog>
@@ -48,7 +58,8 @@ export default {
     createRuleForm: Object,
     flagCOrE: [Boolean, Array, Function],
     defaultCheckedKeys: Array,
-    departList: Array
+    departList: Array,
+    loading: Boolean
   },
   watch: {
     createVisible(val) {
@@ -77,17 +88,17 @@ export default {
       },
       createRules: {
         roleName: [
-          { required: true, message: '请输入角色名称！', trigger: 'blur' }
+          { required: true }
         ],
         description: [
-          { required: true, message: '请输入角色描述！', trigger: 'blur' },
-          { max: 200, message: '字数限制在200以内！', trigger: 'blur' }
+          { required: true }
+          // { max: 200, message: '字数限制在200以内！', trigger: 'blur' }
         ],
         departName: [
-          { required: true, message: '请输入所属部门！', trigger: 'change' }
+          { required: true }
         ],
         rights: [
-          { required: true, message: '请选择菜单选项！', trigger: 'change' }
+          { required: true }
         ]
       }
     }

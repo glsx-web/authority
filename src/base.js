@@ -8,11 +8,20 @@ import { common } from '@/config'
 import './styles/role-user-common.scss'
 import './styles/index.scss'
 import './date.js'
+// import zh_CN from 'vee-validate/dist/locale/zh_CN'
+// import VeeValidate, { Validator } from 'vee-validate'
+import VeeValidate from 'vee-validate'
 // import _ from 'lodash'
 import { Tree } from '@/components'
 Vue.use(GlsxVueComponents)
 Vue.component('tree', Tree)
 Vue.use(GlsxVueCommon, common)
+const config = {
+  errorBagName: 'errorBags',
+  fieldsBagName: 'fieldBags'
+}
+Vue.use(VeeValidate, config)
+// Validator.localize('zh_CN', zh_CN)
 
 var mixin = {
   mounted() {
