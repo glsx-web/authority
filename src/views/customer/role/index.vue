@@ -247,6 +247,7 @@ export default {
     },
     createOrEditSuccess() {
       this.createDialogVisible()
+      this.loading = false
       this.message(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！', 'success')
       this.loading = false
       this.roleMenu = []
@@ -287,6 +288,7 @@ export default {
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
+      // this.createDialogVisible()
       this.flagCOrE && this.createDialogVisible()
       !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
@@ -302,7 +304,6 @@ export default {
       // 将数据提交给后台，根据返回结果做判断
       this.flagCOrE && this.addRole(data)
       !this.flagCOrE && this.updateRoleInfo(data)
-      
     }
   }
 }
