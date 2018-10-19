@@ -3,11 +3,11 @@
   <gl-dialog :title="title" :visible.sync="createVisible" :before-close="handleCreateCancel">
     <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
       <gl-form-item label="角色名称：" prop="roleName">
-        <gl-input name="roleName" v-validate="'required'" v-model="createRuleForm.roleName" clearable></gl-input>
+        <gl-input name="roleName" data-vv-as="角色名称" v-validate="'required'" v-model="createRuleForm.roleName" clearable></gl-input>
         <span v-show="errorBags.has('roleName')" class="error">{{ errorBags.first('roleName') }}</span>
       </gl-form-item>
       <gl-form-item label="角色描述：" prop="description">
-        <gl-input name="description" v-validate="'required|max:200'" v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
+        <gl-input name="description" data-vv-as="角色描述" v-validate="'required|max:200'" v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
         <span v-show="errorBags.has('description')" class="error">{{ errorBags.first('description') }}</span>
       </gl-form-item>
       <gl-form-item>
@@ -23,6 +23,7 @@
           @node-click='clickDepart' 
           name="departName"
           v-validate="'required'"
+          data-vv-as="所属部门"
           v-model="createRuleForm.departName" />
         <span v-show="errorBags.has('departName')" class="error">{{ errorBags.first('departName') }}</span>
       </gl-form-item>
@@ -32,6 +33,7 @@
           ref='tree' 
           name="rights"
           v-validate="'required'"
+          data-vv-as="菜单选项"
           v-model="createRuleForm.rights" 
           :show-checkbox="show_checkbox" 
           :defaultExpandAll="defaultExpandAll" 
@@ -63,7 +65,7 @@ export default {
   },
   watch: {
     createVisible(val) {
-      !val && this.$refs['createRuleForm'].resetFields()
+      !val && this.$validator.errors.clear()
       this.keyFresh = val
     },
     flagCOrE(val) {
@@ -92,7 +94,6 @@ export default {
         ],
         description: [
           { required: true }
-          // { max: 200, message: '字数限制在200以内！', trigger: 'blur' }
         ],
         departName: [
           { required: true }
@@ -131,8 +132,9 @@ export default {
     },
     handleCreateSubmit(formName) {
       const editData = this.getParams()
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
+      this.$validator.validateAll().then((result) => {
+      // this.$refs[formName].validate((valid) => {
+        if (result) {
           this.$emit('createClose', editData)
         } else {
           return false

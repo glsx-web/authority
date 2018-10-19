@@ -80,9 +80,6 @@ export default {
     },
     'value.form.name'(val) {
       if (val !== '') this.nameTip()
-<<<<<<< HEAD
-=======
->>>>>>> 9a8385cde1d87e20d208eb611f7a68e9cdd6cfaf
     }
   },
   methods: {
