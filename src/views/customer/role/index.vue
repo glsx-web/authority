@@ -207,9 +207,10 @@ export default {
     },
     // 添加角色
     addRole(params) {
+      // 没开接口，测试
+      // this.createOrEditSuccess()
       saveRoleList.req(params).then((data) => {
         this.createOrEditSuccess()
-        this.loading = false
       }).catch(err => {
         this.message(err, 'error')
         console.log(err)
@@ -218,6 +219,8 @@ export default {
     },
     // 编辑角色
     updateRoleInfo(params) {
+      // 没开接口，测试
+      // this.createOrEditSuccess()
       delete params.createTime
       delete params.updateTime
       updateRole.req(params).then((data) => {
@@ -247,6 +250,7 @@ export default {
     },
     createOrEditSuccess() {
       this.createDialogVisible()
+      this.loading = false
       this.message(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！', 'success')
       this.roleMenu = []
       this.roleParamName = ''
@@ -286,18 +290,19 @@ export default {
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
+      // this.createDialogVisible()
       this.flagCOrE && this.createDialogVisible()
       !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
-      this.loading = true
       if (!data) {
         this.createDialogVisible()
         this.roleMenu = []
         this.roleParamName = ''
         return false
       }
+      this.loading = true
       // 将数据提交给后台，根据返回结果做判断
       this.flagCOrE && this.addRole(data)
       !this.flagCOrE && this.updateRoleInfo(data)
