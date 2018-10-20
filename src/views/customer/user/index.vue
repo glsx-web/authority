@@ -47,6 +47,7 @@ import { UserCreate, UserDetail } from '@/components/index'
 // 接口
 import { findAll, updateUser, getRoleList, batcheDelUser, operatUser, findDepartTree } from '@/api/api'
 import { userForm, userDetailColumn, fn } from '@/common/commonConst'
+import notice from '@/common/notice'
 export default {
   name: 'user',
   components: {
@@ -157,9 +158,9 @@ export default {
                   this.$set(rows[index], 'state', '0')
                   this.operatUser({ id: rows[index].id, state: 0 })
                 }
-                this.message('修改成功', 'success')
+                notice.okTips('修改成功')
               }).catch(() => {
-                this.message('修改失败', 'info')
+                notice.errorTips('修改失败')
               })
             }
           }, {
@@ -204,17 +205,6 @@ export default {
         console.log(err)
       })
     },
-    message(message, type) {
-      type && this.$notify({
-        type: type,
-        title: message,
-        duration: 2000
-      })
-      !type && this.$notify({
-        title: message,
-        duration: 2000
-      })
-    },
     // 获取所有角色选项
     getRoleOptions() {
       getRoleList.req().then(res => {
@@ -231,12 +221,12 @@ export default {
     // 新增更新用户接口请求
     updateUser_Post(params) {
       updateUser.req(params).then(res => {
-        this.message('操作成功', 'success')
+        notice.okTips('操作成功')
         this.dialogFormVisible = !this.dialogFormVisible
         this.loading = false
         this.findUserList()
       }).catch(message => {
-        this.message(message, 'error')
+        notice.errorTips(message)
         this.loading = false
       })
     },
@@ -308,9 +298,10 @@ export default {
           type: 'warning'
         }).then(() => {
           this.batcheDel(ids.join(','))
-          this.message('删除成功', 'success')
-        }).catch(() => {
-          console.log('error')
+          notice.okTips('删除成功')
+        }).catch(err => {
+          notice.errorTips(err)
+          // console.log('error')
         })
       }
     },
@@ -335,8 +326,9 @@ export default {
         type: 'warning'
       }).then(() => {
         this.operatUser({ id: rows[index].id, state: 2 })
-        this.message('成功删除该用户', 'success')
-      }).catch(() => {
+        notice.okTips('成功删除该用户')
+      }).catch(err => {
+        notice.errorTips(err)
       })
     },
     findRolesName(params) {

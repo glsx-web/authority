@@ -53,6 +53,7 @@ import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
 import { getRoleList, deleteRoleById, selectMenuTreeRoleId, saveRoleList, updateRole, findDepartTree } from '@/api/api'
 import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole, fn } from '@/common/commonConst'
+import notice from '@/common/notice'
 export default {
   name: 'role',
   components: {
@@ -138,12 +139,6 @@ export default {
     }
   },
   methods: {
-    message(message, type) {
-      this.$notify({
-        type: type,
-        title: message
-      })
-    },
     confirmDeleteOrNot(index, rows) {
       this.$confirm('确定要删除这条数据？', '', {
         confirmButtonText: '确定',
@@ -177,10 +172,10 @@ export default {
     // 删除角色
     deleteRole(params) {
       deleteRoleById.req({ roleId: params }).then(res => {
-        this.message('删除成功', 'success')
+        notice.okTips('删除成功')
         this.getList()
       }).catch(message => {
-        this.message(message, 'error')
+        notice.errorTips(message)
       })
     },
     roleMenuOption(data, pid) {
@@ -207,27 +202,25 @@ export default {
     },
     // 添加角色
     addRole(params) {
-      // this.loading = false
       saveRoleList.req(params).then((data) => {
         this.createOrEditSuccess()
       }).catch(err => {
-        this.message(err, 'error')
+        notice.errorTips(err)
         console.log(err)
-        this.loading = false
       })
+      this.loading = false
     },
     // 编辑角色
     updateRoleInfo(params) {
-      // this.loading = false
       delete params.createTime
       delete params.updateTime
       updateRole.req(params).then((data) => {
         this.createOrEditSuccess()
       }).catch(err => {
-        this.message(err, 'error')
+        notice.errorTips(err)
         console.log(err)
-        this.loading = false
       })
+      this.loading = false
     },
     // 获取部门树
     getdepartData() {
@@ -248,8 +241,8 @@ export default {
     createOrEditSuccess() {
       this.createDialogVisible()
       this.loading = false
-      this.message(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！', 'success')
-      this.loading = false
+      notice.okTips(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！')
+      // this.loading = false
       this.roleMenu = []
       this.roleParamName = ''
       this.getList()

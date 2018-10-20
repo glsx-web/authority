@@ -1,4 +1,5 @@
 import { deleteUserRoleById } from '@/api/api'
+import notice from './notice'
 
 const roleCreateStructure = {
   id: Number,
@@ -63,13 +64,15 @@ const userRoleDetailConsole = {
     type: 'text',
     callback: (index, rows) => {
       const data = rows[index]
-      const params = { roleId: data.roleId, userId: data.userId }
+      const params = {
+        roleId: data.roleId,
+        userId: data.userId
+      }
       deleteUserRoleById.req(params).then(res => {
-        // 加入提示消息！！！
+        notice.okTips('删除成功')
         rows.splice(index, 1)
-        // console.log(res)
       }).catch(err => {
-        console.log(err)
+        notice.errorTips(err)
       })
     }
   }]

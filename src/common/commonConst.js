@@ -8,10 +8,6 @@ function fn(data, pid) {
     if (data[i].parent == pid) {
       result.push(data[i])
       temp = fn(data, data[i].id)
-      // if (data[i].id === 1013 || data[i].id === 1014) {
-      //   console.log(`i = ${i}`)
-      //   console.log(`pid = ${pid}`)
-      // }
       if (temp.length > 0) {
         data[i].children = temp
       }
