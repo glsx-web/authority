@@ -71,7 +71,6 @@ export default {
       detailVisible: false,
       userDetailVisible: false,
       roleParam: this.$deep_clone(roleCreateStructure),
-      roleParamName: String,
       roleMenu: [],
       columnParam: [],
       consoleParam: [],
@@ -102,7 +101,6 @@ export default {
             type: 'text',
             callback: (index, rows) => {
               this.roleParam = this.$deep_clone(rows[index])
-              this.roleParamName = this.$deep_clone(rows[index].roleName)
               this.handleCreateOrEdit(this.flagCOrE = false)
             }
           }, {
@@ -238,13 +236,19 @@ export default {
     userDetailDialogVisible() {
       this.userDetailVisible = !this.userDetailVisible
     },
-    createOrEditSuccess() {
+    emptyParam() {
       this.createDialogVisible()
+      clearTimeout(timer)
+      var timer = setTimeout(() => {
+        this.roleParam = this.$deep_clone(roleCreateStructure)
+      }, 200)
+    },
+    createOrEditSuccess() {
+      // this.createDialogVisible()
+      this.emptyParam()
       this.loading = false
       notice.okTips(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！')
-      // this.loading = false
       this.roleMenu = []
-      this.roleParamName = ''
       this.getList()
     },
     // 调取接口相关函数
@@ -281,22 +285,17 @@ export default {
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
-      // this.createDialogVisible()
-      this.flagCOrE && this.createDialogVisible()
-      !this.flagCOrE && this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
+      this.flagCOrE ? this.createDialogVisible() : this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
       if (!data) {
-        this.createDialogVisible()
-        this.roleMenu = []
-        this.roleParamName = ''
+        this.emptyParam()
         return false
       }
       this.loading = true
       // 将数据提交给后台，根据返回结果做判断
-      this.flagCOrE && this.addRole(data)
-      !this.flagCOrE && this.updateRoleInfo(data)
+      this.flagCOrE ? this.addRole(data) : this.updateRoleInfo(data)
     }
   }
 }

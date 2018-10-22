@@ -222,7 +222,7 @@ export default {
     updateUser_Post(params) {
       updateUser.req(params).then(res => {
         notice.okTips('操作成功')
-        this.dialogFormVisible = !this.dialogFormVisible
+        this.emptyForm()
         this.loading = false
         this.findUserList()
       }).catch(message => {
@@ -242,11 +242,18 @@ export default {
         (params.state === 2) && this.findUserList()
       })
     },
+    emptyForm() {
+      this.dialogFormVisible = !this.dialogFormVisible
+      clearTimeout(timer)
+      var timer = setTimeout(() => {
+        this.userManageForm = this.$deep_clone(userForm)
+      }, 200)
+    },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
       this.loading = true
       params && this.updateUser_Post(params)
-      !params && (this.dialogFormVisible = !this.dialogFormVisible)
+      !params && this.emptyForm()
     },
     // 新增按钮
     createUser() {
@@ -327,8 +334,7 @@ export default {
       }).then(() => {
         this.operatUser({ id: rows[index].id, state: 2 })
         notice.okTips('成功删除该用户')
-      }).catch(err => {
-        notice.errorTips(err)
+      }).catch(() => {
       })
     },
     findRolesName(params) {

@@ -65,7 +65,7 @@ export default {
   },
   watch: {
     createVisible(val) {
-      !val && this.$validator.errors.clear()
+      this.$validator.errors.clear()
       this.keyFresh = val
     },
     flagCOrE(val) {

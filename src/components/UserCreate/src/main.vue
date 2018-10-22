@@ -94,7 +94,7 @@ export default {
   watch: {
     dialogFormVisible(val) {
       this.key = Date.now()
-      !val && this.$validator.errors.clear()
+      this.$validator.errors.clear()
     },
     'userManageForm.id'(val) {
       this.placeholder = val ? '不填为不修改' : '请输入密码'
