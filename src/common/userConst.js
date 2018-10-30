@@ -38,7 +38,6 @@ const userDetailColumn = [{
   label: '状态',
   prop: 'state',
   formatter: (cellValue) => {
-    console.log(cellValue)
     return cellValue.state < 1 ? '禁用' : '启动'
   }
 }]

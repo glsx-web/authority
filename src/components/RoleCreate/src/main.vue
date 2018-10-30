@@ -1,7 +1,7 @@
 <!-- createRoleComponent -->
 <template>
   <gl-dialog :title="title" :visible.sync="createVisible" :before-close="handleCreateCancel">
-    <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
+    <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="100px">
       <gl-form-item label="角色名称：" prop="roleName">
         <gl-input name="roleName" data-vv-as="角色名称" v-validate="'required'" v-model="createRuleForm.roleName" clearable></gl-input>
         <span v-show="errorBags.has('roleName')" class="error">{{ errorBags.first('roleName') }}</span>
@@ -39,7 +39,7 @@
           :defaultExpandAll="defaultExpandAll" 
           :defaultCheckedKeys="defaultCheckedKeys" 
           @input="getMenuOption" 
-          style="height:160px" 
+          style="height:180px" 
           :keyFresh="keyFresh">
         </tree>
         <span v-show="errorBags.has('rights')" class="error">{{ errorBags.first('rights') }}</span>
@@ -148,6 +148,9 @@ export default {
 }
 </script>
 <style scoped>
+.dialog-footer{
+  margin-top: -40px;
+}
 .err {
     color: red;
 }

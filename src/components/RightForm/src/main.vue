@@ -32,8 +32,8 @@
         <div v-show="err && index === 0" class="err">{{textName}}</div>
       </gl-form-item>
       <gl-form-item>
-        <gl-button type="primary" @click="submit">{{value.btnTxt}}</gl-button>
-        <gl-button type="danger" v-show='value.del' @click="dialog = true ">删除</gl-button>
+        <gl-button type="primary" @click="submit" :loading="subLoading">{{value.btnTxt}}</gl-button>
+        <gl-button type="danger" v-show='value.del' @click="dialog = true " :loading="delLoading">删除</gl-button>
         <gl-button @click='value.showDetails = false' style="float:right">取消</gl-button>
       </gl-form-item>
     </gl-form>
@@ -52,6 +52,7 @@
 </template>
 <script type='text/ecmascript-6'>
 import { delDepartment, delMenu, editMenu, addMenu, updateDepartment } from '@/api/api'
+import notice from '@/common/notice'
 const reg = new RegExp(/^[0-9]*$/)
 export default {
   name: 'rightForm',
@@ -63,6 +64,8 @@ export default {
       errExist: false,
       textExist: '',
       errIorder: false,
+      subLoading: false,
+      delLoading: false,
       textType: '请填写数字'
     }
   },
@@ -93,10 +96,10 @@ export default {
       this.errExist = false
       this.textExist = ''
     },
-    nameExitTip(err) {
-      this.errExist = true
-      this.textExist = err
-    },
+    // nameExitTip(err) {
+    //   this.errExist = true
+    //   this.textExist = err
+    // },
     getMenuObj(obj = {}) {
       for (const key in this.value.form) {
         obj[key] = this.value.form[key]
@@ -108,30 +111,45 @@ export default {
     },
     // 接口调用-start
     addOrEditDepart(params) {
+      // clearTimeout(timer)
+      // var timer = setTimeout(() => {
       updateDepartment.req(params).then(res => {
+        this.subLoading = false
         this.Tip(true)
       }).catch(err => {
-        console.log(err)
+        this.subLoading = false
+        notice.errorTips(err)
+        // console.log(err)
       })
+      // }, 2000)
     },
     // 接口调用-end
     // 删除
     delData() {
+      this.delLoading = true
       const obj = this.getMenuObj()
       obj.isHidden = this.value.form.isHidden === true ? 0 : 1
+      this.dialog = false
+      // clearTimeout(timer)
+      // var timer = setTimeout(() => {
       this.isDepart
         ? delDepartment.req(obj).then(res => {
+          this.delLoading = false
           this.delTip(true)
         }).catch(err => {
+          this.delLoading = false
           console.log(err)
           this.delErrTip()
         })
         : delMenu.req({ menuId: obj.id }).then(res => {
+          this.delLoading = false
           this.delTip(true)
         }).catch(err => {
+          this.delLoading = false
           console.log(err)
           this.delErrTip()
         })
+      // }, 2000)
     },
     delTip(val) {
       if (val) {
@@ -145,13 +163,14 @@ export default {
         })
         this.value.showDetails = false
         this.value.updateTree = !this.value.updateTree
-      } else {
-        this.$notify({
-          title: '已取消',
-          type: 'info'
-        })
       }
-      this.dialog = false
+      // else {
+      // this.$notify({
+      //   title: '已取消',
+      //   type: 'info'
+      // })
+      // }
+      // this.dialog = false
     },
     delErrTip() {
       this.$notify({
@@ -165,6 +184,7 @@ export default {
       const treeData = this.value.allNode
       if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
         const obj = this.getMenuObj()
+        this.subLoading = true
         obj.isHidden = this.value.form.isHidden === true ? 0 : 1
         // 添加同级
         if (this.value.sublings) {
@@ -173,6 +193,7 @@ export default {
           } else {
             obj.parentId = treeData.parent
           }
+          // this.subLoading = true
           this.addData(obj)
         // 添加子级
         } else if (this.value.children) {
@@ -181,13 +202,19 @@ export default {
         // 修改
         } else {
           if (!this.isDepart) {
+            // clearTimeout(timer)
+            // var timer = setTimeout(() => {
             editMenu.req(obj).then(res => {
+              this.subLoading = false
               this.Tip(true)
             }).catch(err => {
               console.log(err)
+              this.subLoading = false
               this.Tip(false)
             })
+            // }, 2000)
           } else {
+            this.subLoading = true
             this.addOrEditDepart(obj)
           }
         }
@@ -201,15 +228,22 @@ export default {
       return new Date(time).getTime()
     },
     addData(obj) {
+      // clearTimeout(timer)
+      // var timer = setTimeout(() => {
       if (!this.isDepart) {
         addMenu.req(obj).then(res => {
+          this.subLoading = false
           this.Tip(true)
         }).catch(err => {
-          this.nameExitTip(err)
+          this.subLoading = false
+          notice.errorTips(err)
+          // this.nameExitTip(err)
         })
       } else {
+        this.errIorder = true
         this.addOrEditDepart(obj)
       }
+      // }, 2000)
     },
     Tip(val) {
       if (val) {

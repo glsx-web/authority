@@ -18,7 +18,7 @@
         </user-create>
       </div>
       <div class="m-b8">
-        <gl-table :table="userData" ref="multipleTable"></gl-table>
+        <gl-table :table="userData" v-loading="laodingTable" gl-loading-text="拼命加载中" ref="multipleTable"></gl-table>
         <gl-pagination background
           @size-change="handleSizeChange" 
           @current-change="handleCurrentChange" 
@@ -66,6 +66,8 @@ export default {
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
       loading: false,
+      laodingTable: false,
+      tipParams: '',
       userDetailTitle: '用户详情',
       // 分页所需参数-start
       total: 10,
@@ -151,16 +153,17 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
               }).then(() => {
+                this.laodingTable = true
                 if (rows[index].state < 1) {
-                  this.$set(rows[index], 'state', '1')
-                  this.operatUser({ id: rows[index].id, state: 1 })
+                  // this.$set(rows[index], 'state', '1')
+                  this.operatUser({ id: rows[index].id, state: 1 }, rows, index)
                 } else {
-                  this.$set(rows[index], 'state', '0')
-                  this.operatUser({ id: rows[index].id, state: 0 })
+                  // this.$set(rows[index], 'state', '0')
+                  this.operatUser({ id: rows[index].id, state: 0 }, rows, index)
                 }
-                notice.okTips('修改成功')
+                // notice.okTips('修改成功')
               }).catch(() => {
-                notice.errorTips('修改失败')
+                // notice.errorTips('修改失败')
               })
             }
           }, {
@@ -183,7 +186,10 @@ export default {
   },
   watch: {
     userName(val) {
-      !val && this.findUserList()
+      if (!val) {
+        this.laodingTable = true
+        this.findUserList()
+      }
     }
   },
   methods: {
@@ -195,15 +201,37 @@ export default {
         keyWork: this.userName
       }
     },
+    // getTips() {
+    //   switch (this.tipParams) {
+    //     case 'delete':
+    //       notice.okTips('删除成功')
+    //       break
+    //     case 'add':
+    //       notice.okTips('新增成功')
+    //       break
+    //     case 'edit':
+    //       notice.okTips('编辑成功')
+    //       break
+    //   }
+    // },
     // 接口请求-start
     findUserList() {
       const params = this.getParams()
+      // clearTimeout(timer)
+      // var timer = setTimeout(() => {
       findAll.req(params).then(res => {
         this.total = res.total
         this.userData.data = res.list
+        this.laodingTable = false
+        // this.getTips(this.tipParams)
+        this.tipParams = ''
       }).catch(err => {
-        console.log(err)
+        this.tipParams = ''
+        this.laodingTable = false
+        notice.errorTips(err)
+        // console.log(err)
       })
+      // }, 2000)
     },
     // 获取所有角色选项
     getRoleOptions() {
@@ -220,10 +248,13 @@ export default {
     },
     // 新增更新用户接口请求
     updateUser_Post(params) {
+      this.loading = true
       updateUser.req(params).then(res => {
-        notice.okTips('操作成功')
         this.emptyForm()
-        this.loading = false
+        // this.loading = false
+        this.laodingTable = true
+        notice.okTips('操作成功')
+        // this.tipParams = this.isEdit ? 'edit' : 'add'
         this.findUserList()
       }).catch(message => {
         notice.errorTips(message)
@@ -232,17 +263,51 @@ export default {
     },
     // 删除用户接口
     batcheDel(params) {
+      this.laodingTable = true
+      // clearTimeout(timer)
+      // var timer = setTimeout(() => {
       batcheDelUser.req({ ids: params }).then(res => {
+        // this.tipParams = 'delete'
+        notice.okTips('删除成功')
         this.findUserList()
+        // this.laodingTable = false
+      }).catch(err => {
+        this.laodingTable = false
+        notice.errorTips(err)
       })
+      // }, 2000)
     },
     // 删除、禁用、启用接口f
-    operatUser(params) {
+    operatUser(params, rows, index) {
+      // clearTimeout(timer)
+      // var timer = setTimeout(() => {
       operatUser.req(params).then(res => {
-        (params.state === 2) && this.findUserList()
+        switch (params.state) {
+          case 0:
+            this.$set(rows[index], 'state', '0')
+            this.laodingTable = false
+            notice.okTips(rows[index].username + '用户状态已禁用')
+            break
+          case 1:
+            this.$set(rows[index], 'state', '1')
+            this.laodingTable = false
+            notice.okTips(rows[index].username + '用户状态已启动')
+            break
+          case 2:
+            // this.tipParams = 'delete'
+            notice.okTips('删除成功')
+            this.findUserList()
+            // this.laodingTable = false
+            break
+        }
+      }).catch(err => {
+        this.laodingTable = false
+        notice.errorTips(err)
       })
+      // }, 2000)
     },
     emptyForm() {
+      this.loading = false
       this.dialogFormVisible = !this.dialogFormVisible
       clearTimeout(timer)
       var timer = setTimeout(() => {
@@ -251,20 +316,19 @@ export default {
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
-      this.loading = true
       params && this.updateUser_Post(params)
       !params && this.emptyForm()
     },
     // 新增按钮
     createUser() {
-      this.loading = false
+      // this.loading = false
       this.userManageForm = this.$deep_clone(userForm)
       this.dialogFormVisible = !this.dialogFormVisible
       this.isEdit = false
     },
     // 编辑按钮
     editUser(row) {
-      this.loading = false
+      // this.loading = false
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
       row.departList = this.$deep_clone(userForm.departList)
@@ -299,30 +363,33 @@ export default {
         this.toggle.forEach(row => {
           ids.push(row.id + '')
         })
-        this.$confirm('确定要删除这条数据？', '', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.batcheDel(ids.join(','))
-          notice.okTips('删除成功')
-        }).catch(err => {
-          notice.errorTips(err)
-          // console.log('error')
-        })
+        ids.length
+          ? this.$confirm('确定要删除这条数据？', '', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.batcheDel(ids.join(','))
+          }).catch(err => {
+            console.log(err)
+          })
+          : notice.warningTips('请选中你需要删除的用户')
       }
     },
     // 搜索
     finduserName() {
+      this.laodingTable = true
       this.findUserList()
     },
     // 调取接口相关函数  分页
     handleSizeChange(val) {
       this.pageSize = val
+      this.laodingTable = true
       this.findUserList()
     },
     handleCurrentChange(val) {
       this.pageNum = val
+      this.laodingTable = true
       this.findUserList()
     },
     // 单行删除
@@ -332,8 +399,10 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.laodingTable = true
         this.operatUser({ id: rows[index].id, state: 2 })
-        notice.okTips('成功删除该用户')
+        // this.laodingTable = false
+        // notice.okTips('成功删除该用户')
       }).catch(() => {
       })
     },
