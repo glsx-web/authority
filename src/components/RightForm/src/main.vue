@@ -197,6 +197,7 @@ export default {
           this.addData(obj)
         // 添加子级
         } else if (this.value.children) {
+          obj.grade += 1
           obj.parentId = treeData.id
           this.addData(obj)
         // 修改

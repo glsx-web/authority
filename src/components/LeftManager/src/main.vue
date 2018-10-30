@@ -67,7 +67,11 @@ export default {
       this.value.btnTxt = '保存'
       this.value.del = false
       for (const key in this.value.form) {
-        this.value.form[key] = null
+        if (key === 'grade') {
+          break
+        } else {
+          this.value.form[key] = null
+        }
       }
       if (this.value.form.createTime !== undefined) {
         this.value.form.createTime = timeTip
