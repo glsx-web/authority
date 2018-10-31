@@ -3,7 +3,7 @@
         <gl-form :model="userManageForm" :rules="rules" ref="userManageForm" label-width="100px">
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
-                <gl-input type="text" name="username" data-vv-as="用户名" v-validate="'required'" v-model="userManageForm.username" placeholder="请输入用户名" clearable></gl-input>
+                <gl-input type="text" name="username" data-vv-as="用户名" v-validate="'required|min:5'" v-model="userManageForm.username" placeholder="请输入用户名" clearable></gl-input>
                 <span v-show="errorBags.has('username')" class="error">{{ errorBags.first('username') }}</span>
             </gl-form-item>
           </el-col>
@@ -16,7 +16,7 @@
           <gl-col :span="12">
             <gl-form-item label="密码" prop="password" 
             :rules="[{ required: !userManageForm.id }]" >
-                <gl-input type='password' name="password" data-vv-as="密码" v-validate="!userManageForm.id? 'required': ''" v-model="userManageForm.password" :placeholder='placeholder' clearable></gl-input>
+                <gl-input type='password' name="password" data-vv-as="密码" v-validate="!userManageForm.id? 'required|min:5': ''" v-model="userManageForm.password" :placeholder='placeholder' clearable></gl-input>
                 <span v-show="errorBags.has('password')" class="error">{{ errorBags.first('password') }}</span>
             </gl-form-item>
           </gl-col>

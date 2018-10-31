@@ -63,8 +63,14 @@ export default {
       errExist: false,
       textExist: '',
       errIorder: false,
-      textType: '请填写数字'
+      textType: '请填写数字',
+      menu: ''
     }
+  },
+  mounted() {
+    this.eventBus.$on('update', val => {
+      this.menu = val
+    })
   },
   props: {
     value: null,
@@ -72,7 +78,8 @@ export default {
       type: Array,
       default: () => []
     },
-    isDepart: Boolean
+    isDepart: Boolean,
+    eventBus: Object
   },
   watch: {
     'value.form.urlName'(val) {
@@ -176,7 +183,7 @@ export default {
           this.addData(obj)
         // 添加子级
         } else if (this.value.children) {
-          obj.grade += 1
+          obj.grade = this.menu.grade + 1
           obj.parentId = treeData.id
           this.addData(obj)
         // 修改

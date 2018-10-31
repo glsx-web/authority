@@ -2,10 +2,10 @@
 <template>
   <gl-row :gutter="50" :style="{ height: height }" class="mentBox">
     <gl-col :span='8'>
-      <left-manager :title='"部门列表"' isDepart v-model="department" :nodeClick='nodeClick'></left-manager>
+      <left-manager :title='"部门列表"' isDepart v-model="department" :nodeClick='nodeClick' :eventBus='eventBus'></left-manager>
     </gl-col>
     <gl-col :span='16'>
-      <right-form :form='form' isDepart v-model="department"></right-form>
+      <right-form :form='form' isDepart v-model="department" :eventBus='eventBus'></right-form>
     </gl-col>
   </gl-row>
 </template>
@@ -13,6 +13,7 @@
 <script>
 import { LeftManager, RightForm } from '@/components/index'
 import { getDepartTreeNode } from '@/api/api'
+import Vue from 'vue'
 export default {
   name: 'department',
   data() {
@@ -33,14 +34,16 @@ export default {
         form: {
           name: '',
           upDepartment: '',
-          iorder: ''
+          iorder: '',
+          grade: ''
         }
       },
       form: [
         { label: '部门名称', value: 'name' },
         { label: '上级部门', value: 'upDepartment', disabled: true },
         { label: '排序', value: 'iorder' }
-      ]
+      ],
+      eventBus: new Vue()
     }
   },
   components: {
@@ -68,6 +71,10 @@ export default {
         this.department.form.name = res.name
         this.department.form.iorder = res.iorder
         this.department.form.parentId = res.parentId
+        this.department.form.grade = res.grade
+        // for (const key in this.department.form) {
+        //   this.department.form[key] = res[key]
+        // }
       }).catch(err => {
         console.log(err)
       })

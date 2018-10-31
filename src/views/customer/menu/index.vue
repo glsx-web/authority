@@ -1,16 +1,17 @@
 <template>
   <gl-row :gutter="100" :style="{ height: height }" class="mentBox">
     <gl-col :span='8'>
-      <left-manager :title='"菜单列表"' v-model="menuMG" :node-click='nodeClick'></left-manager>
+      <left-manager :title='"菜单列表"' v-model="menuMG" :node-click='nodeClick' :eventBus='eventBus'></left-manager>
     </gl-col>
     <gl-col :span='16'>
-      <right-form :form='form' v-model="menuMG"></right-form>
+      <right-form :form='form' v-model="menuMG" :eventBus='eventBus'></right-form>
     </gl-col>
   </gl-row>
 </template>
 <script>
 import { LeftManager, RightForm } from '@/components/index'
 import { findMenuById } from '@/api/api'
+import Vue from 'vue'
 export default {
   name: 'menuMG',
   data() {
@@ -51,6 +52,7 @@ export default {
           title: ''
         }
       },
+      eventBus: new Vue(),
       form: [
         { label: '名称', value: 'urlName' },
         { label: '主机自定义名称', value: 'hostName' },

@@ -36,7 +36,8 @@ export default {
         return null
       }
     },
-    isDepart: Boolean
+    isDepart: Boolean,
+    eventBus: Object
   },
   methods: {
     // 展开与关闭
@@ -66,12 +67,9 @@ export default {
       this.value.showDetails = true
       this.value.btnTxt = '保存'
       this.value.del = false
+      this.eventBus.$emit('update', this.$deep_clone(this.value.form))
       for (const key in this.value.form) {
-        if (key === 'grade') {
-          break
-        } else {
-          this.value.form[key] = null
-        }
+        this.value.form[key] = null
       }
       if (this.value.form.createTime !== undefined) {
         this.value.form.createTime = timeTip
