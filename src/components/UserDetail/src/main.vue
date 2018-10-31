@@ -81,8 +81,6 @@ export default {
     // 获取角色的相关用户详细信息
     selectUser() {
       const params = this.getRoleParams()
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       selectUserRoleByRoleId.req(params).then(res => {
         this.total = res.total
         this.tableParam.data = res.list
@@ -91,7 +89,6 @@ export default {
         this.roleLoadingParams.loading = false
         notice.errorTips(err)
       })
-      // }, 2000)
     },
     callApi() {
       this.flagRoleOrUser && (this.roleLoadingParams.loading = true)

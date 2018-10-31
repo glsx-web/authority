@@ -155,16 +155,11 @@ export default {
               }).then(() => {
                 this.laodingTable = true
                 if (rows[index].state < 1) {
-                  // this.$set(rows[index], 'state', '1')
                   this.operatUser({ id: rows[index].id, state: 1 }, rows, index)
                 } else {
-                  // this.$set(rows[index], 'state', '0')
                   this.operatUser({ id: rows[index].id, state: 0 }, rows, index)
                 }
-                // notice.okTips('修改成功')
-              }).catch(() => {
-                // notice.errorTips('修改失败')
-              })
+              }).catch(() => {})
             }
           }, {
             label: '删除',
@@ -201,37 +196,19 @@ export default {
         keyWork: this.userName
       }
     },
-    // getTips() {
-    //   switch (this.tipParams) {
-    //     case 'delete':
-    //       notice.okTips('删除成功')
-    //       break
-    //     case 'add':
-    //       notice.okTips('新增成功')
-    //       break
-    //     case 'edit':
-    //       notice.okTips('编辑成功')
-    //       break
-    //   }
-    // },
     // 接口请求-start
     findUserList() {
       const params = this.getParams()
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       findAll.req(params).then(res => {
         this.total = res.total
         this.userData.data = res.list
         this.laodingTable = false
-        // this.getTips(this.tipParams)
         this.tipParams = ''
       }).catch(err => {
         this.tipParams = ''
         this.laodingTable = false
         notice.errorTips(err)
-        // console.log(err)
       })
-      // }, 2000)
     },
     // 获取所有角色选项
     getRoleOptions() {
@@ -251,10 +228,8 @@ export default {
       this.loading = true
       updateUser.req(params).then(res => {
         this.emptyForm()
-        // this.loading = false
         this.laodingTable = true
         notice.okTips('操作成功')
-        // this.tipParams = this.isEdit ? 'edit' : 'add'
         this.findUserList()
       }).catch(message => {
         notice.errorTips(message)
@@ -264,23 +239,16 @@ export default {
     // 删除用户接口
     batcheDel(params) {
       this.laodingTable = true
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       batcheDelUser.req({ ids: params }).then(res => {
-        // this.tipParams = 'delete'
         notice.okTips('删除成功')
         this.findUserList()
-        // this.laodingTable = false
       }).catch(err => {
         this.laodingTable = false
         notice.errorTips(err)
       })
-      // }, 2000)
     },
     // 删除、禁用、启用接口f
     operatUser(params, rows, index) {
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       operatUser.req(params).then(res => {
         switch (params.state) {
           case 0:
@@ -294,17 +262,14 @@ export default {
             notice.okTips(rows[index].username + '用户状态已启动')
             break
           case 2:
-            // this.tipParams = 'delete'
             notice.okTips('删除成功')
             this.findUserList()
-            // this.laodingTable = false
             break
         }
       }).catch(err => {
         this.laodingTable = false
         notice.errorTips(err)
       })
-      // }, 2000)
     },
     emptyForm() {
       this.loading = false
@@ -321,14 +286,12 @@ export default {
     },
     // 新增按钮
     createUser() {
-      // this.loading = false
       this.userManageForm = this.$deep_clone(userForm)
       this.dialogFormVisible = !this.dialogFormVisible
       this.isEdit = false
     },
     // 编辑按钮
     editUser(row) {
-      // this.loading = false
       row.password = ''
       row.roleList = this.$deep_clone(userForm.roleList)
       row.departList = this.$deep_clone(userForm.departList)
@@ -401,8 +364,6 @@ export default {
       }).then(() => {
         this.laodingTable = true
         this.operatUser({ id: rows[index].id, state: 2 })
-        // this.laodingTable = false
-        // notice.okTips('成功删除该用户')
       }).catch(() => {
       })
     },

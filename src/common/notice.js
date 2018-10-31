@@ -23,18 +23,13 @@ export default new Vue({
         roleId: data.roleId,
         userId: data.userId
       }
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       deleteUserRoleById.req(params).then(() => {
         this.okTips(`删除成功`)
         roleLoadingParams.freshList = true
-        // roleLoadingParams.loading = false
-        // rows.splice(index, 1)
       }).catch(err => {
         roleLoadingParams.loading = false
         this.errorTips(err)
       })
-      // }, 2000)
     },
     warningTips(message) {
       this.$notify({

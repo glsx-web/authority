@@ -29,7 +29,9 @@
           v-model="value.form[i.value]" 
           :disabled="i.disabled">
         </gl-input>
-        <div v-show="err && index === 0" class="err">{{textName}}</div>
+        <span v-show="err && index === 0" class="err">{{textName}}</span>
+        <span v-show="errExist && index === 0" class="err">{{textExist}}</span>
+        <span v-show="errOpenstyle && !isDepart && index === 2" class="err">请选择打开模式</span>
       </gl-form-item>
       <gl-form-item>
         <gl-button type="primary" @click="submit" :loading="subLoading">{{value.btnTxt}}</gl-button>
@@ -63,10 +65,10 @@ export default {
       textName: this.isDepart ? '请填写部门名称' : '请填写列表名称',
       errExist: false,
       textExist: '',
+      errOpenstyle: false,
       errIorder: false,
       subLoading: false,
-      delLoading: false,
-      textType: '请填写数字'
+      delLoading: false
     }
   },
   props: {
@@ -78,8 +80,15 @@ export default {
     isDepart: Boolean
   },
   watch: {
+    'value.showDetails'(val) {
+      this.err = false
+      this.errOpenstyle = false
+    },
     'value.form.urlName'(val) {
       if (val !== '') this.nameTip()
+    },
+    'value.form.openStyle'(val) {
+      if (val !== null) this.openStyleTip()
     },
     'value.form.name'(val) {
       if (val !== '') this.nameTip()
@@ -96,10 +105,14 @@ export default {
       this.errExist = false
       this.textExist = ''
     },
-    // nameExitTip(err) {
-    //   this.errExist = true
-    //   this.textExist = err
-    // },
+    openStyleTip() {
+      this.errOpenstyle = false
+      this.openText = ''
+    },
+    nameExitTip(err) {
+      this.errExist = true
+      this.textExist = err
+    },
     getMenuObj(obj = {}) {
       for (const key in this.value.form) {
         obj[key] = this.value.form[key]
@@ -111,17 +124,13 @@ export default {
     },
     // 接口调用-start
     addOrEditDepart(params) {
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       updateDepartment.req(params).then(res => {
         this.subLoading = false
         this.Tip(true)
       }).catch(err => {
         this.subLoading = false
         notice.errorTips(err)
-        // console.log(err)
       })
-      // }, 2000)
     },
     // 接口调用-end
     // 删除
@@ -130,8 +139,6 @@ export default {
       const obj = this.getMenuObj()
       obj.isHidden = this.value.form.isHidden === true ? 0 : 1
       this.dialog = false
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       this.isDepart
         ? delDepartment.req(obj).then(res => {
           this.delLoading = false
@@ -149,7 +156,6 @@ export default {
           console.log(err)
           this.delErrTip()
         })
-      // }, 2000)
     },
     delTip(val) {
       if (val) {
@@ -164,13 +170,6 @@ export default {
         this.value.showDetails = false
         this.value.updateTree = !this.value.updateTree
       }
-      // else {
-      // this.$notify({
-      //   title: '已取消',
-      //   type: 'info'
-      // })
-      // }
-      // this.dialog = false
     },
     delErrTip() {
       this.$notify({
@@ -182,7 +181,7 @@ export default {
     // 保存修改
     submit() {
       const treeData = this.value.allNode
-      if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null) {
+      if (this.value.form[this.form[0].value] !== '' && this.value.form[this.form[0].value] !== null && (this.value.form[this.form[2].value] !== null || this.isDepart)) {
         const obj = this.getMenuObj()
         this.subLoading = true
         obj.isHidden = this.value.form.isHidden === true ? 0 : 1
@@ -193,7 +192,6 @@ export default {
           } else {
             obj.parentId = treeData.parent
           }
-          // this.subLoading = true
           this.addData(obj)
         // 添加子级
         } else if (this.value.children) {
@@ -203,8 +201,6 @@ export default {
         // 修改
         } else {
           if (!this.isDepart) {
-            // clearTimeout(timer)
-            // var timer = setTimeout(() => {
             editMenu.req(obj).then(res => {
               this.subLoading = false
               this.Tip(true)
@@ -213,14 +209,17 @@ export default {
               this.subLoading = false
               this.Tip(false)
             })
-            // }, 2000)
           } else {
             this.subLoading = true
             this.addOrEditDepart(obj)
           }
         }
-      } else {
+      }
+      if (this.value.form[this.form[0].value] === '' || this.value.form[this.form[0].value] === null) {
         this.err = true
+      }
+      if (this.value.form[this.form[2].value] === null && !this.isDepart) {
+        this.errOpenstyle = true
       }
     },
     unix(time) {
@@ -229,8 +228,6 @@ export default {
       return new Date(time).getTime()
     },
     addData(obj) {
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       if (!this.isDepart) {
         addMenu.req(obj).then(res => {
           this.subLoading = false
@@ -238,13 +235,12 @@ export default {
         }).catch(err => {
           this.subLoading = false
           notice.errorTips(err)
-          // this.nameExitTip(err)
+          this.nameExitTip(err)
         })
       } else {
         this.errIorder = true
         this.addOrEditDepart(obj)
       }
-      // }, 2000)
     },
     Tip(val) {
       if (val) {

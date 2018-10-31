@@ -161,53 +161,30 @@ export default {
         keyWork: this.roleName
       }
     },
-    // getTips() {
-    //   switch (this.tipParams) {
-    //     case 'delete':
-    //       notice.okTips('删除成功')
-    //       break
-    //     case 'add':
-    //       notice.okTips('创建成功')
-    //       break
-    //     case 'edit':
-    //       notice.okTips('编辑成功')
-    //       break
-    //   }
-    // },
     // 接口请求-start---------------------------------------
     // 获取展示数据，请求表格数据
     getList() {
       const params = this.getParams()
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       getRoleList.req(params).then(res => {
         this.total = res.total
         this.roleData.data = res.list
         this.loadingTable = false
-        // this.getTips()
         this.tipParams = ''
       }).catch(err => {
         this.tipParams = ''
         this.loadingTable = false
         notice.errorTips(err)
-        // console.log(err)
       })
-      // }, 2000)
     },
     // 删除角色
     deleteRole(params) {
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       deleteRoleById.req({ roleId: params }).then(res => {
-        // this.tipParams = 'delete'
         notice.okTips('删除成功')
-        // this.loadingTable = false
         this.getList()
       }).catch(message => {
         this.loadingTable = false
         notice.errorTips(message)
       })
-      // }, 2000)
     },
     roleMenuOption(data, pid) {
       data.forEach(item => {
@@ -233,30 +210,23 @@ export default {
     },
     // 添加角色
     addRole(params) {
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       saveRoleList.req(params).then((data) => {
         this.createOrEditSuccess()
       }).catch(err => {
         this.loading = false
         notice.errorTips(err)
       })
-      // }, 2000)
     },
     // 编辑角色
     updateRoleInfo(params) {
       delete params.createTime
       delete params.updateTime
-      // clearTimeout(timer)
-      // var timer = setTimeout(() => {
       updateRole.req(params).then((data) => {
         this.createOrEditSuccess()
       }).catch(err => {
         this.loading = false
         notice.errorTips(err)
-        // console.log(err)
       })
-      // }, 2000)
     },
     // 获取部门树
     getdepartData() {
@@ -285,11 +255,9 @@ export default {
       }, 200)
     },
     createOrEditSuccess() {
-      // this.createDialogVisible()
       this.emptyParam()
       this.loading = false
       notice.okTips(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！')
-      // this.tipParams = this.flagCOrE ? 'add' : 'edit'
       this.loadingTable = true
       this.getList()
     },
@@ -336,7 +304,6 @@ export default {
     handleCreateClose(data) {
       if (!data) {
         this.emptyParam()
-        // this.roleMenu = []
         return false
       }
       this.loading = true
