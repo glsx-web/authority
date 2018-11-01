@@ -3,7 +3,7 @@ import {
   deleteUserRoleById,
   getRoleDetail,
   getRoleList,
-  // isRoleNameExit,
+  isRoleNameExit,
   saveRoleList,
   selectMenuTreeRoleId,
   selectUserRoleByRoleId,
@@ -16,7 +16,8 @@ import {
   getUser,
   getWithRoles,
   operatUser,
-  updateUser
+  updateUser,
+  existsByName
 } from './userApi'
 
 import {
@@ -43,7 +44,7 @@ export {
   deleteUserRoleById,
   getRoleDetail,
   getRoleList,
-  // isRoleNameExit,
+  isRoleNameExit,
   saveRoleList,
   selectMenuTreeRoleId,
   selectUserRoleByRoleId,
@@ -55,6 +56,7 @@ export {
   getWithRoles,
   operatUser,
   updateUser,
+  existsByName,
   // depart接口
   delDepartment,
   findDepartTree,

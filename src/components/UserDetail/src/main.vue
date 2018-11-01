@@ -2,7 +2,7 @@
 <template>
   <div>
     <gl-dialog :title="userDetailTitle" :visible.sync="userDetailVisible" :before-close="handleClose">
-      <gl-table :table="tableParam"></gl-table>
+      <gl-table :table="tableParam" v-loading="roleLoadingParams.loading" gl-loading-text="拼命加载中"></gl-table>
       <gl-pagination 
           background 
           v-show="flagRoleOrUser" 
@@ -18,6 +18,8 @@
 
 <script>
 import { selectUserRoleByRoleId } from '@/api/api'
+import notice from '@/common/notice'
+
 export default {
   name: 'UserDetail',
   props: {
@@ -25,33 +27,46 @@ export default {
     userDetailVisible: Boolean,
     apiParam: [Object, Function],
     flagRoleOrUser: [Boolean, Function],
-    columnParam: Array,
-    consoleParam: [Array, Object]
+    columnParam: Array
   },
   watch: {
     columnParam(val) {
       this.tableParam.column = val
-    },
-    consoleParam(val) {
-      this.tableParam.console = val
+      this.flagRoleOrUser && (this.tableParam.console = this.userRoleDetailConsole)
     },
     apiParam(val) {
       this.id = val.id
       this.id && this.callApi()
+    },
+    'roleLoadingParams.freshList'(val) {
+      val && this.callApi()
     }
   },
   data() {
     return {
       pageNum: 1,
       pageSize: 5,
-      total: 10,
+      total: 5,
       id: Number,
+      roleLoadingParams: { loading: false, freshList: false },
+      userRoleDetailConsole: {
+        show: true,
+        label: '操作',
+        prop: 'option',
+        button: [{
+          label: '删除',
+          type: 'text',
+          callback: (index, rows) => {
+            notice.confirmTips('确定要删除该用户吗？', 'userRoleDetail', index, rows, this.roleLoadingParams)
+          }
+        }]
+      },
       tableParam: {
         border: true,
         align: 'center',
         data: [],
         column: [],
-        console: []
+        console: {}
       }
     }
   },
@@ -69,16 +84,23 @@ export default {
       selectUserRoleByRoleId.req(params).then(res => {
         this.total = res.total
         this.tableParam.data = res.list
+        this.roleLoadingParams.loading = false
       }).catch(err => {
-        console.log(err)
+        this.roleLoadingParams.loading = false
+        notice.errorTips(err)
       })
     },
     callApi() {
-      this.flagRoleOrUser && this.selectUser()
-      !this.flagRoleOrUser && (this.tableParam.data = [this.apiParam])
+      this.flagRoleOrUser && (this.roleLoadingParams.loading = true)
+      this.flagRoleOrUser ? this.selectUser() : (this.tableParam.data = [this.apiParam])
+      this.roleLoadingParams.freshList = false
     },
     handleClose() {
       this.$emit('userDetailClose')
+      clearTimeout(timer)
+      var timer = setTimeout(() => {
+        this.pageNum = 1
+      }, 200)
     },
     handleCurrentChange(val) {
       this.pageNum = val

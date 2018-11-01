@@ -1,13 +1,21 @@
 <!-- createRoleComponent -->
 <template>
   <gl-dialog :title="title" :visible.sync="createVisible" :before-close="handleCreateCancel">
-    <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="105px">
+    <gl-form :model="createRuleForm" :rules="createRules" ref="createRuleForm" label-width="100px">
       <gl-form-item label="角色名称：" prop="roleName">
-        <gl-input name="roleName" data-vv-as="角色名称" v-validate="'required'" v-model="createRuleForm.roleName" clearable></gl-input>
+        <gl-input name="roleName" 
+                  data-vv-as="角色名称" 
+                  v-validate="'required|uniqueName'" 
+                  v-model="createRuleForm.roleName" clearable></gl-input>
         <span v-show="errorBags.has('roleName')" class="error">{{ errorBags.first('roleName') }}</span>
       </gl-form-item>
       <gl-form-item label="角色描述：" prop="description">
-        <gl-input name="description" data-vv-as="角色描述" v-validate="'required|max:200'" v-model="createRuleForm.description" type="textarea" :rows="3" clearable></gl-input>
+        <gl-input name="description" 
+                  data-vv-as="角色描述" 
+                  v-validate="'required|max:200'" 
+                  v-model="createRuleForm.description" 
+                  type="textarea" 
+                  :rows="3" clearable></gl-input>
         <span v-show="errorBags.has('description')" class="error">{{ errorBags.first('description') }}</span>
       </gl-form-item>
       <gl-form-item>
@@ -53,6 +61,7 @@
 </template>
 
 <script>
+import { isRoleNameExit } from '@/api/api'
 export default {
   name: 'RoleCreate',
   props: {
@@ -77,6 +86,7 @@ export default {
   },
   data() {
     return {
+      roleName: '',
       isDepart: true,
       show_checkbox: true,
       defaultExpandAll: false,
@@ -103,6 +113,31 @@ export default {
         ]
       }
     }
+  },
+  mounted() {
+    this.$valid.extend('uniqueName', {
+      validate: value => {
+        return new Promise((resolve, reject) => {
+          if (value === this.createRuleForm.oldRoleName) {
+            resolve(true)
+          }
+          isRoleNameExit.req({ roleName: this.createRuleForm.roleName }).then(data => {
+            // 此处data返回一个布尔值，true为已存在，false为不存在
+            resolve(data)
+          }).catch(err => {
+            console.log(err)
+            resolve(false)
+          })
+        })
+      }
+    })
+    this.$validator.localize('zh_CN', {
+      custom: {
+        roleName: {
+          uniqueName: '该角色已存在'
+        }
+      }
+    })
   },
   methods: {
     // tree-strat
@@ -148,6 +183,9 @@ export default {
 }
 </script>
 <style scoped>
+.dialog-footer{
+  margin-top: -40px;
+}
 .err {
     color: red;
 }

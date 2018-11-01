@@ -18,7 +18,7 @@
       </role-create>
       <div class="m-b8">
         <transition>
-          <gl-table :table="roleData"></gl-table>
+          <gl-table :table="roleData" v-loading="loadingTable" gl-loading-text="拼命加载中"></gl-table>
         </transition>
         <gl-pagination background 
           @size-change="handleSizeChange" 
@@ -41,7 +41,6 @@
             @userDetailClose="handleUserDetailClose" 
             :apiParam="apiParam" 
             :columnParam="columnParam" 
-            :consoleParam="consoleParam" 
             :flagRoleOrUser="flagRoleOrUser"></user-detail>
       </div>
     </div>
@@ -52,19 +51,18 @@
 import { RoleCreate, RoleDetail, UserDetail } from '@/components/index'
 // 接口
 import { getRoleList, deleteRoleById, selectMenuTreeRoleId, saveRoleList, updateRole, findDepartTree } from '@/api/api'
-import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole, fn } from '@/common/commonConst'
+import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, fn } from '@/common/commonConst'
 import notice from '@/common/notice'
 export default {
   name: 'role',
   components: {
     RoleCreate,
     RoleDetail,
-    UserDetail,
-    saveRoleList,
-    updateRole
+    UserDetail
   },
   data() {
     return {
+      loadingTable: false,
       loading: false,
       roleName: '',
       createVisible: false,
@@ -73,7 +71,6 @@ export default {
       roleParam: this.$deep_clone(roleCreateStructure),
       roleMenu: [],
       columnParam: [],
-      consoleParam: [],
       apiParam: Object,
       flagRoleOrUser: true,
       flagCOrE: Boolean,
@@ -82,6 +79,7 @@ export default {
       createOrEditTitle: '新增角色',
       userDetailTitle: '用户列表',
       departList: [],
+      tipParams: '',
       // 分页所需参数-start
       total: 10,
       pageNum: 1,
@@ -133,7 +131,11 @@ export default {
   },
   watch: {
     roleName(val) {
-      !val && this.getList()
+      // !val && this.getList()
+      if (!val) {
+        this.loadingTable = true
+        this.getList()
+      }
     }
   },
   methods: {
@@ -144,6 +146,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 删除角色，根据返回的code值来判断是否删除成功(已有拦截器)
+        this.loadingTable = true
         this.deleteRole(rows[index].id)
       }).catch(() => {
       })
@@ -163,8 +166,12 @@ export default {
       getRoleList.req(params).then(res => {
         this.total = res.total
         this.roleData.data = res.list
+        this.loadingTable = false
+        this.tipParams = ''
       }).catch(err => {
-        console.log(err)
+        this.tipParams = ''
+        this.loadingTable = false
+        notice.errorTips(err)
       })
     },
     // 删除角色
@@ -173,6 +180,7 @@ export default {
         notice.okTips('删除成功')
         this.getList()
       }).catch(message => {
+        this.loadingTable = false
         notice.errorTips(message)
       })
     },
@@ -203,10 +211,9 @@ export default {
       saveRoleList.req(params).then((data) => {
         this.createOrEditSuccess()
       }).catch(err => {
+        this.loading = false
         notice.errorTips(err)
-        console.log(err)
       })
-      this.loading = false
     },
     // 编辑角色
     updateRoleInfo(params) {
@@ -215,15 +222,16 @@ export default {
       updateRole.req(params).then((data) => {
         this.createOrEditSuccess()
       }).catch(err => {
+        this.loading = false
         notice.errorTips(err)
-        console.log(err)
       })
-      this.loading = false
     },
     // 获取部门树
     getdepartData() {
       findDepartTree.req().then(res => {
         this.departList = fn(res, '#')
+      }).catch(err => {
+        notice.errorTips(err)
       })
     },
     // 接口请求-end---------------------------------------
@@ -238,29 +246,32 @@ export default {
     },
     emptyParam() {
       this.createDialogVisible()
+      this.roleMenu = []
       clearTimeout(timer)
       var timer = setTimeout(() => {
         this.roleParam = this.$deep_clone(roleCreateStructure)
       }, 200)
     },
     createOrEditSuccess() {
-      // this.createDialogVisible()
       this.emptyParam()
       this.loading = false
       notice.okTips(this.flagCOrE ? '创建角色成功！' : '已经成功修改数据！')
-      this.roleMenu = []
+      this.loadingTable = true
       this.getList()
     },
     // 调取接口相关函数
     handleSizeChange(val) {
       this.pageSize = val
+      this.loadingTable = true
       this.getList()
     },
     handleCurrentChange(val) {
       this.pageNum = val
+      this.loadingTable = true
       this.getList()
     },
     handleSearchRoleName() {
+      this.loadingTable = true
       this.getList()
     },
     handleGetRoleDetail() {
@@ -273,18 +284,19 @@ export default {
     },
     handleGetUserDetail(index, rows) {
       this.columnParam = userRoleDetailColumn
-      this.consoleParam = userRoleDetailConsole
       this.flagRoleOrUser = true
       this.apiParam = rows[index]
       this.userDetailDialogVisible()
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
+      this.loadingTable = true
       this.getList()
       this.apiParam = Object
     },
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
+      this.roleParam.oldRoleName = this.roleParam.roleName
       this.flagCOrE ? this.createDialogVisible() : this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
     },
     // 关闭新增用户组件

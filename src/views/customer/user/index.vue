@@ -18,7 +18,7 @@
         </user-create>
       </div>
       <div class="m-b8">
-        <gl-table :table="userData" ref="multipleTable"></gl-table>
+        <gl-table :table="userData" v-loading="laodingTable" gl-loading-text="拼命加载中" ref="multipleTable"></gl-table>
         <gl-pagination background
           @size-change="handleSizeChange" 
           @current-change="handleCurrentChange" 
@@ -53,7 +53,6 @@ export default {
   components: {
     UserCreate,
     UserDetail,
-    updateUser,
     userForm
   },
   data() {
@@ -66,6 +65,8 @@ export default {
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
       loading: false,
+      laodingTable: false,
+      tipParams: '',
       userDetailTitle: '用户详情',
       // 分页所需参数-start
       total: 10,
@@ -151,17 +152,13 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
               }).then(() => {
+                this.laodingTable = true
                 if (rows[index].state < 1) {
-                  this.$set(rows[index], 'state', '1')
-                  this.operatUser({ id: rows[index].id, state: 1 })
+                  this.operatUser({ id: rows[index].id, state: 1 }, rows, index)
                 } else {
-                  this.$set(rows[index], 'state', '0')
-                  this.operatUser({ id: rows[index].id, state: 0 })
+                  this.operatUser({ id: rows[index].id, state: 0 }, rows, index)
                 }
-                notice.okTips('修改成功')
-              }).catch(() => {
-                notice.errorTips('修改失败')
-              })
+              }).catch(() => {})
             }
           }, {
             label: '删除',
@@ -183,7 +180,10 @@ export default {
   },
   watch: {
     userName(val) {
-      !val && this.findUserList()
+      if (!val) {
+        this.laodingTable = true
+        this.findUserList()
+      }
     }
   },
   methods: {
@@ -201,8 +201,12 @@ export default {
       findAll.req(params).then(res => {
         this.total = res.total
         this.userData.data = res.list
+        this.laodingTable = false
+        this.tipParams = ''
       }).catch(err => {
-        console.log(err)
+        this.tipParams = ''
+        this.laodingTable = false
+        notice.errorTips(err)
       })
     },
     // 获取所有角色选项
@@ -220,30 +224,55 @@ export default {
     },
     // 新增更新用户接口请求
     updateUser_Post(params) {
+      this.loading = true
       updateUser.req(params).then(res => {
-        notice.okTips('操作成功')
         this.emptyForm()
-        this.loading = false
+        this.laodingTable = true
+        notice.okTips('操作成功')
         this.findUserList()
       }).catch(message => {
-        notice.errorTips(message)
+        // notice.errorTips(message)
         this.loading = false
       })
     },
     // 删除用户接口
     batcheDel(params) {
+      this.laodingTable = true
       batcheDelUser.req({ ids: params }).then(res => {
+        notice.okTips('删除成功')
         this.findUserList()
+      }).catch(err => {
+        this.laodingTable = false
+        notice.errorTips(err)
       })
     },
     // 删除、禁用、启用接口f
-    operatUser(params) {
+    operatUser(params, rows, index) {
       operatUser.req(params).then(res => {
-        (params.state === 2) && this.findUserList()
+        switch (params.state) {
+          case 0:
+            this.$set(rows[index], 'state', '0')
+            this.laodingTable = false
+            notice.okTips(rows[index].username + '用户状态已禁用')
+            break
+          case 1:
+            this.$set(rows[index], 'state', '1')
+            this.laodingTable = false
+            notice.okTips(rows[index].username + '用户状态已启动')
+            break
+          case 2:
+            notice.okTips('删除成功')
+            this.findUserList()
+            break
+        }
+      }).catch(err => {
+        this.laodingTable = false
+        notice.errorTips(err)
       })
     },
     emptyForm() {
-      this.dialogFormVisible = !this.dialogFormVisible
+      this.loading = false
+      this.handleUserFormVisible()
       clearTimeout(timer)
       var timer = setTimeout(() => {
         this.userManageForm = this.$deep_clone(userForm)
@@ -251,21 +280,20 @@ export default {
     },
     // 接受子组件传递的值
     handleUserFormData(isEdit, params) {
-      this.loading = true
       params && this.updateUser_Post(params)
       !params && this.emptyForm()
     },
     // 新增按钮
     createUser() {
-      this.loading = false
       this.userManageForm = this.$deep_clone(userForm)
-      this.dialogFormVisible = !this.dialogFormVisible
+      this.handleUserFormVisible()
       this.isEdit = false
     },
     // 编辑按钮
     editUser(row) {
-      this.loading = false
       row.password = ''
+      // console.log(row)
+      row.oldUserName = row.username
       row.roleList = this.$deep_clone(userForm.roleList)
       row.departList = this.$deep_clone(userForm.departList)
       row.state = row.state + ''
@@ -285,7 +313,7 @@ export default {
         }
         this.userManageForm = this.$deep_clone(row)
       })
-      this.dialogFormVisible = !this.dialogFormVisible
+      this.handleUserFormVisible()
       this.isEdit = true
     },
     // 获取选中的行
@@ -299,30 +327,33 @@ export default {
         this.toggle.forEach(row => {
           ids.push(row.id + '')
         })
-        this.$confirm('确定要删除这条数据？', '', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.batcheDel(ids.join(','))
-          notice.okTips('删除成功')
-        }).catch(err => {
-          notice.errorTips(err)
-          // console.log('error')
-        })
+        ids.length
+          ? this.$confirm('确定要删除这条数据？', '', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.batcheDel(ids.join(','))
+          }).catch(err => {
+            console.log(err)
+          })
+          : notice.warningTips('请选中你需要删除的用户')
       }
     },
     // 搜索
     finduserName() {
+      this.laodingTable = true
       this.findUserList()
     },
     // 调取接口相关函数  分页
     handleSizeChange(val) {
       this.pageSize = val
+      this.laodingTable = true
       this.findUserList()
     },
     handleCurrentChange(val) {
       this.pageNum = val
+      this.laodingTable = true
       this.findUserList()
     },
     // 单行删除
@@ -332,8 +363,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.laodingTable = true
         this.operatUser({ id: rows[index].id, state: 2 })
-        notice.okTips('成功删除该用户')
       }).catch(() => {
       })
     },
@@ -361,6 +392,9 @@ export default {
     handleUserDetailClose() {
       this.userDetailVisible = !this.userDetailVisible
       this.apiParam = Object
+    },
+    handleUserFormVisible() {
+      this.dialogFormVisible = !this.dialogFormVisible
     }
   }
 }

@@ -1,4 +1,4 @@
-import { roleCreateStructure, roleDataColumn, userRoleDetailColumn, userRoleDetailConsole } from './roleConst'
+import { roleCreateStructure, roleDataColumn, userRoleDetailColumn } from './roleConst'
 import { userForm, userDetailColumn } from './userConst'
 
 function fn(data, pid) {
@@ -20,7 +20,6 @@ export {
   roleCreateStructure,
   roleDataColumn,
   userRoleDetailColumn,
-  userRoleDetailConsole,
   userDetailColumn,
   userForm,
   fn

@@ -64,6 +64,7 @@ export default {
       this.clearFrom()
     },
     clearFrom() {
+      // console.log(this.value.form)
       this.value.showDetails = true
       this.value.btnTxt = '保存'
       this.value.del = false

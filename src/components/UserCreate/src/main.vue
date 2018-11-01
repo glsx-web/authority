@@ -3,38 +3,73 @@
         <gl-form :model="userManageForm" :rules="rules" ref="userManageForm" label-width="100px">
           <el-col :span="12">
             <gl-form-item label="用户名" prop="username">
-                <gl-input type="text" name="username" data-vv-as="用户名" v-validate="'required|min:5'" v-model="userManageForm.username" placeholder="请输入用户名" clearable></gl-input>
+                <gl-input 
+                type="text"
+                name="username"
+                data-vv-as="用户名"
+                v-validate="'required|min:5|uniqueName'"
+                v-model="userManageForm.username" 
+                placeholder="请输入用户名" clearable></gl-input>
                 <span v-show="errorBags.has('username')" class="error">{{ errorBags.first('username') }}</span>
             </gl-form-item>
           </el-col>
           <gl-col :span="12">
             <gl-form-item label="真实姓名" prop="realname">
-                <gl-input type="text" name="realname" data-vv-as="真实姓名" v-validate="'required'" v-model="userManageForm.realname" placeholder="请输入用户真实名字" clearable></gl-input>
+                <gl-input 
+                type="text" 
+                name="realname" 
+                data-vv-as="真实姓名" 
+                v-validate="'required'" 
+                v-model="userManageForm.realname" 
+                placeholder="请输入用户真实名字" clearable></gl-input>
                 <span v-show="errorBags.has('realname')" class="error">{{ errorBags.first('realname') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="密码" prop="password" 
             :rules="[{ required: !userManageForm.id }]" >
-                <gl-input type='password' name="password" data-vv-as="密码" v-validate="!userManageForm.id? 'required|min:5': ''" v-model="userManageForm.password" :placeholder='placeholder' clearable></gl-input>
+                <gl-input 
+                type='password' 
+                name="password" 
+                data-vv-as="密码" 
+                v-validate="!userManageForm.id? 'required|min:5': ''" 
+                v-model="userManageForm.password" 
+                :placeholder='placeholder' clearable></gl-input>
                 <span v-show="errorBags.has('password')" class="error">{{ errorBags.first('password') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="手机号码" prop="mobile">
-              <gl-masked type="text" name="mobile" data-vv-as="手机号码" v-validate="'required|length:11'" placeholder="请输入手机号码" v-model="userManageForm.mobile" :mask="[ 1, /[34578]/, /\d/, /\d/, /\d/,/\d/, /\d/, /\d/,/\d/, /\d/, /\d/]" clearable></gl-masked>
+              <gl-masked 
+              type="text" 
+              name="mobile" 
+              data-vv-as="手机号码" 
+              v-validate="'required|length:11'" 
+              placeholder="请输入手机号码" 
+              v-model="userManageForm.mobile" 
+              :mask="[ 1, /[34578]/, /\d/, /\d/, /\d/,/\d/, /\d/, /\d/,/\d/, /\d/, /\d/]" clearable></gl-masked>
               <span v-show="errorBags.has('mobile')" class="error">{{ errorBags.first('mobile') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="注册IP" prop="joinip">
-              <gl-masked name="joinip" v-validate="'required'" data-vv-as="注册IP" v-model="userManageForm.joinip" ip clearable></gl-masked>
+              <gl-masked 
+              name="joinip" 
+              v-validate="'required'" 
+              data-vv-as="注册IP" 
+              v-model="userManageForm.joinip" ip clearable></gl-masked>
               <span v-show="errorBags.has('joinip')" class="error">{{ errorBags.first('joinip') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
               <gl-form-item prop="email" label="邮箱">
-                <gl-input type="text" name="email" data-vv-as="邮箱" v-model='userManageForm.email' placeholder="请输入邮箱地址" v-validate="'required|email'" clearable></gl-input>
+                <gl-input 
+                type="text" 
+                name="email" 
+                data-vv-as="邮箱" 
+                v-model='userManageForm.email' 
+                placeholder="请输入邮箱地址" 
+                v-validate="'required|email'" clearable></gl-input>
                 <span v-show="errorBags.has('email')" class="error">{{ errorBags.first('email') }}</span>
             </gl-form-item>
           </gl-col>
@@ -57,15 +92,32 @@
           <gl-col :span="24">
             <gl-form-item label="所属部门" 
             prop="departName">
-              <gl-input-tree name="departName" data-vv-as="所属部门" v-validate="'required'" :data='userManageForm.departList' :props="props" :treeStyle='{ maxHeight: "160px" }' @node-click='clickDepart' v-model="userManageForm.departName" />
+              <gl-input-tree 
+              name="departName" 
+              data-vv-as="所属部门" 
+              v-validate="'required'" 
+              :data='userManageForm.departList' 
+              :props="props" 
+              :treeStyle='{ maxHeight: "160px" }' 
+              @node-click='clickDepart' 
+              v-model="userManageForm.departName" />
               <span v-show="errorBags.has('departName')" class="error">{{ errorBags.first('departName') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
             <gl-form-item  label="角色选项" 
             prop="roles" :key="key">
-                <gl-checkbox-group name="roles" data-vv-as="角色选项" v-validate="'required'"  class="height" v-model="userManageForm.roles" @change="handleCheckedChange">
-                  <gl-checkbox v-for="item in userManageForm.roleList" :key="item.id"  :label='item.id'>{{item.roleName}}</gl-checkbox>
+                <gl-checkbox-group 
+                name="roles" 
+                data-vv-as="角色选项" 
+                v-validate="'required'"  
+                class="height" 
+                v-model="userManageForm.roles" 
+                @change="handleCheckedChange">
+                  <gl-checkbox 
+                  v-for="item in userManageForm.roleList" 
+                  :key="item.id"  
+                  :label='item.id'>{{item.roleName}}</gl-checkbox>
                 </gl-checkbox-group>
                 <span v-show="errorBags.has('roles')" class="error">{{ errorBags.first('roles') }}</span>
             </gl-form-item>
@@ -79,6 +131,7 @@
 </template>
 
 <script>
+import { existsByName } from '@/api/api'
 import { userForm } from '@/common/userConst'
 export default {
   name: 'UserCreate',
@@ -138,6 +191,31 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$valid.extend('uniqueName', {
+      validate: value => {
+        return new Promise((resolve, reject) => {
+          if (value === this.userManageForm.oldUserName) {
+            resolve(true)
+          }
+          existsByName.req({ username: this.userManageForm.username }).then(data => {
+            // 此处data返回一个布尔值，false为已存在，true为不存在
+            resolve(data)
+          }).catch(err => {
+            console.log(err)
+            resolve(false)
+          })
+        })
+      }
+    })
+    this.$validator.localize('zh_CN', {
+      custom: {
+        username: {
+          uniqueName: '该用户已存在'
+        }
+      }
+    })
+  },
   methods: {
     // 部门树
     clickDepart(data, treeData, vue, props) {
@@ -181,7 +259,6 @@ export default {
     },
     cancelForm() {
       this.$emit('userFormData')
-      // this.$validator.errors.clear()
     },
     handleCheckedChange(value) {
       if (!value) return

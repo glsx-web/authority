@@ -6,7 +6,7 @@ const __sDeleteRole = `${path}/deleteRoleById`
 const __sDeleteUserRole = `${path}/deleteUserRoleById`
 const __sGetRoleDetail = `${path}/getRoleDetail`
 const __sGetRoleList = `${path}/getRoleList`
-// const __sIsRoleNameExit = `${path}/isRoleNameExit`
+const __sIsRoleNameExit = `${path}/isRoleNameExit`
 const __sSaveRoleList = `${path}/saveRoleList`
 const __sSelectMenuTreeRoleId = `${path}/selectMenuTreeRoleId`
 const __sSelectUserRole = `${path}/selectUserRoleByRoleId`
@@ -32,10 +32,10 @@ const getRoleList = {
   req: params => GlAxios.get(__sGetRoleList, { params })
 }
 
-// const isRoleNameExit = {
-//   p: [__sIsRoleNameExit],
-//   req: params => GlAxios.get(__sIsRoleNameExit, { params })
-// }
+const isRoleNameExit = {
+  p: [__sIsRoleNameExit],
+  req: params => GlAxios.get(__sIsRoleNameExit, { params })
+}
 
 const saveRoleList = {
   p: [__sSaveRoleList],
@@ -62,7 +62,7 @@ export {
   deleteUserRoleById,
   getRoleDetail,
   getRoleList,
-  // isRoleNameExit,
+  isRoleNameExit,
   saveRoleList,
   selectMenuTreeRoleId,
   selectUserRoleByRoleId,

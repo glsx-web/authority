@@ -8,6 +8,7 @@ const __sGet = `${path}/get`
 const __sGetWithRoles = `${path}/getWithRoles`
 const __sOperatUser = `${path}/operatUser`
 const __sUpdateUser = `${path}/updateUser`
+const __sExistsByName = `${path}/existsByName`
 
 const batcheDelUser = {
   p: [__sBatcheDel],
@@ -38,6 +39,10 @@ const updateUser = {
   p: [__sUpdateUser],
   req: params => GlAxios.post(__sUpdateUser, params)
 }
+const existsByName = {
+  p: [__sExistsByName],
+  req: params => GlAxios.get(__sExistsByName, { params })
+}
 
 export {
   batcheDelUser,
@@ -45,5 +50,6 @@ export {
   getUser,
   getWithRoles,
   operatUser,
-  updateUser
+  updateUser,
+  existsByName
 }

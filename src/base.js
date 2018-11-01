@@ -22,7 +22,7 @@ const config = {
 }
 Vue.use(VeeValidate, config)
 Validator.localize('zh_CN', zh_CN)
-
+Vue.prototype.$valid = Validator
 var mixin = {
   mounted() {
     const _this = this
