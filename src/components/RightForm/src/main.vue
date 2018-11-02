@@ -177,6 +177,8 @@ export default {
         })
         this.value.showDetails = false
         this.value.updateTree = !this.value.updateTree
+      } else {
+        this.dialog = false
       }
     },
     delErrTip() {
