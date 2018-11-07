@@ -1,7 +1,7 @@
 import {
   GlAxios
 } from 'glsx-vue-common'
-const path = 'user'
+const path = '/admin-operating-auth/user'
 const __sBatcheDel = `${path}/batcheDel`
 const __sFindAll = `${path}/findAll`
 const __sGet = `${path}/get`

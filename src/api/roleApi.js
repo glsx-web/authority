@@ -1,7 +1,7 @@
 import {
   GlAxios
 } from 'glsx-vue-common'
-const path = 'role'
+const path = '/admin-operating-auth/role'
 const __sDeleteRole = `${path}/deleteRoleById`
 const __sDeleteUserRole = `${path}/deleteUserRoleById`
 const __sGetRoleDetail = `${path}/getRoleDetail`

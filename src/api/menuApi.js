@@ -2,7 +2,7 @@ import {
   GlAxios
 } from 'glsx-vue-common'
 
-const path = 'menu'
+const path = '/admin-operating-auth/menu'
 const __sAdd = `${path}/add`
 const __sDel = `${path}/del`
 const __sEdit = `${path}/edit`

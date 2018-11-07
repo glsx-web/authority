@@ -2,7 +2,7 @@ import {
   GlAxios
 } from 'glsx-vue-common'
 
-const path = 'department'
+const path = '/admin-operating-auth/department'
 const __sDel = `${path}/del`
 const __sFindTree = `${path}/findTree`
 const __sGetPName = `${path}/getPName`

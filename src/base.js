@@ -3,19 +3,17 @@
 import Vue from 'vue'
 import GlsxVueComponents from 'glsx-vue-components'
 import 'glsx-vue-components/dist/glsx-vue-components.css'
-import GlsxVueCommon from 'glsx-vue-common'
-import { common } from '@/config'
+// import { common } from '@/config'
 import './styles/role-user-common.scss'
 import './styles/index.scss'
 import './date.js'
 import zh_CN from 'vee-validate/dist/locale/zh_CN'
 import VeeValidate, { Validator } from 'vee-validate'
 // import VeeValidate from 'vee-validate'
-// import _ from 'lodash'
 import { Tree } from '@/components'
 Vue.use(GlsxVueComponents)
 Vue.component('tree', Tree)
-Vue.use(GlsxVueCommon, common)
+
 const config = {
   errorBagName: 'errorBags',
   fieldsBagName: 'fieldBags'
@@ -46,7 +44,19 @@ var mixin = {
     })
   }
 }
-
+const URL = ' http://192.168.3.171:7300/mock/5be17454f31545347559d499/config'
+const getConfig = (url = URL + '/authority_common') => {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        resolve({ 'vue': Vue, 'config': JSON.parse(xhr.responseText) })
+      }
+    }
+    xhr.open('GET', url)
+    xhr.send()
+  })
+}
 /* eslint-disable no-new */
 const render = App => {
   new Vue({
@@ -55,4 +65,5 @@ const render = App => {
     render: h => h(App)
   })
 }
-export default { render }
+
+export default { render, getConfig }
