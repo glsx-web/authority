@@ -114,8 +114,8 @@ function fn(data, pid) {
 }
 </script>
 <style scoped>
-.tree {
+/* .tree {
     height: 550px;
     overflow-y: scroll;
-}
+} */
 </style>

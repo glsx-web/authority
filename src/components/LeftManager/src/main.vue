@@ -1,17 +1,19 @@
 <template>
   <div class="menu-box box">
     <div class="title">{{title}}</div>
-    <div class="console-btn">
+    <div ref="topInfo" class="console-btn">
         <div><gl-button @click="openAll(openOrClose)">{{openOrClose ? '全部展开' : '全部收起'}}</gl-button></div>
         <div><gl-button @click="pushSublings" type='primary' :disabled="value.push">添加同级菜单</gl-button></div>
         <div><gl-button @click="pushChildren" type='primary' :disabled="value.push">添加子菜单</gl-button></div>
     </div>
+    <gl-scroll :height='parseInt(this.$client_height() - this.height - 60)'>
     <tree
       ref='tree'
       @node-click='nodeClick'
       :isDepart='isDepart'
       :updateTree="value.updateTree"
     ></tree>
+    </gl-scroll>
   </div>
 </template>
 
@@ -21,7 +23,8 @@ export default {
   name: 'leftManager',
   data() {
     return {
-      openOrClose: true
+      openOrClose: true,
+      height: ''
     }
   },
   props: {
@@ -38,6 +41,9 @@ export default {
     },
     isDepart: Boolean,
     eventBus: Object
+  },
+  mounted() {
+    this.height = this.$refs.topInfo.offsetHeight
   },
   methods: {
     // 展开与关闭

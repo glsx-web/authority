@@ -290,8 +290,8 @@ export default {
     },
     handleUserDetailClose() {
       this.userDetailDialogVisible()
-      this.loadingTable = true
-      this.getList()
+      // this.loadingTable = true
+      // this.getList()
       this.apiParam = Object
     },
     handleCreateOrEdit() {

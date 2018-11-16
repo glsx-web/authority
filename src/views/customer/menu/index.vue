@@ -1,5 +1,7 @@
 <template>
-  <gl-row :gutter="100" :style="{ height: height }" class="mentBox">
+  <gl-row :gutter="100" 
+  class="mentBox">
+  <!-- :style="{ height: height }"  -->
     <gl-col :span='8'>
       <left-manager :title='"菜单列表"' v-model="menuMG" :node-click='nodeClick' :eventBus='eventBus'></left-manager>
     </gl-col>
@@ -105,9 +107,9 @@ export default {
     LeftManager,
     RightForm
   },
-  mounted() {
-    this.height = this.$client_height() + 'px'
-  },
+  // mounted() {
+  //   this.height = this.$client_height() + 'px'
+  // },
   methods: {
     nodeClick(data, node, that, props) {
       this.menuMG.showDetails = true

@@ -28,7 +28,7 @@ module.exports = {
     // config.mode = mode
   },
   devServer: {
-    port: 8085,
+    port: 8888,
     host: 'localhost',
     open: true,
     proxy: {
