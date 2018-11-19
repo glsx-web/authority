@@ -47,7 +47,7 @@
           :defaultExpandAll="defaultExpandAll" 
           :defaultCheckedKeys="defaultCheckedKeys" 
           @input="getMenuOption" 
-          style="height:160px" 
+          style="height:160px;overflow-y: auto;" 
           :keyFresh="keyFresh">
         </tree>
         <span v-show="errorBags.has('rights')" class="error">{{ errorBags.first('rights') }}</span>

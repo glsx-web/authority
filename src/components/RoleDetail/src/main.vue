@@ -9,7 +9,7 @@
         <span style="word-wrap: break-word;">{{roleParam.description}}</span>
       </gl-form-item>
       <gl-form-item label="菜单选项：">
-        <tree ref='tree' :propsData="roleMenuTree" :defaultExpandAll="defaultExpandAll" style="height:160px"></tree>
+        <tree ref='tree' :propsData="roleMenuTree" :defaultExpandAll="defaultExpandAll" style="height:160px;overflow-y: auto;"></tree>
       </gl-form-item>
     </gl-form>
   </gl-dialog>
