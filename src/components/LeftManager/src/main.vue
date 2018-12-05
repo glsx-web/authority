@@ -6,7 +6,7 @@
         <div><gl-button @click="pushSublings" type='primary' :disabled="value.push">添加同级菜单</gl-button></div>
         <div><gl-button @click="pushChildren" type='primary' :disabled="value.push">添加子菜单</gl-button></div>
     </div>
-    <gl-scroll :height='parseInt(this.$client_height() - this.height - 60)'>
+    <gl-scroll :height='parseInt(this.$client_height() - this.height - 108)'>
     <tree
       ref='tree'
       @node-click='nodeClick'
@@ -43,6 +43,7 @@ export default {
     eventBus: Object
   },
   mounted() {
+    console.log()
     this.height = this.$refs.topInfo.offsetHeight
   },
   methods: {

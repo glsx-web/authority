@@ -23,7 +23,7 @@ const userDetailColumn = [{
   label: '管理员',
   prop: 'isadmin',
   formatter: (cellValue) => {
-    return cellValue < 1 ? '否' : '是'
+    return cellValue.isadmin < 1 ? '否' : '是'
   }
 }, {
   label: '手机号码',

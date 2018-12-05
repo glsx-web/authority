@@ -2,8 +2,8 @@
 <template>
   <div>
     <div class="default m-b20">
-      <gl-input class="search-w250" placeholder="请输入角色名称" v-model="roleName" clearable></gl-input>
-      <gl-button type="primary" @click="handleSearchRoleName">搜索</gl-button>
+      <gl-input class="search-w250" placeholder="请输入角色名称" @keyup.enter.native="handleSearchRoleName" v-model="roleName" clearable></gl-input>
+      <gl-button type="primary" @keyup.enter="handleSearchRoleName" @click="handleSearchRoleName">搜索</gl-button>
     </div>
     <div class="default p-t15">
       <gl-button class="control-tabledata-button" size="small" @click="handleCreateOrEdit(flagCOrE = true)">创建</gl-button>
@@ -88,6 +88,7 @@ export default {
       roleData: {
         border: true,
         height: parseInt(this.$client_height() - 140),
+        align: 'center',
         data: [],
         column: roleDataColumn,
         console: {
@@ -122,6 +123,13 @@ export default {
             }
           }]
         }
+      }
+    }
+  },
+  created() {
+    document.onkeydown = e => {
+      if (e.keyCode === 13) {
+        this.handleSearchRoleName()
       }
     }
   },

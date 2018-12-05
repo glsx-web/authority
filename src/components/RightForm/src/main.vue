@@ -158,21 +158,21 @@ export default {
         })
         : delMenu.req({ menuId: obj.id }).then(res => {
           this.delLoading = false
-          this.delTip(true)
+          this.delTip(true, '删除成功，首页查看需重新登录')
         }).catch(err => {
           this.delLoading = false
           console.log(err)
           this.delErrTip()
         })
     },
-    delTip(val) {
+    delTip(val, tips) {
       if (val) {
         const parent = this.value.node.parent
         const children = parent.data.children || parent.data
         const index = children.findIndex(d => d.id === this.value.data.id)
         children.splice(index, 1)
         this.$notify({
-          title: '删除成功',
+          title: tips || '删除成功',
           type: 'success'
         })
         this.value.showDetails = false
@@ -199,8 +199,10 @@ export default {
         if (this.value.sublings) {
           if (treeData.parent === '#') {
             obj.parentId = 0
+            obj.grade = 0
           } else {
             obj.parentId = treeData.parent
+            obj.grade = this.menu.grade
           }
           this.addData(obj)
         // 添加子级
@@ -213,7 +215,7 @@ export default {
           if (!this.isDepart) {
             editMenu.req(obj).then(res => {
               this.subLoading = false
-              this.Tip(true)
+              this.Tip(true, '操作成功，首页查看需重新登录')
             }).catch(err => {
               console.log(err)
               this.subLoading = false
@@ -241,7 +243,7 @@ export default {
       if (!this.isDepart) {
         addMenu.req(obj).then(res => {
           this.subLoading = false
-          this.Tip(true)
+          this.Tip(true, '操作成功，首页查看需重新登录')
         }).catch(err => {
           this.subLoading = false
           console.log(err)
@@ -256,10 +258,10 @@ export default {
         this.addOrEditDepart(obj)
       }
     },
-    Tip(val) {
+    Tip(val, tips) {
       if (val) {
         this.$notify({
-          title: '操作成功',
+          title: tips || '操作成功',
           type: 'success'
         })
         this.value.showDetails = false

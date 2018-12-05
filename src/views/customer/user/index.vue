@@ -2,8 +2,8 @@
 <template>
   <div>
     <div class="default m-b20">
-      <gl-input class="search-w250" placeholder="请输入用户名或姓名" v-model="userName" clearable></gl-input>
-      <gl-button type="primary" @click="finduserName">搜索</gl-button>
+      <gl-input class="search-w250" @keyup.enter.native="finduserName" placeholder="请输入用户名或姓名" v-model="userName" clearable></gl-input>
+      <gl-button type="primary" @keyup.enter="finduserName" @click="finduserName">搜索</gl-button>
     </div>
     <div class="default p-t15">
       <div class="control-tabledata-button">
@@ -170,6 +170,13 @@ export default {
         },
         selection: {},
         multipleSelection: []
+      }
+    }
+  },
+  created() {
+    document.onkeydown = e => {
+      if (e.keyCode === 13) {
+        this.finduserName()
       }
     }
   },
@@ -369,6 +376,7 @@ export default {
       })
     },
     findRolesName(params) {
+      if (!params) return null
       var nameArray = []
       const userRoles = params.split(',')
       userRoles.forEach(userItem => {

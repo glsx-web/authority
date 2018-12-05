@@ -75,18 +75,20 @@
           </gl-col>
           <gl-col :span="12">
             <gl-form-item label="状态" prop="state">
-                <gl-select v-model="userManageForm.state" placeholder="启用">
+                <gl-select v-model="userManageForm.state" data-vv-as="状态" name="state" v-validate="'required'">
                 <gl-option label="禁用" value='0'></gl-option>
                 <gl-option label="启用" value='1'></gl-option>
                 </gl-select>               
+                <span v-show="errorBags.has('state')" class="error">{{ errorBags.first('state') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="12">
-            <gl-form-item label="管理员">
-                <gl-select v-model="userManageForm.isadmin" placeholder="否">
+            <gl-form-item label="管理员" prop="isadmin">
+                <gl-select v-model="userManageForm.isadmin" data-vv-as="管理员" name="isadmin" v-validate="'required'">
                 <gl-option label="否" value='0'></gl-option>
                 <gl-option label="是" value='1'></gl-option>
                 </gl-select>
+                <span v-show="errorBags.has('isadmin')" class="error">{{ errorBags.first('isadmin') }}</span>
             </gl-form-item>
           </gl-col>
           <gl-col :span="24">
@@ -180,6 +182,12 @@ export default {
           { required: true }
         ],
         email: [
+          { required: true }
+        ],
+        state: [
+          { required: true }
+        ],
+        isadmin: [
           { required: true }
         ],
         departName: [
