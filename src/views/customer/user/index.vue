@@ -61,6 +61,7 @@ export default {
       toggle: [],
       isEdit: true,
       departList: [],
+      row: {},
       dialogFormVisible: false,
       userManageForm: this.$deep_clone(userForm),
       userDetailVisible: false,
@@ -131,14 +132,14 @@ export default {
           button: [{
             label: '编辑',
             type: 'text',
-            callback: (index, rows) => {
-              this.editUser(rows[index])
+            callback: (index) => {
+              this.editUser(index)
             }
           }, {
             label: '详细',
             type: 'text',
             callback: (index, rows) => {
-              this.handleGetUserDetail(index, rows)
+              this.handleGetUserDetail(index)
             }
           }, {
             label: '禁用',
@@ -182,8 +183,6 @@ export default {
   },
   mounted() {
     this.findUserList()
-    this.getRoleOptions()
-    this.getdepartData()
   },
   watch: {
     userName(val) {
@@ -217,18 +216,18 @@ export default {
       })
     },
     // 获取所有角色选项
-    getRoleOptions() {
-      getRoleList.req().then(res => {
-        userForm.roleList = res.list
-      })
-    },
+    // getRoleOptions() {
+    //   getRoleList.req().then(res => {
+    //     userForm.roleList = res.list
+    //   })
+    // },
     // 获取部门树
-    getdepartData() {
-      findDepartTree.req().then(res => {
-        this.departList = res
-        userForm.departList = fn(res, '#')
-      })
-    },
+    // getdepartData() {
+    //   findDepartTree.req().then(res => {
+    //     this.departList = res
+    //     userForm.departList = fn(res, '#')
+    //   })
+    // },
     // 新增更新用户接口请求
     updateUser_Post(params) {
       this.loading = true
@@ -292,33 +291,39 @@ export default {
     },
     // 新增按钮
     createUser() {
-      this.userManageForm = this.$deep_clone(userForm)
+      Promise.all([getRoleList.req(), findDepartTree.req()]).then(result => {
+        userForm.departList = fn(result[1], '#')
+        userForm.roleList = result[0].list
+        this.userManageForm = this.$deep_clone(userForm)
+      })
       this.handleUserFormVisible()
       this.isEdit = false
     },
     // 编辑按钮
-    editUser(row) {
-      row.password = ''
-      // console.log(row)
-      row.oldUserName = row.username
-      row.roleList = this.$deep_clone(userForm.roleList)
-      row.departList = this.$deep_clone(userForm.departList)
-      row.state = row.state + ''
-      row.isadmin = row.isadmin + ''
-      this.departList.forEach(item => {
-        if (item.id === row.departId) {
-          row.departName = item.text
-        }
-      })
-      Promise.all([findAll, getRoleList]).then((result) => {
-        if (row.roles && typeof (row.roles) === 'string') {
-          row.roles = (row.roles + '').split(',').map(role => +role)
-        } else if (row.roles && typeof (row.roles) === 'object') {
-          row.roles
+    editUser(index) {
+      const params = this.getParams()
+      delete params.keyWork
+      Promise.all([findAll.req(params), getRoleList.req(), findDepartTree.req()]).then(result => {
+        this.row = result[0].list[index]
+        this.row.password = null
+        this.row.oldUserName = this.row.username
+        this.row.roleList = this.$deep_clone(result[1].list)
+        this.departList = result[2]
+        userForm.departList = fn(result[2], '#')
+        this.row.departList = this.$deep_clone(userForm.departList)
+        this.departList.forEach(item => {
+          if (item.id === this.row.departId) {
+            this.row.departName = item.text
+          }
+        })
+        if (this.row.roles && typeof (this.row.roles) === 'string') {
+          this.row.roles = (this.row.roles + '').split(',').map(role => +role)
+        } else if (this.row.roles && typeof (this.row.roles) === 'object') {
+          this.row.roles
         } else {
-          row.roles = []
+          this.row.roles = []
         }
-        this.userManageForm = this.$deep_clone(row)
+        this.userManageForm = this.$deep_clone(this.row)
       })
       this.handleUserFormVisible()
       this.isEdit = true
@@ -389,13 +394,31 @@ export default {
       return nameArray.join(',')
     },
     // 详细操作
-    handleGetUserDetail(index, rows) {
+    handleGetUserDetail(index) {
       this.columnParam = userDetailColumn
       this.consoleParam = []
       this.flagRoleOrUser = false
-      this.apiParam = this.$deep_clone(rows[index])
-      this.apiParam.roles = this.findRolesName(this.apiParam.roles)
-      this.userDetailVisible = !this.userDetailVisible
+      const params = this.getParams()
+      delete params.keyWork
+      Promise.all([findAll.req(params), getRoleList.req()]).then(result => {
+        this.apiParam = this.$deep_clone(result[0].list[index])
+        const params = this.apiParam.roles
+        if (!params) {
+          this.apiParam.roles = null
+        } else {
+          const nameArray = []
+          const userRoles = (typeof (params) === 'string') ? params.split(',') : params
+          userRoles.forEach(userItem => {
+            result[1].list.forEach(item => {
+              if (+userItem === item.id) {
+                nameArray.push(item.roleName)
+              }
+            })
+          })
+          this.apiParam.roles = nameArray.join(',')
+        }
+        this.userDetailVisible = !this.userDetailVisible
+      })
     },
     handleUserDetailClose() {
       this.userDetailVisible = !this.userDetailVisible

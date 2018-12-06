@@ -13,6 +13,7 @@ import VeeValidate, { Validator } from 'vee-validate'
 import { Tree } from '@/components'
 Vue.use(GlsxVueComponents)
 Vue.component('tree', Tree)
+import Theme from '@/common/theme'
 
 const config = {
   errorBagName: 'errorBags',
@@ -22,26 +23,45 @@ Vue.use(VeeValidate, config)
 Validator.localize('zh_CN', zh_CN)
 Vue.prototype.$valid = Validator
 var mixin = {
+  data() {
+    return {
+      connection: null,
+      eventBus: null
+    }
+  },
+  beforeMount() {
+    this.eventBus = new Vue()
+  },
   mounted() {
     const _this = this
-    const theme = new this.$Theme()
-    const connection = this.$Penpal.connectToParent({
+    const theme = new Theme()
+    this.connection = this.$Penpal.connectToParent({
       methods: {
         setTheme(color) {
           theme.change(color)
         },
         height() {
           return document.height || document.body.offsetHeight // document.documentElement.clientHeight || document.body.clientHeight //
+        },
+        $$on(e) {
+          _this.eventBus.$emit('event', e)
         }
       }
     })
-    connection.promise.then(parent => {
+    this.connection.promise.then(parent => {
       const cfg = _this.$get_session_config()
       if (cfg) return
       parent.getResources().then(config => {
         _this.$set_session_config(config)
       })
     })
+  },
+  methods: {
+    C2P(_event) {
+      this.connection.promise.then(parent => {
+        parent.$$emit(_event)
+      })
+    }
   }
 }
 const URL = ' http://192.168.3.171:7300/mock/5be17454f31545347559d499/config'

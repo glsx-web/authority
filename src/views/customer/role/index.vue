@@ -305,10 +305,18 @@ export default {
     handleCreateOrEdit() {
       this.roleParam = this.flagCOrE ? this.$deep_clone(roleCreateStructure) : this.roleParam
       this.roleParam.oldRoleName = this.roleParam.roleName
-      this.flagCOrE ? this.createDialogVisible() : this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
+      findDepartTree.req().then(res => {
+        this.departList = fn(res, '#')
+        if (this.departList) {
+          this.flagCOrE ? this.createDialogVisible() : this.getMenuTree(this.roleParam.id, this.editOrDetail = true)
+        }
+      }).catch(err => {
+        notice.errorTips(err)
+      })
     },
     // 关闭新增用户组件
     handleCreateClose(data) {
+      this.departList = []
       if (!data) {
         this.emptyParam()
         return false

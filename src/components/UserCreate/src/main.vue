@@ -248,7 +248,7 @@ export default {
       // this.$refs[formName].validate(valid => {
         this.userData = this.$deep_clone(this.userManageForm)
         // 如果密码为null 就不传密码的值
-        !this.userData.password && delete userForm.password
+        !this.userData.password && delete this.userData.password
         delete this.userData.createTime
         delete this.userData.updateTime
         delete this.userData.roleList
