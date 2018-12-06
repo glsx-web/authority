@@ -13,7 +13,7 @@ import VeeValidate, { Validator } from 'vee-validate'
 import { Tree } from '@/components'
 Vue.use(GlsxVueComponents)
 Vue.component('tree', Tree)
-import Theme from '@/common/theme'
+// import Theme from '@/common/theme'
 
 const config = {
   errorBagName: 'errorBags',
@@ -34,7 +34,7 @@ var mixin = {
   },
   mounted() {
     const _this = this
-    const theme = new Theme()
+    const theme = new this.$Theme()
     this.connection = this.$Penpal.connectToParent({
       methods: {
         setTheme(color) {
