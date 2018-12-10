@@ -134,6 +134,7 @@ export default {
     addOrEditDepart(params) {
       updateDepartment.req(params).then(res => {
         this.subLoading = false
+        this.$root.C2P({ 'depart': 'update' })
         this.Tip(true)
       }).catch(err => {
         this.subLoading = false
@@ -150,6 +151,7 @@ export default {
       this.isDepart
         ? delDepartment.req(obj).then(res => {
           this.delLoading = false
+          this.$root.C2P({ 'depart': 'update' })
           this.delTip(true)
         }).catch(err => {
           this.delLoading = false

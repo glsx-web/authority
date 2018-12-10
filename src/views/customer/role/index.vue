@@ -135,7 +135,10 @@ export default {
   },
   mounted() {
     this.getList()
-    this.getdepartData()
+    // this.getdepartData()
+    this.$root.eventBus.$on('event', data => {
+      data.depart === 'update' ? this.getList() : ''
+    })
   },
   watch: {
     roleName(val) {
@@ -235,13 +238,13 @@ export default {
       })
     },
     // 获取部门树
-    getdepartData() {
-      findDepartTree.req().then(res => {
-        this.departList = fn(res, '#')
-      }).catch(err => {
-        notice.errorTips(err)
-      })
-    },
+    // getdepartData() {
+    //   findDepartTree.req().then(res => {
+    //     this.departList = fn(res, '#')
+    //   }).catch(err => {
+    //     notice.errorTips(err)
+    //   })
+    // },
     // 接口请求-end---------------------------------------
     createDialogVisible() {
       this.createVisible = !this.createVisible
